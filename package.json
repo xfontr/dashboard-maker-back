@@ -1,0 +1,39 @@
+{
+  "name": "widescope-back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "ts": "tsc",
+    "ts:dev": "tsc -w",
+    "build": "npm run ts",
+    "start": "node .",
+    "start:dev": "nodemon -q",
+    "test": "jest src --watchAll=false",
+    "test:coverage": "jest src --coverage --watchAll=false"
+  },
+  "externals": {
+    "sharp": "commonjs sharp"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^28.1.6",
+    "@types/node": "^18.7.1",
+    "@typescript-eslint/eslint-plugin": "^5.33.0",
+    "@typescript-eslint/parser": "^5.33.0",
+    "eslint": "^8.21.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "jest": "^28.1.3",
+    "nodemon": "^2.0.19",
+    "ts-jest": "^28.0.7",
+    "typescript": "^4.7.4"
+  },
+  "engines": {
+    "node": "^18.x"
+  }
+}
