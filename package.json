@@ -9,8 +9,8 @@
     "build": "npm run ts",
     "start": "node .",
     "start:dev": "nodemon -q",
-    "test": "jest src --watchAll=false",
-    "test:coverage": "jest src --coverage --watchAll=false",
+    "test": "jest src --watchAll=false --passWithNoTests",
+    "test:coverage": "jest src --coverage --watchAll=false --passWithNoTests",
     "prepare": "husky install"
   },
   "externals": {
