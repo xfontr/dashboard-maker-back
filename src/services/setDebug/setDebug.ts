@@ -13,10 +13,8 @@ const importDebugAndSetBaseLocation = (
 
 const baseSetDebug =
   (debug: Debug, baseLocation: string) =>
-  // eslint-disable-next-line arrow-body-style
-  (currentLocation: string): Debugger => {
-    return debug(`${baseLocation.slice(0, -2)}:${currentLocation}`);
-  };
+  (currentLocation: string): Debugger =>
+    debug(`${baseLocation.slice(0, -2)}:${currentLocation}`);
 
 export const setDebugWithoutColors = importDebugAndSetBaseLocation(
   DebugFunction,
@@ -27,15 +25,13 @@ export const setDebugWithoutColors = importDebugAndSetBaseLocation(
 /**
  * Imports Debug and sets the base location from the environment.
  *
- * @param {string} CurrentLocation Current file the user is at
- *
- * @returns {Debug} Returns a Debug function that when called will know the base location and import Debug by default
- *
  * @example
+ *   const debug = setDebug("index");
+ *   debug("Server listening at port 3000");
  *
- * const debug = setDebug("index")
- * debug("Server listening at port 3000")
- *
+ * @param {string} CurrentLocation Current file the user is at
+ * @returns {Debug} Returns a Debug function that when called will know the base
+ *   location and import Debug by default
  */
 
 export const setDebug = (currentLocation: string): CustomDebug => {
