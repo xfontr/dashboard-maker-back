@@ -7,5 +7,7 @@ module.exports = {
     "!src/server/*.ts",
     "!src/index.ts",
     "!src/config/*.ts",
+    "!src/database/*.ts",
+    "!src/database/**/*.ts",
   ],
 };
