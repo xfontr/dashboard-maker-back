@@ -10,7 +10,13 @@ const debug = Debug("dashboard-maker:index");
 
 const app = express();
 
-app.use(cors());
+app.disable("x-powered-by");
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 app.use(morgan("dev"));
 app.use(express.json());
 
