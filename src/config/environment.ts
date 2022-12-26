@@ -1,3 +1,4 @@
 export default {
-  port: process.env.PORT,
+  debug: process.env.DEBUG ?? "*",
+  port: +process.env.PORT ?? 4000,
 };
