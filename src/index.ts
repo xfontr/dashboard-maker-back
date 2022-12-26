@@ -10,10 +10,12 @@ const { port, database } = environment;
 
 (async () => {
   try {
-    debug("information", "Initializing the API");
+    debug("information", "Initializing...");
+
     startServer(app, port);
     await connectDatabase(database);
-    debug("highSuccess", "API launched successfully");
+
+    debug("highSuccess", "Server up and running");
   } catch (error) {
     debug("highError", `Launch error: ${error.message}`);
     process.exit(1);
