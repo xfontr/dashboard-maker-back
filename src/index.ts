@@ -1,29 +1,13 @@
-import "./loadEnvironment";
-import Debug from "debug";
-import chalk from "chalk";
-import express from "express";
-import cors from "cors";
-import morgan from "morgan";
 import environment from "./config/environment";
+import app from "./server";
+import startServer from "./server/startServer";
+import { setDebug } from "./services/setDebug/setDebug";
 
-const debug = Debug("dashboard-maker:index");
+const debug = setDebug("index");
 
-const app = express();
-
-app.disable("x-powered-by");
-
-app.use(
-  cors({
-    origin: "*",
-  })
-);
-app.use(morgan("dev"));
-app.use(express.json());
-
-const startServer = () => {
-  app.listen(environment.port, () => {
-    debug(chalk.bgGreen(`Listening at port ${environment.port}`));
-  });
-};
-
-startServer();
+try {
+  startServer(app, environment.port);
+} catch (error) {
+  debug("highError", `Launch error: ${error.message}`);
+  process.exit(1);
+}
