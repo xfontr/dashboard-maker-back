@@ -8,8 +8,8 @@
     "ts:dev": "tsc -w",
     "start": "node .",
     "start:dev": "nodemon -q",
-    "test": "jest src --watchAll=false --passWithNoTests",
-    "test:coverage": "jest src --coverage --watchAll=false --passWithNoTests",
+    "test": "jest src --watchAll=false",
+    "test:coverage": "jest src --coverage --watchAll=false",
     "lint": "eslint ./src",
     "build": "npm run ts",
     "prepare": "husky install"
