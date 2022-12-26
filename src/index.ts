@@ -1,3 +1,29 @@
-const api = () => {};
+import "./loadEnvironment";
+import Debug from "debug";
+import chalk from "chalk";
+import express from "express";
+import cors from "cors";
+import morgan from "morgan";
+import environment from "./config/environment";
 
-export default api;
+const debug = Debug("dashboard-maker:index");
+
+const app = express();
+
+app.disable("x-powered-by");
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+app.use(morgan("dev"));
+app.use(express.json());
+
+const startServer = () => {
+  app.listen(environment.port, () => {
+    debug(chalk.bgGreen(`Listening at port ${environment.port}`));
+  });
+};
+
+startServer();
