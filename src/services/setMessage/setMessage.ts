@@ -7,13 +7,13 @@ export const BaseColors = ({
   bgRed,
   red,
   blue,
-  yellow,
+  bgYellow,
 }: Chalk) => ({
   highSuccess: bgGreen,
   success: green,
   highError: bgRed,
   error: red,
-  information: yellow,
+  information: bgYellow,
   misc: blue,
 });
 
