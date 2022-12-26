@@ -1,7 +1,7 @@
 import "../../loadEnvironment";
 import DebugFunction, { Debug, Debugger } from "debug";
 import environment from "../../config/environment";
-import setMessage from "../setMessage";
+import setMessage from "../setMessage/setMessage";
 import AvaliableColors from "../../types/avaliableColors";
 import CustomDebug from "../../types/customDebug";
 
