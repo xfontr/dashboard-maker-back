@@ -25,16 +25,16 @@ export const setDebugWithoutColors = importDebugAndSetBaseLocation(
 );
 
 /**
- * Imports Debug and sets the base location from the environment.
+ *  Imports Debug and sets the base location from the environment.
  *
- * @param {string} CurrentLocation Current file the user is at
+ *  @param {string} CurrentLocation Current file the user is at
  *
- * @returns {Debug} Returns a Debug function that when called will know the base location and import Debug by default
+ *  @returns {Debug} Returns a Debug function that when called will know the base location and import Debug by default
  *
- * @example
+ *  @example
  *
- * const debug = setDebug("index")
- * debug("Server listening at port 3000")
+ *  const debug = setDebug("index")
+ *  debug("Server listening at port 3000")
  *
  */
 
