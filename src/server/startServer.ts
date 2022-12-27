@@ -1,6 +1,6 @@
 import { Express } from "express";
 import { Server } from "http";
-import { setDebug } from "../services/setDebug/setDebug";
+import setDebug from "../services/setDebug/setDebug";
 
 const debug = setDebug("start-server");
 

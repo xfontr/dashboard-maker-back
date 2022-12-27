@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import mongoose, { Mongoose } from "mongoose";
-import { setDebug } from "../services/setDebug/setDebug";
+import setDebug from "../services/setDebug/setDebug";
 
 const debug = setDebug("database-connect");
 

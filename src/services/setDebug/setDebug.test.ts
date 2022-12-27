@@ -1,7 +1,7 @@
 import environment from "../../config/environment";
 import AvaliableColors from "../../types/avaliableColors";
 import setMessage from "../setMessage/setMessage";
-import { setDebug, setDebugWithoutColors } from "./setDebug";
+import setDebug, { setDebugWithoutColors } from "./setDebug";
 
 const mockDebugger = jest.fn();
 const mockDebug = jest.fn().mockReturnValue(mockDebugger);

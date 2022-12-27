@@ -11,6 +11,10 @@ export default (
     newError.name = `Error ${availableCodes[code]}`;
     newError.message = error.message || camelToRegular(code);
 
-    return CustomError(newError, privateMessage ?? newError.message);
+    return CustomError(
+      newError,
+      availableCodes[code],
+      privateMessage || newError.message
+    );
   }
 )(codes.error);
