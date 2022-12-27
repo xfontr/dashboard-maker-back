@@ -9,15 +9,15 @@ const debug = setDebug("index");
 const { port, database } = environment;
 
 (async () => {
-  try {
-    debug("information", "Initializing...");
+	try {
+		debug("information", "Initializing...");
 
-    startServer(app, port);
-    await connectDatabase(database);
+		startServer(app, port);
+		await connectDatabase(database);
 
-    debug("highSuccess", "Server up and running");
-  } catch (error) {
-    debug("highError", `Launch error: ${error.message}`);
-    process.exit(1);
-  }
+		debug("highSuccess", "Server up and running");
+	} catch (error) {
+		debug("highError", `Launch error: ${error.message}`);
+		process.exit(1);
+	}
 })();

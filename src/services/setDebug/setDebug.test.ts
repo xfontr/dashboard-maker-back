@@ -9,53 +9,53 @@ const mockDebug = jest.fn().mockReturnValue(mockDebugger);
 jest.mock("debug", () => (location: string) => mockDebug(location));
 
 describe("Given a setDebugWithoutColors function", () => {
-  describe("When called with a current location 'test'", () => {
-    const currentLocation = "test";
+	describe("When called with a current location 'test'", () => {
+		const currentLocation = "test";
 
-    test("Then it should call debug with the environment debug base location and the passed text", () => {
-      const slicedBaseLocation = `${environment.debug.slice(
-        0,
-        -2
-      )}:${currentLocation}`;
+		test("Then it should call debug with the environment debug base location and the passed text", () => {
+			const slicedBaseLocation = `${environment.debug.slice(
+				0,
+				-2
+			)}:${currentLocation}`;
 
-      setDebugWithoutColors(currentLocation);
+			setDebugWithoutColors(currentLocation);
 
-      expect(mockDebug).toHaveBeenCalledWith(slicedBaseLocation);
-    });
+			expect(mockDebug).toHaveBeenCalledWith(slicedBaseLocation);
+		});
 
-    test("Then it should return a function that when called, should instantiate the Debugger with the passed text", () => {
-      const text = "message";
+		test("Then it should return a function that when called, should instantiate the Debugger with the passed text", () => {
+			const text = "message";
 
-      const returnedDebugger = setDebugWithoutColors(currentLocation);
+			const returnedDebugger = setDebugWithoutColors(currentLocation);
 
-      returnedDebugger(text);
+			returnedDebugger(text);
 
-      expect(mockDebugger).toHaveBeenCalledWith(text);
-    });
-  });
+			expect(mockDebugger).toHaveBeenCalledWith(text);
+		});
+	});
 });
 
 describe("Given a setDebug function", () => {
-  describe("When caled with a current location 'test'", () => {
-    const currentLocation = "test";
+	describe("When caled with a current location 'test'", () => {
+		const currentLocation = "test";
 
-    test("Then it should return a function that sets a message with a color and a text", () => {
-      const typeOfMessage: AvaliableColors = "error";
-      const message = "Something went wrong";
-      const slicedBaseLocation = `${environment.debug.slice(
-        0,
-        -2
-      )}:${currentLocation}`;
+		test("Then it should return a function that sets a message with a color and a text", () => {
+			const typeOfMessage: AvaliableColors = "error";
+			const message = "Something went wrong";
+			const slicedBaseLocation = `${environment.debug.slice(
+				0,
+				-2
+			)}:${currentLocation}`;
 
-      const debugWithSetMessage = setDebug(currentLocation);
+			const debugWithSetMessage = setDebug(currentLocation);
 
-      expect(mockDebug).toHaveBeenCalledWith(slicedBaseLocation);
+			expect(mockDebug).toHaveBeenCalledWith(slicedBaseLocation);
 
-      debugWithSetMessage(typeOfMessage, message);
+			debugWithSetMessage(typeOfMessage, message);
 
-      expect(mockDebugger).toHaveBeenCalledWith(
-        setMessage(typeOfMessage, message)
-      );
-    });
-  });
+			expect(mockDebugger).toHaveBeenCalledWith(
+				setMessage(typeOfMessage, message)
+			);
+		});
+	});
 });

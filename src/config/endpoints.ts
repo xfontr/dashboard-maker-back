@@ -1,6 +1,6 @@
 export default {
-  users: {
-    router: "/users",
-    root: "/",
-  },
+	users: {
+		router: "/users",
+		root: "/",
+	},
 };

@@ -10,11 +10,11 @@ const app = express();
 app.disable("x-powered-by");
 
 app.use(
-  cors({
-    origin: "*",
-  }),
-  morgan("dev"),
-  express.json()
+	cors({
+		origin: "*",
+	}),
+	morgan("dev"),
+	express.json()
 );
 
 app.use(endpoints.users.router, usersRouter);
