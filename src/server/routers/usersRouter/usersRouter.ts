@@ -1,6 +1,6 @@
 import express from "express";
-import endpoints from "../../config/endpoints";
-import { getAllUsers } from "../../controllers/usersControllers";
+import endpoints from "../../../config/endpoints";
+import { getAllUsers } from "../../../controllers/usersControllers";
 
 const usersRouter = express.Router();
 
