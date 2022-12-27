@@ -1,4 +1,4 @@
-type AvaliableColors =
+type DebugColors =
   | "highSuccess"
   | "success"
   | "highError"
@@ -6,4 +6,4 @@ type AvaliableColors =
   | "information"
   | "misc";
 
-export default AvaliableColors;
+export default DebugColors;

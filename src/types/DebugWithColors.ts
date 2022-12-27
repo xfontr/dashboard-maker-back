@@ -1,5 +1,5 @@
-import AvaliableColors from "./AvaliableColors";
+import DebugColors from "./DebugColors";
 
-type DebugWithColors = (colors: AvaliableColors, message: string) => void;
+type DebugWithColors = (colors: DebugColors, message: string) => void;
 
 export default DebugWithColors;
