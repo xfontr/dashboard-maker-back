@@ -22,18 +22,6 @@ export const setDebugWithoutColors = importDebugAndSetBaseLocation(
   baseSetDebug
 );
 
-/**
- * Imports Debug and sets the base location from the environment.
- *
- * @example
- *   const debug = setDebug("index");
- *   debug("Server listening at port 3000");
- *
- * @param {string} CurrentLocation Current file the user is at
- * @returns {Debug} Returns a Debug function that when called will know the base
- *   location and import Debug by default
- */
-
 export const setDebug = (currentLocation: string): CustomDebug => {
   const debug = setDebugWithoutColors(currentLocation);
 
