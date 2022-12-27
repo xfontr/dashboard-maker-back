@@ -2,7 +2,7 @@ import codes from "../../config/codes";
 import camelToRegular from "../camelToRegular/camelToRegular";
 import CustomError, { ICustomError } from "../CustomError/CustomError";
 
-type Codes = keyof typeof codes.error;
+export type Codes = keyof typeof codes.error;
 
 export default (
   (availableCodes: typeof codes.error) =>
