@@ -1,5 +1,5 @@
 import chalk, { Chalk } from "chalk";
-import AvaliableColors from "../../types/avaliableColors";
+import DebugColors from "../../types/DebugColors";
 
 const BaseColors = (color: Chalk) => ({
   highSuccess: color.bgGreen,
@@ -12,6 +12,6 @@ const BaseColors = (color: Chalk) => ({
 
 export default (
   (colorSetter: typeof BaseColors, chalkFunction: Chalk) =>
-  (color: AvaliableColors, message: string): string =>
+  (color: DebugColors, message: string): string =>
     colorSetter(chalkFunction)[color](message)
 )(BaseColors, chalk);
