@@ -6,12 +6,12 @@ export default <T>(model: Model<T>) =>
   (next: NextFunction) => {
     const tryThis = catchCodedError(next);
 
-    const GetAll = () => ({
+    const Get = () => ({
       getAll: async (query: object = {}) => {
         const response = await tryThis<T>(model.find.bind(model), query);
         return response;
       },
     });
 
-    return { ...GetAll() };
+    return { ...Get() };
   };

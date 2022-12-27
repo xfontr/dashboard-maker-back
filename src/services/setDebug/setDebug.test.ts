@@ -1,5 +1,5 @@
 import environment from "../../config/environment";
-import AvaliableColors from "../../types/avaliableColors";
+import AvaliableColors from "../../types/AvaliableColors";
 import setMessage from "../setMessage/setMessage";
 import setDebug, { setDebugWithoutColors } from "./setDebug";
 

@@ -2,8 +2,8 @@ import "../../loadEnvironment";
 import DebugFunction, { Debug, Debugger } from "debug";
 import environment from "../../config/environment";
 import setMessage from "../setMessage/setMessage";
-import AvaliableColors from "../../types/avaliableColors";
-import CustomDebug from "../../types/customDebug";
+import AvaliableColors from "../../types/AvaliableColors";
+import DebugWithColors from "../../types/DebugWithColors";
 
 const importDebugAndSetBaseLocation = (
   debug: Debug,
@@ -22,6 +22,6 @@ export const setDebugWithoutColors = importDebugAndSetBaseLocation(
   baseSetDebug
 );
 
-export default (currentLocation: string): CustomDebug =>
+export default (currentLocation: string): DebugWithColors =>
   (color: AvaliableColors, message: string): void =>
     setDebugWithoutColors(currentLocation)(setMessage(color, message));

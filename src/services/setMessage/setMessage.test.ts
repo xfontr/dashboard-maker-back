@@ -1,4 +1,4 @@
-import AvaliableColors from "../../types/avaliableColors";
+import AvaliableColors from "../../types/AvaliableColors";
 import setMessage from "./setMessage";
 
 const mockBgRed = jest.fn();

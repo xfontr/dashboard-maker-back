@@ -1,5 +1,5 @@
 import chalk, { Chalk } from "chalk";
-import AvaliableColors from "../../types/avaliableColors";
+import AvaliableColors from "../../types/AvaliableColors";
 
 const BaseColors = (color: Chalk) => ({
   highSuccess: color.bgGreen,
