@@ -12,13 +12,15 @@ describe("Given a CustomError function", () => {
       originalError.name = errorCode;
 
       const expectedError: ICustomError = {
-        name: errorCode,
+        name: `Error ${errorCode}`,
+        code: +errorCode,
         message: originalError.message,
         privateMessage: "Private",
       };
 
       const customError = CustomError(
         originalError,
+        +errorCode,
         expectedError.privateMessage
       );
 
@@ -30,6 +32,7 @@ describe("Given a CustomError function", () => {
     test("Then it should return an error with the default message and name", () => {
       const expectedError: ICustomError = {
         name: `Error ${codes.error.internalServerError}`,
+        code: codes.error.internalServerError,
         message: camelToRegular("internalServerError"),
         privateMessage: "Unknown error",
       };

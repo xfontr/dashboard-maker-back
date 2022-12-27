@@ -11,6 +11,7 @@ describe("Given a CodedError function", () => {
     test(`Then it should return a custom error with code ${codes.error.badRequest} and a default message 'Bad Request'`, () => {
       const expectedError: ICustomError = {
         name: `Error ${codes.error.badRequest}`,
+        code: codes.error.badRequest,
         message: defaultMessage,
         privateMessage: defaultMessage,
       };
@@ -25,6 +26,7 @@ describe("Given a CodedError function", () => {
     test(`Then it should return a custom error with code ${codes.error.badRequest} and said messages`, () => {
       const expectedError: ICustomError = {
         name: `Error ${codes.error.badRequest}`,
+        code: codes.error.badRequest,
         message: "Test",
         privateMessage: "Private",
       };

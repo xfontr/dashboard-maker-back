@@ -22,9 +22,6 @@ export const setDebugWithoutColors = importDebugAndSetBaseLocation(
   baseSetDebug
 );
 
-export const setDebug = (currentLocation: string): CustomDebug => {
-  const debug = setDebugWithoutColors(currentLocation);
-
-  return (color: AvaliableColors, message: string): void =>
-    debug(setMessage(color, message));
-};
+export default (currentLocation: string): CustomDebug =>
+  (color: AvaliableColors, message: string): void =>
+    setDebugWithoutColors(currentLocation)(setMessage(color, message));

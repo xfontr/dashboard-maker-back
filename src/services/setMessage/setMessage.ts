@@ -1,25 +1,17 @@
 import chalk, { Chalk } from "chalk";
 import AvaliableColors from "../../types/avaliableColors";
 
-export const BaseColors = ({
-  bgGreen,
-  green,
-  bgRed,
-  red,
-  blue,
-  bgYellow,
-}: Chalk) => ({
-  highSuccess: bgGreen,
-  success: green,
-  highError: bgRed,
-  error: red,
-  information: bgYellow,
-  misc: blue,
+const BaseColors = (color: Chalk) => ({
+  highSuccess: color.bgGreen,
+  success: color.green,
+  highError: color.bgRed,
+  error: color.red,
+  information: color.bgYellow,
+  misc: color.blue,
 });
 
-const importChalkAndBaseColors =
+export default (
   (colorSetter: typeof BaseColors, chalkFunction: Chalk) =>
   (color: AvaliableColors, message: string): string =>
-    colorSetter(chalkFunction)[color](message);
-
-export default importChalkAndBaseColors(BaseColors, chalk);
+    colorSetter(chalkFunction)[color](message)
+)(BaseColors, chalk);

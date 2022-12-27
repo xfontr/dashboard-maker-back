@@ -2,7 +2,7 @@ import environment from "./config/environment";
 import connectDatabase from "./database";
 import app from "./server";
 import startServer from "./server/startServer";
-import { setDebug } from "./services/setDebug/setDebug";
+import setDebug from "./services/setDebug/setDebug";
 
 const debug = setDebug("index");
 
