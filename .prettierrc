@@ -1,4 +1,3 @@
 {
-  "plugins": ["prettier-plugin-jsdoc"],
-  "tabWidth": 2
+  "plugins": ["prettier-plugin-jsdoc"]
 }
