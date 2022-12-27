@@ -1,9 +1,9 @@
-import databaseHandler from "./databaseHandler";
+import Connection from "./Connection";
 
 export default (
-  (database: typeof databaseHandler) => async (credentials: string) => {
+  (database: typeof Connection) => async (credentials: string) => {
     database.setStrictQuery();
     await database.connect(credentials);
     database.transformDocuments();
   }
-)(databaseHandler);
+)(Connection);
