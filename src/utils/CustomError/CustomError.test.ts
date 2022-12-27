@@ -15,13 +15,13 @@ describe("Given a CustomError function", () => {
         name: `Error ${errorCode}`,
         code: +errorCode,
         message: originalError.message,
-        privateMessage: "Private",
+        publicMessage: "Private",
       };
 
       const customError = CustomError(
         originalError,
         +errorCode,
-        expectedError.privateMessage
+        expectedError.publicMessage
       );
 
       expect(customError).toStrictEqual(expectedError);
@@ -33,8 +33,8 @@ describe("Given a CustomError function", () => {
       const expectedError: ICustomError = {
         name: `Error ${codes.error.internalServerError}`,
         code: codes.error.internalServerError,
-        message: camelToRegular("internalServerError"),
-        privateMessage: "Unknown error",
+        message: "Unknown error",
+        publicMessage: camelToRegular("internalServerError"),
       };
 
       const customError = CustomError(Error());

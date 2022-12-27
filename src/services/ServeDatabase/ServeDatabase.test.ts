@@ -1,6 +1,7 @@
 import { NextFunction } from "express";
 import { Model } from "mongoose";
 import IUser from "../../database/types/IUser";
+import camelToRegular from "../../utils/camelToRegular/camelToRegular";
 import CodedError from "../../utils/CodedError/CodedError";
 import ServeDatabase from "./ServeDatabase";
 
@@ -24,6 +25,7 @@ describe("Given a ServeDatabase factory function", () => {
     test("Then it should call next with an error if the method throws an error", async () => {
       const error = new Error();
       const response = Promise.reject(error);
+      const errorType = "internalServerError";
 
       const model = {
         find: () => response,
@@ -34,7 +36,7 @@ describe("Given a ServeDatabase factory function", () => {
       await TestServe.getAll();
 
       expect(next).toHaveBeenCalledWith(
-        CodedError("internalServerError", error)
+        CodedError(errorType, camelToRegular(errorType))(error)
       );
     });
   });
