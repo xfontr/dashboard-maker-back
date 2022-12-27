@@ -7,8 +7,6 @@ describe("Given a CustomError function", () => {
 	const errorMessage = "Public error";
 
 	describe("When instantiated with an error of message 'Public error', name '500' and private message 'Private'", () => {
-		const privateMessage = "Private";
-
 		test("Then it should return an error object with said message and name", () => {
 			const originalError = Error(errorMessage);
 			originalError.name = errorCode;
@@ -16,10 +14,13 @@ describe("Given a CustomError function", () => {
 			const expectedError: ICustomError = {
 				name: errorCode,
 				message: originalError.message,
-				privateMessage,
+				privateMessage: "Private",
 			};
 
-			const customError = CustomError(originalError, privateMessage);
+			const customError = CustomError(
+				originalError,
+				expectedError.privateMessage
+			);
 
 			expect(customError).toStrictEqual(expectedError);
 		});
