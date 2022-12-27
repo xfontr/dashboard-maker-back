@@ -6,25 +6,25 @@
 Creates a new user.
 
 ```json
-{
-  "name": "John",
-  "firstSurname": "Doe",
-  "secondSurname": "Dao",
-  "email": "johndoe@mail.com",
-  "mobileNumber": 674 251 833,
-  "phoneNumber": 93 419 77 11,
-  "role": "user",
-  "address": "",
-  "postalCode": 08033,
-  "city": "Barcelona",
-}
+		{
+			"name": "John",
+			"firstSurname": "Doe",
+			"secondSurname": "Dao",
+			"email": "johndoe@mail.com",
+			"mobileNumber": 674 251 833,
+			"phoneNumber": 93 419 77 11,
+			"role": "user",
+			"address": "",
+			"postalCode": 08033,
+			"city": "Barcelona",
+		}
 
-{
-  "userRoles": [
-    "user",
-    "admin"
-  ]
-}
+		{
+			"userRoles": [
+				"user",
+				"admin"
+			]
+		}
 ```
 
 `🔹 DELETE ➡️ .../users?user=userId`
