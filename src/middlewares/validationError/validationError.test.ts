@@ -29,7 +29,16 @@ describe("Given a validationError middleware", () => {
   describe("When called with a joi error", () => {
     const joiError = new ValidationError(
       {
-        body: [],
+        body: [
+          {
+            message: "Error",
+            isJoi: true,
+            details: [],
+            _original: "",
+            name: "ValidationError",
+            annotate: () => "",
+          },
+        ],
       },
       {}
     );
@@ -44,7 +53,7 @@ describe("Given a validationError middleware", () => {
     test("Then it should console all the errors", () => {
       validationError(joiError, req, res as Response, next);
 
-      expect(mockDebug).toHaveBeenCalledTimes(1);
+      expect(mockDebug).toHaveBeenCalledTimes(2);
     });
   });
 

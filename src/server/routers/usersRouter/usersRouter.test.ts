@@ -27,4 +27,14 @@ describe(`Given a ${endpoints.users.router} route`, () => {
       expect(res.statusCode).toBe(codes.success.created);
     });
   });
+
+  describe("When requested with POST method and invalid register data", () => {
+    test(`Then it should respond with a status of ${codes.error.badRequest}`, async () => {
+      const res = await request(app).post(`${endpoints.users.router}`).send({
+        name: mockUser.name,
+      });
+
+      expect(res.statusCode).toBe(codes.error.badRequest);
+    });
+  });
 });
