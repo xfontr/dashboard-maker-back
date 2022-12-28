@@ -6,7 +6,7 @@ const userData = {
 
   email: {
     min: 10,
-    max: 25,
+    max: 70,
   },
 };
 
