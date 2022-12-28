@@ -9,7 +9,6 @@ export default (
     schema: Schema,
     options: EvOptions = {},
     joiRoot: object = defaultAbortEarly
-  ): RequestHandler => {
-    return validator(schema, options, joiRoot);
-  }
+  ): RequestHandler =>
+    validator(schema, options, joiRoot)
 )(validate);
