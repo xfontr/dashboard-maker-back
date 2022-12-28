@@ -6,7 +6,8 @@ export type Codes = keyof typeof codes.error;
 
 export default (
   (availableCodes: typeof codes.error) =>
-  (code: Codes, error: Error, privateMessage?: string): ICustomError => {
+  (code: Codes, publicMessage?: string) =>
+  (error: Error): ICustomError => {
     const newError = error;
     newError.name = `Error ${availableCodes[code]}`;
     newError.message = error.message || camelToRegular(code);
@@ -14,7 +15,8 @@ export default (
     return CustomError(
       newError,
       availableCodes[code],
-      privateMessage || newError.message
+      publicMessage ||
+        "Something went wrong. Please contact the administrator to address the issue"
     );
   }
 )(codes.error);

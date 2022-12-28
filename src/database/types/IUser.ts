@@ -1,10 +1,10 @@
 export type UserRoles = "user" | "admin";
 
 export type UserRequiredData = {
-  id: string;
+  id?: string;
   password: string;
   email: string;
-  role: UserRoles;
+  role?: UserRoles;
 };
 
 export type UserName = Partial<{
