@@ -1,4 +1,4 @@
-export default {
+const userData = {
   name: {
     min: 3,
     max: 15,
@@ -9,3 +9,5 @@ export default {
     max: 25,
   },
 };
+
+export default userData;

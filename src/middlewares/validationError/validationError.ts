@@ -5,7 +5,7 @@ import setDebug from "../../services/setDebug/setDebug";
 
 const debug = setDebug("validation-error");
 
-export default (
+const validationError = (
   error: Error,
   req: Request,
   res: Response,
@@ -20,3 +20,5 @@ export default (
 
   next(error);
 };
+
+export default validationError;

@@ -4,7 +4,7 @@ import CustomError from "../../utils/CustomError/CustomError";
 
 const debug = setDebug("general-error");
 
-export default (
+const validationError = (
   { code, message, publicMessage }: ReturnType<typeof CustomError>,
   req: Request,
   res: Response,
@@ -15,3 +15,5 @@ export default (
 
   res.status(code).json({ error: publicMessage });
 };
+
+export default validationError;
