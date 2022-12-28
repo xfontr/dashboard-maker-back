@@ -13,8 +13,8 @@ beforeEach(() => {
   User.create = jest.fn().mockResolvedValueOnce(mockUser);
 });
 
-jest.mock("../utils/authentication/authentication", () => ({
-  ...jest.requireActual("../utils/authentication/authentication"),
+jest.mock("../services/authentication/authentication", () => ({
+  ...jest.requireActual("../services/authentication/authentication"),
   createHash: () => mockHashedPassword,
 }));
 

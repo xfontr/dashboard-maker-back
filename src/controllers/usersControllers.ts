@@ -4,7 +4,7 @@ import User from "../database/models/User";
 import IUser from "../database/types/IUser";
 import ServeDatabase from "../services/ServeDatabase/ServeDatabase";
 import CodedError from "../utils/CodedError/CodedError";
-import { createHash } from "../utils/authentication/authentication";
+import { createHash } from "../services/authentication/authentication";
 import catchCodedError from "../utils/catchCodedError/catchCodedError";
 
 const Serve = ServeDatabase<IUser>(User);
