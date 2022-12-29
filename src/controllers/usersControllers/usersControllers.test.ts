@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import codes from "../config/codes";
-import userMainIdentifier from "../config/database";
-import User from "../database/models/User";
-import mockUser from "../test-utils/mocks/mockUser";
-import camelToRegular from "../utils/camelToRegular/camelToRegular";
-import CodedError from "../utils/CodedError/CodedError";
-import Token from "../utils/Token/Token";
+import codes from "../../config/codes";
+import { userMainIdentifier } from "../../config/database";
+import User from "../../database/models/User";
+import mockUser from "../../test-utils/mocks/mockUser";
+import camelToRegular from "../../utils/camelToRegular/camelToRegular";
+import CodedError from "../../utils/CodedError/CodedError";
+import Token from "../../utils/Token/FullToken";
 import { getAllUsers, logInUser, registerUser } from "./usersControllers";
 
 let mockHashedPassword: string | Promise<never> = "validPassword";
