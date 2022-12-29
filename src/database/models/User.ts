@@ -46,4 +46,6 @@ const userSchema = new Schema<IUser>({
   ...userAddressData,
 });
 
-export default model("User", userSchema, "users");
+const User = model("User", userSchema, "users");
+
+export default User;
