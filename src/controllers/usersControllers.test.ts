@@ -1,16 +1,20 @@
 import { NextFunction, Request, Response } from "express";
+import bcrypt from "bcryptjs";
 import codes from "../config/codes";
+import userMainIdentifier from "../config/database";
 import User from "../database/models/User";
 import mockUser from "../test-utils/mocks/mockUser";
 import camelToRegular from "../utils/camelToRegular/camelToRegular";
 import CodedError from "../utils/CodedError/CodedError";
-import { getAllUsers, registerUser } from "./usersControllers";
+import Token from "../utils/Token/Token";
+import { getAllUsers, logInUser, registerUser } from "./usersControllers";
 
 let mockHashedPassword: string | Promise<never> = "validPassword";
 
 beforeEach(() => {
-  User.find = jest.fn().mockResolvedValueOnce([mockUser]);
-  User.create = jest.fn().mockResolvedValueOnce(mockUser);
+  bcrypt.compare = jest.fn().mockResolvedValue("#");
+  User.find = jest.fn().mockResolvedValue([mockUser]);
+  User.create = jest.fn().mockResolvedValue(mockUser);
 });
 
 jest.mock("../services/authentication/authentication", () => ({
@@ -88,6 +92,63 @@ describe("Given a registerUser controller", () => {
         await registerUser(req, res as Response, next);
 
         expect(next).toHaveBeenCalledWith(expectedError);
+      });
+    });
+  });
+});
+
+describe("Given a logInUser controller", () => {
+  describe("When called with a request with user log in data, a response and a next function", () => {
+    const req = {
+      body: {
+        [userMainIdentifier]: mockUser[userMainIdentifier],
+        password: mockUser.password,
+      },
+    } as Request;
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as Partial<Response>;
+    const next = jest.fn() as NextFunction;
+
+    test(`Then it should respond with a status of ${codes.success.ok} and a token`, async () => {
+      const expectedResponse = Token(mockUser);
+
+      await logInUser(req, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(codes.success.ok);
+      expect(res.json).toHaveBeenCalledWith(expectedResponse);
+    });
+
+    describe("And the user doesn't exist", () => {
+      test("Then it should call next with an error", async () => {
+        User.find = jest.fn().mockResolvedValue([]);
+
+        const expectedError = CodedError(
+          "notFound",
+          `Invalid ${userMainIdentifier} or password`
+        )(Error("User doesn't exist"));
+
+        await logInUser(req, res as Response, next);
+
+        expect(next).toHaveBeenCalledWith(expectedError);
+      });
+    });
+
+    describe("And the user password is incorrect", () => {
+      test("Then it should call next with an error", async () => {
+        const nextError = jest.fn() as NextFunction;
+
+        bcrypt.compare = jest.fn().mockResolvedValue(false);
+
+        const expectedError = CodedError(
+          "badRequest",
+          `Invalid ${userMainIdentifier} or password`
+        )(Error("Invalid password"));
+
+        await logInUser(req, res as Response, nextError);
+
+        expect(nextError).toHaveBeenCalledWith(expectedError);
       });
     });
   });

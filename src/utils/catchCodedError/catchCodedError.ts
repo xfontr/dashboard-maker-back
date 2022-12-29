@@ -10,6 +10,7 @@ export default (next: NextFunction) =>
   ): Promise<R | void> => {
     try {
       const response = await callback(...args);
+
       return response;
     } catch (error) {
       const newError = CodedError(errorType, camelToRegular(errorType))(error);

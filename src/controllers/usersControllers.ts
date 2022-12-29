@@ -11,13 +11,14 @@ import {
 import catchCodedError from "../utils/catchCodedError/catchCodedError";
 import userMainIdentifier from "../config/database";
 import Token from "../utils/Token/Token";
+import LogInData from "../types/LogInData";
 
 const Serve = ServeDatabase<IUser>(User);
 
 const invalidSignUp = CodedError("conflict", "Invalid sign up data");
 const invalidLogIn = CodedError(
   "notFound",
-  "The login data provided is not valid"
+  `Invalid ${userMainIdentifier} or password`
 );
 
 export const getAllUsers = async (
@@ -72,13 +73,12 @@ export const logInUser = async (
   const tryThis = catchCodedError(next);
   const UsersService = Serve(next);
 
-  // TODO: Type this
-  const logInData = req.body;
+  const logInData: LogInData = req.body;
 
   const dbUser = await UsersService.getByAttribute(
     userMainIdentifier,
     logInData[userMainIdentifier],
-    invalidLogIn(Error("No users found by the provided email"))
+    invalidLogIn(Error("User doesn't exist"))
   );
 
   if (dbUser === true) return;
@@ -86,7 +86,7 @@ export const logInUser = async (
   const isPasswordCorrect = await tryThis(
     compareHash,
     [logInData.password, (dbUser as IUser[])[0].password],
-    "badRequest"
+    "internalServerError"
   );
 
   if (!isPasswordCorrect) {

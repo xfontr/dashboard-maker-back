@@ -1,4 +1,11 @@
-const userData = {
+import IUser from "../database/types/IUser";
+
+export type UserData = Partial<{
+  min: number;
+  max: number;
+}>;
+
+const userData: Partial<Record<keyof IUser, UserData>> = {
   name: {
     min: 3,
     max: 15,
