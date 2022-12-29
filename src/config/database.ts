@@ -1,6 +1,6 @@
-import LogInData from "../types/LogInData";
+import AcceptedIdentifiers from "../types/AcceptedIdentifiers";
 
 /** Caution: avoid changing this variable, as it may break the database */
-const userMainIdentifier: keyof Omit<LogInData, "password"> = "email";
+export const userMainIdentifier: AcceptedIdentifiers = "email";
 
 export default userMainIdentifier;

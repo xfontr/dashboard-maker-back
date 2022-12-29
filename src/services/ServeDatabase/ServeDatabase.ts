@@ -44,9 +44,25 @@ export default <T>(model: Model<T>) =>
 
     const Create = () => ({
       create: async (newItem: T) => {
-        await tryThis<T, T>(model.create.bind(model), [newItem], "badRequest");
+        const response = await tryThis<T, T>(
+          model.create.bind(model),
+          [newItem],
+          "badRequest"
+        );
+        return response;
       },
     });
 
-    return { ...Get(), ...Create() };
+    const Delete = () => ({
+      deleteByAttribute: async (attribute: keyof T, value: string | number) => {
+        const response = await tryThis<T, T>(
+          model.deleteMany.bind(model),
+          [{ [attribute]: value }],
+          "notFound"
+        );
+        return response;
+      },
+    });
+
+    return { ...Get(), ...Create(), ...Delete() };
   };
