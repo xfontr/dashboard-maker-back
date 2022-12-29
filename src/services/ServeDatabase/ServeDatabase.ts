@@ -1,7 +1,12 @@
 import { NextFunction } from "express";
 import { Model } from "mongoose";
+import codes from "../../config/codes";
 import catchCodedError from "../../utils/catchCodedError/catchCodedError";
 import { ICustomError } from "../../utils/CustomError/CustomError";
+
+const {
+  error: { conflict, notFound },
+} = codes;
 
 export default <T>(model: Model<T>) =>
   (next: NextFunction) => {
@@ -9,20 +14,27 @@ export default <T>(model: Model<T>) =>
 
     const Get = () => ({
       getAll: async (query: object = {}) => {
-        const response = await tryThis<T, T[]>(model.find.bind(model), query);
+        const response = await tryThis<T, T[]>(model.find.bind(model), [query]);
         return response;
       },
+
       getByAttribute: async (
         attribute: keyof T,
         value: string | number,
-        errorIfExists?: ICustomError
+        error?: ICustomError
       ) => {
-        const response = await tryThis<T, T[]>(model.find.bind(model), {
-          [attribute]: value,
-        });
+        const response = await tryThis<T, T[]>(model.find.bind(model), [
+          {
+            [attribute]: value,
+          },
+        ]);
 
-        if (errorIfExists && response && response.length) {
-          next(errorIfExists);
+        if (
+          error &&
+          ((error.code === conflict && response && response.length) ||
+            (error.code === notFound && response && !response.length))
+        ) {
+          next(error);
           return true;
         }
 
@@ -32,7 +44,7 @@ export default <T>(model: Model<T>) =>
 
     const Create = () => ({
       create: async (newItem: T) => {
-        await tryThis<T, T>(model.create.bind(model), newItem, "badRequest");
+        await tryThis<T, T>(model.create.bind(model), [newItem], "badRequest");
       },
     });
 

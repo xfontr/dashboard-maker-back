@@ -2,6 +2,7 @@ const endpoints = {
   users: {
     router: "/users",
     root: "/",
+    logIn: "/log-in",
   },
 };
 

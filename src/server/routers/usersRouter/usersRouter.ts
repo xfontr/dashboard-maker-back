@@ -2,8 +2,10 @@ import express from "express";
 import endpoints from "../../../config/endpoints";
 import {
   getAllUsers,
+  logInUser,
   registerUser,
 } from "../../../controllers/usersControllers";
+import logInSchema from "../../../schemas/logIn.schema";
 import registerSchema from "../../../schemas/register.schema";
 import validateRequest from "../../../services/validateRequest/validateRequest";
 
@@ -15,6 +17,12 @@ usersRouter.post(
   endpoints.users.root,
   validateRequest(registerSchema),
   registerUser
+);
+
+usersRouter.post(
+  endpoints.users.logIn,
+  validateRequest(logInSchema),
+  logInUser
 );
 
 export default usersRouter;

@@ -1,12 +1,11 @@
 import { Joi } from "express-validation";
 import userData from "../config/userData";
-import IUser from "../database/types/IUser";
+import { UserRequiredData } from "../database/types/IUser";
 
-const { email, name } = userData;
+const { email } = userData;
 
-const registerSchema = {
-  body: Joi.object<Partial<IUser>>({
-    name: Joi.string().min(name.min).max(name.max).required(),
+const logInSchema = {
+  body: Joi.object<Partial<UserRequiredData>>({
     password: Joi.string().required(),
     email: Joi.string()
       .min(email.min)
@@ -16,4 +15,4 @@ const registerSchema = {
   }),
 };
 
-export default registerSchema;
+export default logInSchema;

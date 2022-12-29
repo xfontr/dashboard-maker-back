@@ -73,7 +73,25 @@ describe("Given a ServeDatabase factory function", () => {
 
         const attribute = "email";
         const value = "test@test.com";
-        const error = CodedError("badRequest")(Error());
+        const error = CodedError("conflict")(Error());
+
+        const TestServe = ServeDatabase(model as Model<IUser>)(next);
+
+        const result = await TestServe.getByAttribute(attribute, value, error);
+
+        expect(next).toHaveBeenCalledWith(error);
+        expect(result).toBe(true);
+      });
+
+      test("return an error if the document doesn't exist, if specified in the parameters", async () => {
+        const response: unknown[] = [];
+        const model = {
+          find: jest.fn().mockResolvedValue(response),
+        } as unknown as Partial<Model<IUser>>;
+
+        const attribute = "email";
+        const value = "test@test.com";
+        const error = CodedError("notFound")(Error());
 
         const TestServe = ServeDatabase(model as Model<IUser>)(next);
 
