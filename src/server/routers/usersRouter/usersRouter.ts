@@ -5,6 +5,7 @@ import {
   logInUser,
   registerUser,
 } from "../../../controllers/usersControllers";
+import logInSchema from "../../../schemas/logIn.schema";
 import registerSchema from "../../../schemas/register.schema";
 import validateRequest from "../../../services/validateRequest/validateRequest";
 
@@ -20,7 +21,7 @@ usersRouter.post(
 
 usersRouter.post(
   endpoints.users.logIn,
-  // validateRequest(registerSchema),
+  validateRequest(logInSchema),
   logInUser
 );
 
