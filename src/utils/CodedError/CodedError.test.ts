@@ -13,10 +13,11 @@ describe("Given a CodedError function", () => {
         name: `Error ${codes.error.badRequest}`,
         code: codes.error.badRequest,
         message: defaultMessage,
-        privateMessage: defaultMessage,
+        publicMessage:
+          "Something went wrong. Please contact the administrator to address the issue",
       };
 
-      const codedError = CodedError("badRequest", Error());
+      const codedError = CodedError("badRequest")(Error());
 
       expect(codedError).toStrictEqual(expectedError);
     });
@@ -28,14 +29,13 @@ describe("Given a CodedError function", () => {
         name: `Error ${codes.error.badRequest}`,
         code: codes.error.badRequest,
         message: "Test",
-        privateMessage: "Private",
+        publicMessage: "Private",
       };
 
       const codedError = CodedError(
         "badRequest",
-        Error(expectedError.message),
-        expectedError.privateMessage
-      );
+        expectedError.publicMessage
+      )(Error(expectedError.message));
 
       expect(codedError).toStrictEqual(expectedError);
     });

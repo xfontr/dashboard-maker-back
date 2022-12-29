@@ -23,7 +23,7 @@ describe("Given a generalError function (middleware)", () => {
 
   const next = jest.fn() as NextFunction;
   describe("When called with a internal server custom error", () => {
-    const customError = CodedError("internalServerError", Error());
+    const customError = CodedError("internalServerError")(Error());
     generalError(customError, req as Request, res as Response, next);
 
     test(`Then it should respond with a status of '${codes.error.internalServerError}'`, () => {
@@ -31,11 +31,13 @@ describe("Given a generalError function (middleware)", () => {
     });
 
     test("Then it should respond with the error message", () => {
-      expect(res.json).toHaveBeenCalledWith({ error: customError.message });
+      expect(res.json).toHaveBeenCalledWith({
+        error: customError.publicMessage,
+      });
     });
 
     test("Then it should console the private error message", () => {
-      expect(mockDebug).toHaveBeenCalledWith("error", "Internal Server Error");
+      expect(mockDebug).toHaveBeenCalledWith("error", customError.message);
     });
   });
 });

@@ -1,4 +1,4 @@
-export default {
+const codes = {
   success: {
     ok: 200,
     created: 201,
@@ -15,3 +15,5 @@ export default {
     internalServerError: 500,
   },
 };
+
+export default codes;

@@ -14,7 +14,10 @@ export default ((database: Mongoose) => {
       new Promise((resolve, reject) => {
         database.connect(credentials, (error: Error) => {
           if (error) {
-            debug("error", `Error while connecting to the database: ${error}`);
+            debug(
+              "error",
+              `Error while connecting to the database: ${error.message}`
+            );
             reject(error);
             return;
           }

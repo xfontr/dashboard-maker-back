@@ -1,4 +1,5 @@
 import { NextFunction } from "express";
+import camelToRegular from "../camelToRegular/camelToRegular";
 import CodedError, { Codes } from "../CodedError/CodedError";
 import catchCodedError from "./catchCodedError";
 
@@ -16,7 +17,7 @@ describe("Given a catchCodedError function that returns another function", () =>
       const callback = jest.fn().mockResolvedValue(response);
       const tryThis = catchCodedError(next);
 
-      const result = await tryThis(callback, callbackArgument);
+      const result = await tryThis(callback, [callbackArgument]);
 
       expect(result).toStrictEqual(response);
     });
@@ -25,12 +26,16 @@ describe("Given a catchCodedError function that returns another function", () =>
       test("Then it should call next with said error", async () => {
         const error = new Error();
         const callbackWithError = jest.fn().mockRejectedValue(error);
+        const errorType: Codes = "internalServerError";
 
-        const expectedError = CodedError("internalServerError", error);
+        const expectedError = CodedError(
+          errorType,
+          camelToRegular(errorType)
+        )(error);
 
         const tryThis = catchCodedError(next);
 
-        await tryThis(callbackWithError, callbackArgument);
+        await tryThis(callbackWithError, [callbackArgument]);
 
         expect(next).toHaveBeenCalledWith(expectedError);
       });
@@ -42,13 +47,16 @@ describe("Given a catchCodedError function that returns another function", () =>
       test("Then it should call next with the custom error", async () => {
         const error = new Error();
         const callbackWithError = jest.fn().mockRejectedValue(error);
-        const customError: Codes = "badRequest";
+        const errorType: Codes = "badRequest";
 
-        const expectedError = CodedError(customError, error);
+        const expectedError = CodedError(
+          errorType,
+          camelToRegular(errorType)
+        )(error);
 
         const tryThis = catchCodedError(next);
 
-        await tryThis(callbackWithError, callbackArgument, customError);
+        await tryThis(callbackWithError, [callbackArgument], errorType);
 
         expect(next).toHaveBeenCalledWith(expectedError);
       });

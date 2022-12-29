@@ -3,7 +3,7 @@ import camelToRegular from "../camelToRegular/camelToRegular";
 
 export interface ICustomError extends Error {
   code: number;
-  privateMessage: string;
+  publicMessage: string;
 }
 
 export default (
@@ -11,13 +11,13 @@ export default (
   (
     { message }: Error,
     code?: number,
-    privateMessage?: string
+    publicMessage?: string
   ): ICustomError => ({
     name: code
       ? `Error ${code}`
       : `Error ${availableCodes.internalServerError}`,
     code: code || availableCodes.internalServerError,
-    message: message || camelToRegular("internalServerError"),
-    privateMessage: privateMessage || "Unknown error",
+    message: message || "Unknown error",
+    publicMessage: publicMessage || camelToRegular("internalServerError"),
   })
 )(codes.error);

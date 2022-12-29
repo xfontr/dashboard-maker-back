@@ -4,14 +4,16 @@ import CustomError from "../../utils/CustomError/CustomError";
 
 const debug = setDebug("general-error");
 
-export default (
-  { code, message, privateMessage }: ReturnType<typeof CustomError>,
+const validationError = (
+  { code, message, publicMessage }: ReturnType<typeof CustomError>,
   req: Request,
   res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   next: NextFunction
 ) => {
-  debug("error", privateMessage);
+  debug("error", message);
 
-  res.status(code).json({ error: message });
+  res.status(code).json({ error: publicMessage });
 };
+
+export default validationError;

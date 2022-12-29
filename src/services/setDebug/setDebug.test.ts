@@ -1,5 +1,5 @@
 import environment from "../../config/environment";
-import AvaliableColors from "../../types/avaliableColors";
+import DebugColors from "../../types/DebugColors";
 import setMessage from "../setMessage/setMessage";
 import setDebug, { setDebugWithoutColors } from "./setDebug";
 
@@ -40,7 +40,7 @@ describe("Given a setDebug function", () => {
     const currentLocation = "test";
 
     test("Then it should return a function that sets a message with a color and a text", () => {
-      const typeOfMessage: AvaliableColors = "error";
+      const typeOfMessage: DebugColors = "error";
       const message = "Something went wrong";
       const slicedBaseLocation = `${environment.debug.slice(
         0,
