@@ -17,7 +17,7 @@ describe("Given a catchCodedError function that returns another function", () =>
       const callback = jest.fn().mockResolvedValue(response);
       const tryThis = catchCodedError(next);
 
-      const result = await tryThis(callback, callbackArgument);
+      const result = await tryThis(callback, [callbackArgument]);
 
       expect(result).toStrictEqual(response);
     });
@@ -35,7 +35,7 @@ describe("Given a catchCodedError function that returns another function", () =>
 
         const tryThis = catchCodedError(next);
 
-        await tryThis(callbackWithError, callbackArgument);
+        await tryThis(callbackWithError, [callbackArgument]);
 
         expect(next).toHaveBeenCalledWith(expectedError);
       });
@@ -56,7 +56,7 @@ describe("Given a catchCodedError function that returns another function", () =>
 
         const tryThis = catchCodedError(next);
 
-        await tryThis(callbackWithError, callbackArgument, errorType);
+        await tryThis(callbackWithError, [callbackArgument], errorType);
 
         expect(next).toHaveBeenCalledWith(expectedError);
       });
