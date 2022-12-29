@@ -16,3 +16,5 @@ jobs:
 
       - name: Testing
         run: npm test
+        env:
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
