@@ -3,8 +3,8 @@ import bcrypt from "bcryptjs";
 import { mockFullToken } from "../../test-utils/mocks/mockToken";
 import mockUser from "../../test-utils/mocks/mockUser";
 import checkToken from "./checkToken";
-import { invalidToken } from "../../server/routers/usersRouter/usersRouter.errors";
 import { userMainIdentifier } from "../../config/database";
+import Errors from "../../services/Errors/Errors";
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -39,7 +39,7 @@ describe("Given a checkToken middleware", () => {
 
         await checkToken()(invalidReq, res, next);
 
-        expect(next).toHaveBeenCalledWith(invalidToken);
+        expect(next).toHaveBeenCalledWith(Errors.users.invalidToken);
         expect(next).toHaveBeenCalledTimes(1);
       });
     });
@@ -57,7 +57,7 @@ describe("Given a checkToken middleware", () => {
 
         await checkToken()(invalidReq, res, next);
 
-        expect(next).toHaveBeenCalledWith(invalidToken);
+        expect(next).toHaveBeenCalledWith(Errors.users.invalidToken);
         expect(next).toHaveBeenCalledTimes(1);
       });
     });
@@ -68,7 +68,7 @@ describe("Given a checkToken middleware", () => {
 
         await checkToken()(req, res, next);
 
-        expect(next).toHaveBeenCalledWith(invalidToken);
+        expect(next).toHaveBeenCalledWith(Errors.users.invalidToken);
         expect(next).toHaveBeenCalledTimes(1);
       });
     });

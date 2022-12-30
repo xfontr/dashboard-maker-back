@@ -12,6 +12,7 @@ const tokenSchema = {
       .max(email.max)
       .email({ minDomainSegments: 2 })
       .required(),
+    role: Joi.string().required(),
   }),
 };
 

@@ -3,6 +3,8 @@ import { Model } from "mongoose";
 import { userMainIdentifier } from "../../config/database";
 import IUser from "../../database/types/IUser";
 import mockUser from "../../test-utils/mocks/mockUser";
+import CustomRequest from "../../types/CustomRequest";
+import { FindOptions } from "../../types/requestOptions";
 import CodedError from "../../utils/CodedError/CodedError";
 import findItem from "./findItem";
 
@@ -53,10 +55,10 @@ describe("Given a findItem middleware", () => {
 
       describe("If there is a store parameter", () => {
         test("Then it should also save the item in the request body", async () => {
-          const options = { store: true };
+          const options: FindOptions = { storeAt: "token" };
           const customReq = {
             body: mockUser,
-          } as Request;
+          } as CustomRequest;
 
           const model = {
             find: (): IUser[] => [mockUser],
@@ -69,7 +71,7 @@ describe("Given a findItem middleware", () => {
             options
           )(customReq, res, next);
 
-          expect(req.body.item).toStrictEqual([mockUser]);
+          expect(customReq.token).toStrictEqual(mockUser);
           expect(next).toHaveBeenCalledWith();
         });
       });

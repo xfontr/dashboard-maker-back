@@ -8,9 +8,10 @@ import {
 import catchCodedError from "../../utils/catchCodedError/catchCodedError";
 import FullToken from "../../utils/Token/FullToken";
 import LogInData from "../../types/LogInData";
-import { invalidPassword } from "../../server/routers/usersRouter/usersRouter.errors";
 import { userMainIdentifier } from "../../config/database";
 import { ServeToken, ServeUser } from "../../database/servedModels";
+import CustomRequest from "../../types/CustomRequest";
+import Errors from "../../services/Errors/Errors";
 
 const { success } = codes;
 
@@ -26,7 +27,7 @@ export const getAllUsers = async (
 };
 
 export const registerUser = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -39,10 +40,15 @@ export const registerUser = async (
   const password = (await tryThis(createHash, [user.password])) as string;
   if (!password) return;
 
+  if (req.token && req.token.role !== user.role) {
+    next(Errors.users.invalidRole);
+    return;
+  }
+
   const newUser = await UsersService.create({ ...user, password });
   if (!newUser) return;
 
-  if (req.body.item) {
+  if (req.token) {
     await TokensService.deleteByAttribute(
       userMainIdentifier,
       user[userMainIdentifier]
@@ -55,24 +61,24 @@ export const registerUser = async (
 };
 
 export const logInUser = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
   const tryThis = catchCodedError(next);
 
   const logInData: LogInData = req.body;
-  const dbUser: IUser[] = req.body.item;
+  const dbUser: IUser = req.user;
 
   const isPasswordCorrect = await tryThis(compareHash, [
     logInData.password,
-    dbUser[0].password,
+    dbUser.password,
   ]);
 
   if (!isPasswordCorrect) {
-    next(invalidPassword);
+    next(Errors.users.invalidPassword);
     return;
   }
 
-  res.status(success.ok).json(FullToken(dbUser[0]));
+  res.status(success.ok).json(FullToken(dbUser));
 };

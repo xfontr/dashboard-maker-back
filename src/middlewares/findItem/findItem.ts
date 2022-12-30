@@ -1,8 +1,10 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { Model } from "mongoose";
 import ServeDatabase from "../../services/ServeDatabase/ServeDatabase";
+import CustomRequest from "../../types/CustomRequest";
+import { FindOptions } from "../../types/requestOptions";
 import { ICustomError } from "../../utils/CustomError/CustomError";
-import FindOptions from "./findItem.types";
+import requestStores from "../../utils/requestStores/requestStores";
 
 const findItem =
   <T>(
@@ -11,7 +13,7 @@ const findItem =
     error: ICustomError,
     options: FindOptions = {}
   ) =>
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: CustomRequest, res: Response, next: NextFunction) => {
     if (options.skip) {
       next();
       return;
@@ -26,7 +28,8 @@ const findItem =
       return;
     }
 
-    if (options.store) req.body.item = item;
+    if (options.storeAt) requestStores[options.storeAt](req, item[0]);
+
     next();
   };
 

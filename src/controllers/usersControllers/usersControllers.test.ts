@@ -8,9 +8,9 @@ import camelToRegular from "../../utils/camelToRegular/camelToRegular";
 import CodedError from "../../utils/CodedError/CodedError";
 import FullToken from "../../utils/Token/FullToken";
 import { getAllUsers, logInUser, registerUser } from "./usersControllers";
-import { invalidPassword } from "../../server/routers/usersRouter/usersRouter.errors";
 import Token from "../../database/models/Token";
 import { mockProtoToken } from "../../test-utils/mocks/mockToken";
+import Errors from "../../services/Errors/Errors";
 
 let mockHashedPassword: string | Promise<never> = "validPassword";
 
@@ -154,7 +154,7 @@ describe("Given a logInUser controller", () => {
 
         await logInUser(req, res as Response, nextError);
 
-        expect(nextError).toHaveBeenCalledWith(invalidPassword);
+        expect(nextError).toHaveBeenCalledWith(Errors.users.invalidPassword);
       });
     });
   });
