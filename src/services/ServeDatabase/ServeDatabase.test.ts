@@ -47,7 +47,7 @@ describe("Given a ServeDatabase factory function", () => {
       });
     });
 
-    describe("Then it should return a getByAttrbiute method that should", () => {
+    describe("Then it should return a getByAttribute method that should", () => {
       test("call the find method with specific parameters and return its response", async () => {
         const response = { users: ["Test"] };
         const model = {
@@ -114,6 +114,25 @@ describe("Given a ServeDatabase factory function", () => {
         await TestServe.create(user);
 
         expect(model.create).toHaveBeenCalled();
+      });
+    });
+
+    describe("Then it should return a deleteByAttribute method that should", () => {
+      test("call the delete method with specific parameters and return its response", async () => {
+        const model = {
+          deleteMany: jest.fn(),
+        } as unknown as Partial<Model<IUser>>;
+
+        const attribute = "email";
+        const value = "test@test.com";
+
+        const TestServe = ServeDatabase(model as Model<IUser>)(next);
+
+        await TestServe.deleteByAttribute(attribute, value);
+
+        expect(model.deleteMany).toHaveBeenCalledWith({
+          [attribute]: value,
+        });
       });
     });
   });
