@@ -11,6 +11,7 @@ import { getAllUsers, logInUser, registerUser } from "./usersControllers";
 import Token from "../../database/models/Token";
 import { mockProtoToken } from "../../test-utils/mocks/mockToken";
 import Errors from "../../services/Errors/Errors";
+import CustomRequest from "../../types/CustomRequest";
 
 let mockHashedPassword: string | Promise<never> = "validPassword";
 
@@ -76,8 +77,9 @@ describe("Given a registerUser controller", () => {
 
     test("Then it should delete the token, if any", async () => {
       const reqWithToken = {
-        body: { ...mockUser, item: mockProtoToken },
-      } as Request;
+        body: { ...mockUser },
+        token: mockProtoToken,
+      } as CustomRequest;
 
       User.find = jest.fn().mockResolvedValue([]);
 
@@ -128,9 +130,9 @@ describe("Given a logInUser controller", () => {
       body: {
         [userMainIdentifier]: mockUser[userMainIdentifier],
         password: mockUser.password,
-        item: [mockUser],
       },
-    } as Request;
+      user: mockUser,
+    } as CustomRequest;
     const res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),

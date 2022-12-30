@@ -5,6 +5,7 @@ import mockUser from "../../test-utils/mocks/mockUser";
 import checkToken from "./checkToken";
 import { userMainIdentifier } from "../../config/database";
 import Errors from "../../services/Errors/Errors";
+import CustomRequest from "../../types/CustomRequest";
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -14,11 +15,12 @@ beforeEach(() => {
 describe("Given a checkToken middleware", () => {
   describe("When called with a request, a response and a next function", () => {
     const req = {
-      body: { ...mockUser, item: [mockFullToken] },
+      body: { ...mockUser },
+      token: mockFullToken,
       headers: {
         authorization: `Bearer ${mockFullToken.code}`,
       },
-    } as Request;
+    } as CustomRequest;
     const res = {} as Response;
     const next = jest.fn() as NextFunction;
 
@@ -94,9 +96,9 @@ describe("Given a checkToken middleware", () => {
           body: {
             ...mockUser,
             [userMainIdentifier]: "randomStuff",
-            item: [{ ...mockFullToken, isCodeRequired: false }],
           },
-        } as Request;
+          token: { ...mockFullToken, isCodeRequired: false },
+        } as CustomRequest;
 
         await checkToken()(skipReq, res, next);
 

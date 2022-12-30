@@ -3,7 +3,7 @@ import request from "supertest";
 import app from "../..";
 import codes from "../../../config/codes";
 import endpoints from "../../../config/endpoints";
-import mockUser from "../../../test-utils/mocks/mockUser";
+import mockUser, { mockProtoUser } from "../../../test-utils/mocks/mockUser";
 import { userMainIdentifier } from "../../../config/database";
 import { mockProtoToken } from "../../../test-utils/mocks/mockToken";
 
@@ -29,9 +29,7 @@ describe(`Given a ${users.router} route`, () => {
         .post(`${users.router}`)
         .set("Authorization", `Bearer ${mockProtoToken.code}`)
         .send({
-          name: mockUser.name,
-          password: mockUser.password,
-          email: mockUser.email,
+          ...mockProtoUser,
         });
 
       expect(res.statusCode).toBe(success.created);
@@ -45,9 +43,7 @@ describe(`Given a ${users.router} route`, () => {
         .post(`${users.router}`)
         .set("Authorization", "Bearer wrongCode")
         .send({
-          name: mockUser.name,
-          password: mockUser.password,
-          email: mockUser.email,
+          ...mockProtoUser,
         });
 
       expect(res.statusCode).toBe(error.unauthorized);
@@ -73,9 +69,7 @@ describe(`Given a ${users.logIn} route`, () => {
         .post(`${users.router}`)
         .set("Authorization", `Bearer ${mockProtoToken.code}`)
         .send({
-          name: mockUser.name,
-          password: mockUser.password,
-          email: mockUser.email,
+          ...mockProtoUser,
         });
 
       const res = await request(app)
