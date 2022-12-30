@@ -1,16 +1,16 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { userMainIdentifier } from "../../config/database";
-import IToken from "../../database/types/IToken";
-import { invalidToken } from "../../server/routers/usersRouter/usersRouter.errors";
 import { compareHash } from "../../services/authentication/authentication";
 import AcceptedIdentifiers from "../../types/AcceptedIdentifiers";
 import catchCodedError from "../../utils/catchCodedError/catchCodedError";
 import getBearerToken from "../../utils/getBearerToken/getBearerToken";
-import MiddlewareOptions from "../Types/MiddlewareOptions";
+import { MiddlewareOptions } from "../../types/requestOptions";
+import CustomRequest from "../../types/CustomRequest";
+import Errors from "../../services/Errors/Errors";
 
 const checkToken =
   (options: MiddlewareOptions = {}) =>
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: CustomRequest, res: Response, next: NextFunction) => {
     if (options.skip) {
       next();
       return;
@@ -20,7 +20,7 @@ const checkToken =
     const code = getBearerToken(req.headers.authorization);
 
     const userIdentifier: AcceptedIdentifiers = req.body[userMainIdentifier];
-    const dbToken: IToken = req.body.item[0];
+    const dbToken = req.token;
 
     if (!dbToken.isCodeRequired) {
       next();
@@ -28,14 +28,14 @@ const checkToken =
     }
 
     if (!code || dbToken[userMainIdentifier] !== userIdentifier) {
-      next(invalidToken);
+      next(Errors.users.invalidToken);
       return;
     }
 
     const isTokenCorrect = await tryThis(compareHash, [code, dbToken.code]);
 
     if (!isTokenCorrect) {
-      next(invalidToken);
+      next(Errors.users.invalidToken);
       return;
     }
 

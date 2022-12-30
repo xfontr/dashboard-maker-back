@@ -9,6 +9,8 @@ const environment = {
   authSecret: env.AUTH_SECRET ?? "testingSecret",
   defaultRegistrationToken: env.DEFAULT_REGISTRATION_TOKEN,
   defaultPowerToken: env.DEFAULT_POWER_TOKEN,
+  defaultPowerEmail: env.DEFAULT_POWER_EMAIL,
+  defaultPowerPassword: env.DEFAULT_POWER_PASSWORD,
 };
 
 export default environment;

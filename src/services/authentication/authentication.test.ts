@@ -39,7 +39,7 @@ describe("Given a createToken function", () => {
     test("Then it should call jwt and return its returned value", () => {
       const mockToken: Payload = {
         id: "1234",
-        name: "aaa",
+        email: "aaa",
       };
 
       const returnedValue = createToken(mockToken);
