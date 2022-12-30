@@ -6,27 +6,35 @@ import { compareHash } from "../../services/authentication/authentication";
 import AcceptedIdentifiers from "../../types/AcceptedIdentifiers";
 import catchCodedError from "../../utils/catchCodedError/catchCodedError";
 import getBearerToken from "../../utils/getBearerToken/getBearerToken";
+import MiddlewareOptions from "../Types/MiddlewareOptions";
 
-const checkToken = async (req: Request, res: Response, next: NextFunction) => {
-  const tryThis = catchCodedError(next);
-  const code = getBearerToken(req.headers.authorization);
+const checkToken =
+  (options: MiddlewareOptions = {}) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    if (options.skip) {
+      next();
+      return;
+    }
 
-  const userIdentifier: AcceptedIdentifiers = req.body[userMainIdentifier];
-  const dbToken: IToken[] = req.body.item;
+    const tryThis = catchCodedError(next);
+    const code = getBearerToken(req.headers.authorization);
 
-  if (!code || dbToken[0][userMainIdentifier] !== userIdentifier) {
-    next(invalidToken);
-    return;
-  }
+    const userIdentifier: AcceptedIdentifiers = req.body[userMainIdentifier];
+    const dbToken: IToken[] = req.body.item;
 
-  const isTokenCorrect = await tryThis(compareHash, [code, dbToken[0].code]);
+    if (!code || dbToken[0][userMainIdentifier] !== userIdentifier) {
+      next(invalidToken);
+      return;
+    }
 
-  if (!isTokenCorrect) {
-    next(invalidToken);
-    return;
-  }
+    const isTokenCorrect = await tryThis(compareHash, [code, dbToken[0].code]);
 
-  next();
-};
+    if (!isTokenCorrect) {
+      next(invalidToken);
+      return;
+    }
+
+    next();
+  };
 
 export default checkToken;

@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import codes from "../../config/codes";
-import User from "../../database/models/User";
 import IUser from "../../database/types/IUser";
-import ServeDatabase from "../../services/ServeDatabase/ServeDatabase";
 import {
   compareHash,
   createHash,
@@ -11,12 +9,8 @@ import catchCodedError from "../../utils/catchCodedError/catchCodedError";
 import FullToken from "../../utils/Token/FullToken";
 import LogInData from "../../types/LogInData";
 import { invalidPassword } from "../../server/routers/usersRouter/usersRouter.errors";
-import IToken from "../../database/types/IToken";
 import { userMainIdentifier } from "../../config/database";
-import Token from "../../database/models/Token";
-
-const ServeUser = ServeDatabase<IUser>(User);
-const ServeToken = ServeDatabase<IToken>(Token);
+import { ServeToken, ServeUser } from "../../database/servedModels";
 
 const { success } = codes;
 
@@ -48,10 +42,12 @@ export const registerUser = async (
   const newUser = await UsersService.create({ ...user, password });
   if (!newUser) return;
 
-  await TokensService.deleteByAttribute(
-    userMainIdentifier,
-    user[userMainIdentifier]
-  );
+  if (req.body.item.code) {
+    await TokensService.deleteByAttribute(
+      userMainIdentifier,
+      user[userMainIdentifier]
+    );
+  }
 
   res
     .status(success.created)

@@ -53,19 +53,40 @@ describe("Given a findItem middleware", () => {
 
       describe("If there is a store parameter", () => {
         test("Then it should also save the item in the request body", async () => {
+          const customReq = {
+            body: mockUser,
+          } as Request;
+
           const model = {
             find: (): IUser[] => [mockUser],
           } as unknown as Model<IUser>;
 
-          await findItem(
-            model,
-            userMainIdentifier,
-            notFoundError,
-            true
-          )(req, res, next);
+          await findItem(model, userMainIdentifier, notFoundError, {
+            store: true,
+          })(customReq, res, next);
 
           expect(req.body.item).toStrictEqual([mockUser]);
           expect(next).toHaveBeenCalledWith();
+        });
+      });
+
+      describe("If there is a skip parameter", () => {
+        test("Then it should directly skip to the next step calling next", async () => {
+          const cleanReq = {
+            body: { ...mockUser, item: undefined },
+          } as Request;
+
+          const model = {
+            find: jest.fn(),
+          } as unknown as Model<IUser>;
+
+          await findItem(model, userMainIdentifier, notFoundError, {
+            skip: true,
+          })(cleanReq, res, next);
+
+          expect(next).toHaveBeenCalledWith();
+          expect(next).toHaveBeenCalledTimes(1);
+          expect(cleanReq.body.item).toBeUndefined();
         });
       });
     });
