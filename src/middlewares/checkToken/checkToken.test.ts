@@ -24,7 +24,7 @@ describe("Given a checkToken middleware", () => {
 
     describe("And there is a valid existent token", () => {
       test("Then it should call next to the following step", async () => {
-        await checkToken(req, res, next);
+        await checkToken()(req, res, next);
 
         expect(next).toHaveBeenCalledWith();
       });
@@ -37,7 +37,7 @@ describe("Given a checkToken middleware", () => {
           headers: { authorization: "invalidToken" },
         } as Request;
 
-        await checkToken(invalidReq, res, next);
+        await checkToken()(invalidReq, res, next);
 
         expect(next).toHaveBeenCalledWith(invalidToken);
         expect(next).toHaveBeenCalledTimes(1);
@@ -55,7 +55,7 @@ describe("Given a checkToken middleware", () => {
           },
         } as Request;
 
-        await checkToken(invalidReq, res, next);
+        await checkToken()(invalidReq, res, next);
 
         expect(next).toHaveBeenCalledWith(invalidToken);
         expect(next).toHaveBeenCalledTimes(1);
@@ -66,9 +66,21 @@ describe("Given a checkToken middleware", () => {
       test("Then it should call next with an error", async () => {
         bcrypt.compare = jest.fn().mockResolvedValue(false);
 
-        await checkToken(req, res, next);
+        await checkToken()(req, res, next);
 
         expect(next).toHaveBeenCalledWith(invalidToken);
+        expect(next).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe("And called with a skip option", () => {
+      test("Then it should do nothing and skip to the next step", async () => {
+        bcrypt.compare = jest.fn().mockResolvedValue(false);
+        const options = { skip: true };
+
+        await checkToken(options)(req, res, next);
+
+        expect(next).toHaveBeenCalledWith();
         expect(next).toHaveBeenCalledTimes(1);
       });
     });

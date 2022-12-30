@@ -10,6 +10,7 @@ import FullToken from "../../utils/Token/FullToken";
 import { getAllUsers, logInUser, registerUser } from "./usersControllers";
 import { invalidPassword } from "../../server/routers/usersRouter/usersRouter.errors";
 import Token from "../../database/models/Token";
+import { mockProtoToken } from "../../test-utils/mocks/mockToken";
 
 let mockHashedPassword: string | Promise<never> = "validPassword";
 
@@ -70,12 +71,17 @@ describe("Given a registerUser controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(codes.success.created);
       expect(res.json).toHaveBeenCalledWith(successMessage);
+      expect(Token.deleteMany).not.toHaveBeenCalled();
     });
 
     test("Then it should delete the token, if any", async () => {
+      const reqWithToken = {
+        body: { ...mockUser, item: mockProtoToken },
+      } as Request;
+
       User.find = jest.fn().mockResolvedValue([]);
 
-      await registerUser(req, res as Response, next);
+      await registerUser(reqWithToken, res as Response, next);
 
       expect(Token.deleteMany).toHaveBeenCalled();
     });

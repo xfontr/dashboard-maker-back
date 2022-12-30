@@ -4,10 +4,7 @@ import AcceptedIdentifiers from "../types/AcceptedIdentifiers";
 export const userMainIdentifier: AcceptedIdentifiers = "email";
 
 /**
- * Caution: there are almost no use cases where this will need to be set to
- * false. As a safety measure, this is highly recommendable as true
- *
- * TODO: This is currently not implemented, but its purpose is to remove all
- * token authentications by a simple switch
+ * As a safety measure, this should be set to true. Caution: changing this
+ * variable once the app is up could lead to unexpected behavior
  */
 export const isTokenRequired = true;

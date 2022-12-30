@@ -42,7 +42,7 @@ export const registerUser = async (
   const newUser = await UsersService.create({ ...user, password });
   if (!newUser) return;
 
-  if (req.body.item.code) {
+  if (req.body.item) {
     await TokensService.deleteByAttribute(
       userMainIdentifier,
       user[userMainIdentifier]
