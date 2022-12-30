@@ -10,25 +10,16 @@ import getBearerToken from "../../utils/getBearerToken/getBearerToken";
 const checkToken = async (req: Request, res: Response, next: NextFunction) => {
   const tryThis = catchCodedError(next);
   const code = getBearerToken(req.headers.authorization);
+
   const userIdentifier: AcceptedIdentifiers = req.body[userMainIdentifier];
-
-  if (!code) {
-    next(invalidToken);
-    return;
-  }
-
   const dbToken: IToken[] = req.body.item;
 
-  if (dbToken[0][userMainIdentifier] !== userIdentifier) {
+  if (!code || dbToken[0][userMainIdentifier] !== userIdentifier) {
     next(invalidToken);
     return;
   }
 
-  const isTokenCorrect = await tryThis(
-    compareHash,
-    [code, dbToken[0].code],
-    "internalServerError"
-  );
+  const isTokenCorrect = await tryThis(compareHash, [code, dbToken[0].code]);
 
   if (!isTokenCorrect) {
     next(invalidToken);

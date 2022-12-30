@@ -8,8 +8,6 @@ import {
 } from "../../../controllers/usersControllers/usersControllers";
 import Token from "../../../database/models/Token";
 import User from "../../../database/models/User";
-import IToken from "../../../database/types/IToken";
-import IUser from "../../../database/types/IUser";
 import checkToken from "../../../middlewares/checkToken/checkToken";
 import findItem from "../../../middlewares/findItem/findItem";
 import logInSchema from "../../../schemas/logIn.schema";
@@ -30,8 +28,8 @@ usersRouter.get(root, getAllUsers);
 usersRouter.post(
   root,
   validateRequest(registerSchema),
-  findItem<IToken>(Token, userMainIdentifier, notFoundToken, true), // El test peta aqui
-  findItem<IUser>(User, userMainIdentifier, invalidSignUp),
+  findItem(Token, userMainIdentifier, notFoundToken, true),
+  findItem(User, userMainIdentifier, invalidSignUp),
   checkToken,
   registerUser
 );
@@ -39,7 +37,7 @@ usersRouter.post(
 usersRouter.post(
   logIn,
   validateRequest(logInSchema),
-  findItem<IUser>(User, userMainIdentifier, logInUserDoesNotExist, true),
+  findItem(User, userMainIdentifier, logInUserDoesNotExist, true),
   logInUser
 );
 
