@@ -1,13 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import codes from "../../config/codes";
 import { userMainIdentifier } from "../../config/database";
-import Token from "../../database/models/Token";
+import { ServeToken } from "../../database/servedModels";
 import IToken from "../../database/types/IToken";
 import { createHash } from "../../services/authentication/authentication";
-import ServeDatabase from "../../services/ServeDatabase/ServeDatabase";
 import catchCodedError from "../../utils/catchCodedError/catchCodedError";
-
-const ServeToken = ServeDatabase<IToken>(Token);
 
 const { success } = codes;
 

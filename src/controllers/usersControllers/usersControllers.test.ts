@@ -6,9 +6,11 @@ import User from "../../database/models/User";
 import mockUser from "../../test-utils/mocks/mockUser";
 import camelToRegular from "../../utils/camelToRegular/camelToRegular";
 import CodedError from "../../utils/CodedError/CodedError";
-import Token from "../../utils/Token/FullToken";
+import FullToken from "../../utils/Token/FullToken";
 import { getAllUsers, logInUser, registerUser } from "./usersControllers";
 import { invalidPassword } from "../../server/routers/usersRouter/usersRouter.errors";
+import Token from "../../database/models/Token";
+import { mockProtoToken } from "../../test-utils/mocks/mockToken";
 
 let mockHashedPassword: string | Promise<never> = "validPassword";
 
@@ -16,6 +18,7 @@ beforeEach(() => {
   bcrypt.compare = jest.fn().mockResolvedValue("#");
   User.find = jest.fn().mockResolvedValue([mockUser]);
   User.create = jest.fn().mockResolvedValue(mockUser);
+  Token.deleteMany = jest.fn();
   jest.clearAllMocks();
 });
 
@@ -68,6 +71,19 @@ describe("Given a registerUser controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(codes.success.created);
       expect(res.json).toHaveBeenCalledWith(successMessage);
+      expect(Token.deleteMany).not.toHaveBeenCalled();
+    });
+
+    test("Then it should delete the token, if any", async () => {
+      const reqWithToken = {
+        body: { ...mockUser, item: mockProtoToken },
+      } as Request;
+
+      User.find = jest.fn().mockResolvedValue([]);
+
+      await registerUser(reqWithToken, res as Response, next);
+
+      expect(Token.deleteMany).toHaveBeenCalled();
     });
 
     describe("And the hashing of the password fails", () => {
@@ -122,7 +138,7 @@ describe("Given a logInUser controller", () => {
     const next = jest.fn() as NextFunction;
 
     test(`Then it should respond with a status of ${codes.success.ok} and a token`, async () => {
-      const expectedResponse = Token(mockUser);
+      const expectedResponse = FullToken(mockUser);
 
       await logInUser(req, res as Response, next);
 
