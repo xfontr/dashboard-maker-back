@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import { mockProtoToken } from "../../test-utils/mocks/mockToken";
+import { mockFullToken } from "../../test-utils/mocks/mockToken";
 import mockUser from "../../test-utils/mocks/mockUser";
 import checkToken from "./checkToken";
 import { invalidToken } from "../../server/routers/usersRouter/usersRouter.errors";
@@ -14,9 +14,9 @@ beforeEach(() => {
 describe("Given a checkToken middleware", () => {
   describe("When called with a request, a response and a next function", () => {
     const req = {
-      body: { ...mockUser, item: [mockProtoToken] },
+      body: { ...mockUser, item: [mockFullToken] },
       headers: {
-        authorization: `Bearer ${mockProtoToken.code}`,
+        authorization: `Bearer ${mockFullToken.code}`,
       },
     } as Request;
     const res = {} as Response;
@@ -51,7 +51,7 @@ describe("Given a checkToken middleware", () => {
           body: {
             ...mockUser,
             [userMainIdentifier]: "randomStuff",
-            item: [mockProtoToken],
+            item: [mockFullToken],
           },
         } as Request;
 
@@ -82,6 +82,27 @@ describe("Given a checkToken middleware", () => {
 
         expect(next).toHaveBeenCalledWith();
         expect(next).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe("And the token allows to skip code validation", () => {
+      test("Then it should directly skip to the next step", async () => {
+        bcrypt.compare = jest.fn();
+
+        const skipReq = {
+          ...req,
+          body: {
+            ...mockUser,
+            [userMainIdentifier]: "randomStuff",
+            item: [{ ...mockFullToken, isCodeRequired: false }],
+          },
+        } as Request;
+
+        await checkToken()(skipReq, res, next);
+
+        expect(next).toHaveBeenCalledWith();
+        expect(next).toHaveBeenCalledTimes(1);
+        expect(bcrypt.compare).not.toHaveBeenCalled();
       });
     });
   });

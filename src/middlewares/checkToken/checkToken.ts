@@ -20,14 +20,19 @@ const checkToken =
     const code = getBearerToken(req.headers.authorization);
 
     const userIdentifier: AcceptedIdentifiers = req.body[userMainIdentifier];
-    const dbToken: IToken[] = req.body.item;
+    const dbToken: IToken = req.body.item[0];
 
-    if (!code || dbToken[0][userMainIdentifier] !== userIdentifier) {
+    if (!dbToken.isCodeRequired) {
+      next();
+      return;
+    }
+
+    if (!code || dbToken[userMainIdentifier] !== userIdentifier) {
       next(invalidToken);
       return;
     }
 
-    const isTokenCorrect = await tryThis(compareHash, [code, dbToken[0].code]);
+    const isTokenCorrect = await tryThis(compareHash, [code, dbToken.code]);
 
     if (!isTokenCorrect) {
       next(invalidToken);
