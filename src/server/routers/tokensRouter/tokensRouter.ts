@@ -2,8 +2,8 @@ import express from "express";
 import { userMainIdentifier } from "../../../config/database";
 import endpoints from "../../../config/endpoints";
 import generateToken from "../../../controllers/tokensControllers/tokensControllers";
-import Token from "../../../database/models/Token";
-import IToken from "../../../database/types/IToken";
+import User from "../../../database/models/User";
+import IUser from "../../../database/types/IUser";
 import findItem from "../../../middlewares/findItem/findItem";
 import emailAlreadyRegistered from "./tokensRouter.error";
 
@@ -13,7 +13,7 @@ const tokensRouter = express.Router();
 
 tokensRouter.post(
   root,
-  findItem<IToken>(Token, userMainIdentifier, emailAlreadyRegistered),
+  findItem<IUser>(User, userMainIdentifier, emailAlreadyRegistered),
   generateToken
 );
 

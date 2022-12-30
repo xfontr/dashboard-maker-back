@@ -29,19 +29,10 @@ const generateToken = async (
 
   if (!tokenValue) return;
 
-  const doesTokenExist = await TokensService.getByAttribute(
-    userMainIdentifier,
-    token[userMainIdentifier]
+  const newToken = await TokensService.create(
+    { ...token, code: tokenValue },
+    { replace: true, mainIdentifier: userMainIdentifier }
   );
-
-  if (doesTokenExist) {
-    await TokensService.deleteByAttribute(
-      userMainIdentifier,
-      token[userMainIdentifier]
-    );
-  }
-
-  const newToken = await TokensService.create({ ...token, code: tokenValue });
 
   if (!newToken) return;
 

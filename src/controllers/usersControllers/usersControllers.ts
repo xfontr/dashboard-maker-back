@@ -37,18 +37,11 @@ export const registerUser = async (
 
   const user: IUser = req.body;
 
-  const password = (await tryThis(
-    createHash,
-    [user.password],
-    "internalServerError"
-  )) as string;
-
+  const password = (await tryThis(createHash, [user.password])) as string;
   if (!password) return;
 
-  await UsersService.create({ ...user, password });
-
-  // TODO: Implement and test this, to cover more corner cases
-  // if (!newUser) return;
+  const newUser = await UsersService.create({ ...user, password });
+  if (!newUser) return;
 
   // TODO: Delete token from database once user is created
 
@@ -67,11 +60,10 @@ export const logInUser = async (
   const logInData: LogInData = req.body;
   const dbUser: IUser[] = req.body.item;
 
-  const isPasswordCorrect = await tryThis(
-    compareHash,
-    [logInData.password, dbUser[0].password],
-    "internalServerError"
-  );
+  const isPasswordCorrect = await tryThis(compareHash, [
+    logInData.password,
+    dbUser[0].password,
+  ]);
 
   if (!isPasswordCorrect) {
     next(invalidPassword);
