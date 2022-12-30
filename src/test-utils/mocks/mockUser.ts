@@ -12,6 +12,7 @@ const mockUser: IUser = {
   email: "email@email.com",
   password: "adminadmin",
   role: "admin",
+  id: "id",
 };
 
 export default mockUser;
