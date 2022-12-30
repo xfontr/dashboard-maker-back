@@ -8,11 +8,15 @@ import {
   createHash,
 } from "../../services/authentication/authentication";
 import catchCodedError from "../../utils/catchCodedError/catchCodedError";
-import Token from "../../utils/Token/FullToken";
+import FullToken from "../../utils/Token/FullToken";
 import LogInData from "../../types/LogInData";
 import { invalidPassword } from "../../server/routers/usersRouter/usersRouter.errors";
+import IToken from "../../database/types/IToken";
+import { userMainIdentifier } from "../../config/database";
+import Token from "../../database/models/Token";
 
 const ServeUser = ServeDatabase<IUser>(User);
+const ServeToken = ServeDatabase<IToken>(Token);
 
 const { success } = codes;
 
@@ -34,6 +38,7 @@ export const registerUser = async (
 ) => {
   const tryThis = catchCodedError(next);
   const UsersService = ServeUser(next);
+  const TokensService = ServeToken(next);
 
   const user: IUser = req.body;
 
@@ -43,7 +48,10 @@ export const registerUser = async (
   const newUser = await UsersService.create({ ...user, password });
   if (!newUser) return;
 
-  // TODO: Delete token from database once user is created
+  await TokensService.deleteByAttribute(
+    userMainIdentifier,
+    user[userMainIdentifier]
+  );
 
   res
     .status(success.created)
@@ -70,5 +78,5 @@ export const logInUser = async (
     return;
   }
 
-  res.status(success.ok).json(Token(dbUser[0]));
+  res.status(success.ok).json(FullToken(dbUser[0]));
 };
