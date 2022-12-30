@@ -66,21 +66,8 @@ describe("Given a registerUser controller", () => {
       expect(res.json).toHaveBeenCalledWith(successMessage);
     });
 
-    describe("And the user already exists", () => {
-      test("Then it should call next with an error", async () => {
-        const expectedError = CodedError(
-          "conflict",
-          "Invalid sign up data"
-        )(Error("There's a user using the same email"));
-
-        await registerUser(req, res as Response, next);
-
-        expect(next).toHaveBeenCalledWith(expectedError);
-      });
-    });
-
     describe("And the hashing of the password fails", () => {
-      test("Then it should call next with an errror", async () => {
+      test("Then it should call next with an error", async () => {
         User.find = jest.fn().mockResolvedValue([]);
         mockHashedPassword = Promise.reject(new Error());
 
@@ -103,6 +90,7 @@ describe("Given a logInUser controller", () => {
       body: {
         [userMainIdentifier]: mockUser[userMainIdentifier],
         password: mockUser.password,
+        item: mockUser,
       },
     } as Request;
     const res = {
@@ -118,21 +106,6 @@ describe("Given a logInUser controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(codes.success.ok);
       expect(res.json).toHaveBeenCalledWith(expectedResponse);
-    });
-
-    describe("And the user doesn't exist", () => {
-      test("Then it should call next with an error", async () => {
-        User.find = jest.fn().mockResolvedValue([]);
-
-        const expectedError = CodedError(
-          "notFound",
-          `Invalid ${userMainIdentifier} or password`
-        )(Error("User doesn't exist"));
-
-        await logInUser(req, res as Response, next);
-
-        expect(next).toHaveBeenCalledWith(expectedError);
-      });
     });
 
     describe("And the user password is incorrect", () => {

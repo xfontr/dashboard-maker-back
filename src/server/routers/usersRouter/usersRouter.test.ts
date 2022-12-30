@@ -1,11 +1,11 @@
-import "../../../../setupTests";
+import "../../../setupTests";
 import request from "supertest";
-import app from "../../..";
-import codes from "../../../../config/codes";
-import endpoints from "../../../../config/endpoints";
-import mockUser from "../../../../test-utils/mocks/mockUser";
-import { userMainIdentifier } from "../../../../config/database";
-import { mockProtoToken } from "../../../../test-utils/mocks/mockToken";
+import app from "../..";
+import codes from "../../../config/codes";
+import endpoints from "../../../config/endpoints";
+import mockUser from "../../../test-utils/mocks/mockUser";
+import { userMainIdentifier } from "../../../config/database";
+import { mockProtoToken } from "../../../test-utils/mocks/mockToken";
 
 const { users, tokens } = endpoints;
 const { success, error } = codes;

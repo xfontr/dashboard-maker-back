@@ -2,7 +2,7 @@ import "../loadEnvironment";
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
-import usersRouter from "./routers/usersRouter/usersRouter/usersRouter";
+import usersRouter from "./routers/usersRouter/usersRouter";
 import endpoints from "../config/endpoints";
 import generalError from "../middlewares/generalError/generalError";
 import notFoundError from "../middlewares/notFoundError/notFoundError";

@@ -3,23 +3,16 @@ import codes from "../../config/codes";
 import User from "../../database/models/User";
 import IUser from "../../database/types/IUser";
 import ServeDatabase from "../../services/ServeDatabase/ServeDatabase";
-import CodedError from "../../utils/CodedError/CodedError";
 import {
   compareHash,
   createHash,
 } from "../../services/authentication/authentication";
 import catchCodedError from "../../utils/catchCodedError/catchCodedError";
-import { userMainIdentifier } from "../../config/database";
 import Token from "../../utils/Token/FullToken";
 import LogInData from "../../types/LogInData";
+import { invalidPassword } from "../../server/routers/usersRouter/usersRouter.errors";
 
 const ServeUser = ServeDatabase<IUser>(User);
-
-const invalidSignUp = CodedError("conflict", "Invalid sign up data");
-const invalidLogIn = CodedError(
-  "notFound",
-  `Invalid ${userMainIdentifier} or password`
-);
 
 const { success } = codes;
 
@@ -43,14 +36,6 @@ export const registerUser = async (
   const UsersService = ServeUser(next);
 
   const user: IUser = req.body;
-
-  const doesUserExist = await UsersService.getByAttribute(
-    userMainIdentifier,
-    user[userMainIdentifier],
-    invalidSignUp(Error("There's a user using the same email"))
-  );
-
-  if (doesUserExist === true) return;
 
   const password = (await tryThis(
     createHash,
@@ -78,17 +63,9 @@ export const logInUser = async (
   next: NextFunction
 ) => {
   const tryThis = catchCodedError(next);
-  const UsersService = ServeUser(next);
 
   const logInData: LogInData = req.body;
-
-  const dbUser = await UsersService.getByAttribute(
-    userMainIdentifier,
-    logInData[userMainIdentifier],
-    invalidLogIn(Error("User doesn't exist"))
-  );
-
-  if (!dbUser || dbUser === true) return;
+  const dbUser: IUser[] = req.body.item;
 
   const isPasswordCorrect = await tryThis(
     compareHash,
@@ -97,12 +74,7 @@ export const logInUser = async (
   );
 
   if (!isPasswordCorrect) {
-    next(
-      CodedError(
-        "badRequest",
-        `Invalid ${userMainIdentifier} or password`
-      )(Error("Invalid password"))
-    );
+    next(invalidPassword);
     return;
   }
 
