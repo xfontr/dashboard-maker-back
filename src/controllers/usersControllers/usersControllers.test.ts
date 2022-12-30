@@ -8,6 +8,7 @@ import camelToRegular from "../../utils/camelToRegular/camelToRegular";
 import CodedError from "../../utils/CodedError/CodedError";
 import Token from "../../utils/Token/FullToken";
 import { getAllUsers, logInUser, registerUser } from "./usersControllers";
+import { invalidPassword } from "../../server/routers/usersRouter/usersRouter.errors";
 
 let mockHashedPassword: string | Promise<never> = "validPassword";
 
@@ -15,6 +16,7 @@ beforeEach(() => {
   bcrypt.compare = jest.fn().mockResolvedValue("#");
   User.find = jest.fn().mockResolvedValue([mockUser]);
   User.create = jest.fn().mockResolvedValue(mockUser);
+  jest.clearAllMocks();
 });
 
 jest.mock("../../services/authentication/authentication", () => ({
@@ -37,8 +39,10 @@ describe("Given a getAllUsers controller", () => {
       expect(res.status).toHaveBeenCalledWith(codes.success.ok);
     });
 
-    test("Then it should respond with the data found", () => {
+    test("Then it should respond with the data found", async () => {
       const expectedResponse = { users: [mockUser] };
+
+      await getAllUsers(req, res as Response, next);
 
       expect(res.json).toHaveBeenCalledWith(expectedResponse);
     });
@@ -71,14 +75,32 @@ describe("Given a registerUser controller", () => {
         User.find = jest.fn().mockResolvedValue([]);
         mockHashedPassword = Promise.reject(new Error());
 
-        const expectedError = CodedError(
+        const internalServerError = CodedError(
           "internalServerError",
           camelToRegular("internalServerError")
         )(Error());
 
         await registerUser(req, res as Response, next);
 
-        expect(next).toHaveBeenCalledWith(expectedError);
+        expect(next).toHaveBeenCalledWith(internalServerError);
+      });
+    });
+
+    describe("And the creation of the user fails", () => {
+      test("Then it should not call the response methods", async () => {
+        User.find = jest.fn().mockResolvedValue([]);
+        User.create = jest.fn().mockRejectedValue(new Error());
+        mockHashedPassword = "validPassword";
+
+        const badRequest = CodedError(
+          "badRequest",
+          camelToRegular("badRequest")
+        )(Error());
+
+        await registerUser(req, res as Response, next);
+
+        expect(next).toHaveBeenCalledWith(badRequest);
+        expect(res.status).not.toHaveBeenCalled();
       });
     });
   });
@@ -114,14 +136,9 @@ describe("Given a logInUser controller", () => {
 
         bcrypt.compare = jest.fn().mockResolvedValue(false);
 
-        const expectedError = CodedError(
-          "badRequest",
-          `Invalid ${userMainIdentifier} or password`
-        )(Error("Invalid password"));
-
         await logInUser(req, res as Response, nextError);
 
-        expect(nextError).toHaveBeenCalledWith(expectedError);
+        expect(nextError).toHaveBeenCalledWith(invalidPassword);
       });
     });
   });
