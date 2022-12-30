@@ -10,6 +10,9 @@ const requestStores = {
   payload: <T>(req: CustomRequest, item: T) => {
     req.payload = item as Payload;
   },
+  authority: <T>(req: CustomRequest, item: T) => {
+    req.authority = item as IUser;
+  },
   user: <T>(req: CustomRequest, item: T) => {
     req.user = item as IUser;
   },

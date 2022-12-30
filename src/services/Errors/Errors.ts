@@ -6,10 +6,17 @@ const RegistrationTokens = () => ({
     "conflict",
     "The requested token can't be authorized"
   )(Error("The token's email is already registered")),
+  unauthorizedToCreate: CodedError(
+    "unauthorized",
+    "The requested token can't be authorized"
+  )(Error("The person requesting the token is not allowed to")),
 });
 
 const AuthTokens = () => ({
-  invalidAuthToken: CodedError("badRequest", "Authentication error"),
+  invalidAuthToken: CodedError(
+    "badRequest",
+    "Invalid request, could not create token"
+  ),
 });
 
 const Register = () => ({

@@ -15,7 +15,7 @@ const authentication = async (
   const token = getBearerToken(req.headers.authorization);
 
   if (!token) {
-    next(Errors.users.invalidToken);
+    next(Errors.users.invalidAuthToken(Error("The token provided is invalid")));
     return;
   }
 
