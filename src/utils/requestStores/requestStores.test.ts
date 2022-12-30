@@ -1,7 +1,7 @@
+import mockPayload from "../../test-utils/mocks/mockPayload";
 import { mockFullToken } from "../../test-utils/mocks/mockToken";
 import mockUser from "../../test-utils/mocks/mockUser";
 import CustomRequest from "../../types/CustomRequest";
-import Payload from "../../types/Payload";
 import requestStores from "./requestStores";
 
 const { token, payload, authority, user } = requestStores;
@@ -22,10 +22,6 @@ describe("Given a payload method", () => {
   describe("When called with a custom request and a payload item", () => {
     test("Then it should assign said item to the request 'payload' attribute", () => {
       const req = {} as CustomRequest;
-      const mockPayload: Payload = {
-        email: mockUser.email,
-        id: mockUser.id,
-      };
 
       payload(req, mockPayload);
 

@@ -1,23 +1,24 @@
 import { NextFunction, Response } from "express";
 import environment from "../../config/environment";
-import roles from "../../config/roles";
-import { UserRoles } from "../../database/types/IUser";
 import Errors from "../../services/Errors/Errors";
 import CustomRequest from "../../types/CustomRequest";
+import setAllowedRoles from "../../utils/setAllowedRoles/setAllowedRoles";
 
-const roleFilter =
-  (role: UserRoles) =>
-  async (req: CustomRequest, res: Response, next: NextFunction) => {
-    if (req.payload.email === environment.defaultPowerEmail) {
-      req.authority = { ...req.payload, role: "superAdmin", password: "" };
-    }
+const roleFilter = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.payload.email === environment.defaultPowerEmail) {
+    req.authority = { ...req.payload, role: "superAdmin", password: "" };
+  }
 
-    if (roles[role].createToken.includes(req.authority.role)) {
-      next(Errors.tokens.unauthorizedToCreate);
-      return;
-    }
+  if (!setAllowedRoles(req.authority.role).includes(req.body.role)) {
+    next(Errors.tokens.unauthorizedToCreate);
+    return;
+  }
 
-    next();
-  };
+  next();
+};
 
 export default roleFilter;

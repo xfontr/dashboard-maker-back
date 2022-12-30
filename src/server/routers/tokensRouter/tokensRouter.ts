@@ -27,7 +27,7 @@ tokensRouter.post(
     storeAt: "authority",
   }),
 
-  roleFilter("admin"),
+  roleFilter,
   generateToken
 );
 

@@ -1,7 +1,6 @@
-import { UserRoles } from "../database/types/IUser";
-
 type Actions = Partial<{
-  createToken: UserRoles[];
+  /** Allows to create tokens with roles which index match the number specified */
+  createToken: 1 | 2 | 3 | 4;
 }>;
 
 export default Actions;

@@ -11,8 +11,11 @@ const mockUser: IUser = {
   name: "Name",
   email: "email@email.com",
   password: "adminadmin",
-  role: "admin",
+  role: "user",
   id: "id",
 };
+
+export const mockUserSuperAdmin: IUser = { ...mockUser, role: "superAdmin" };
+export const mockUserAdmin: IUser = { ...mockUser, role: "admin" };
 
 export default mockUser;
