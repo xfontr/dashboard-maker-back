@@ -6,6 +6,11 @@ export const notFoundToken = CodedError(
   "The registration data provided is not valid. If the error persists, please contact the administrator"
 )(Error("The token doesn't exist"));
 
+export const invalidToken = CodedError(
+  "unauthorized",
+  "The registration data provided is not valid. If the error persists, please contact the administrator"
+)(Error("Invalid registration token"));
+
 export const invalidSignUp = CodedError(
   "conflict",
   "Invalid sign up data"

@@ -1,16 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { userMainIdentifier } from "../../config/database";
 import IToken from "../../database/types/IToken";
+import { invalidToken } from "../../server/routers/usersRouter/usersRouter.errors";
 import { compareHash } from "../../services/authentication/authentication";
 import AcceptedIdentifiers from "../../types/AcceptedIdentifiers";
 import catchCodedError from "../../utils/catchCodedError/catchCodedError";
-import CodedError from "../../utils/CodedError/CodedError";
 import getBearerToken from "../../utils/getBearerToken/getBearerToken";
-
-const invalidToken = CodedError(
-  "unauthorized",
-  "The registration data provided is not valid. If the error persists, please contact the administrator"
-)(Error("Invalid registration token"));
 
 const checkToken = async (req: Request, res: Response, next: NextFunction) => {
   const tryThis = catchCodedError(next);

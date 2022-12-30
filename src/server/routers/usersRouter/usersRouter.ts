@@ -30,7 +30,7 @@ usersRouter.get(root, getAllUsers);
 usersRouter.post(
   root,
   validateRequest(registerSchema),
-  findItem<IToken>(Token, userMainIdentifier, notFoundToken),
+  findItem<IToken>(Token, userMainIdentifier, notFoundToken, true), // El test peta aqui
   findItem<IUser>(User, userMainIdentifier, invalidSignUp),
   checkToken,
   registerUser
@@ -39,7 +39,7 @@ usersRouter.post(
 usersRouter.post(
   logIn,
   validateRequest(logInSchema),
-  findItem<IUser>(User, userMainIdentifier, logInUserDoesNotExist),
+  findItem<IUser>(User, userMainIdentifier, logInUserDoesNotExist, true),
   logInUser
 );
 

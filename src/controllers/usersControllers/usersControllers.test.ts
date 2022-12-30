@@ -90,7 +90,7 @@ describe("Given a logInUser controller", () => {
       body: {
         [userMainIdentifier]: mockUser[userMainIdentifier],
         password: mockUser.password,
-        item: mockUser,
+        item: [mockUser],
       },
     } as Request;
     const res = {

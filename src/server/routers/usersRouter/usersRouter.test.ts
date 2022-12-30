@@ -24,6 +24,7 @@ describe(`Given a ${users.router} route`, () => {
   describe("When requested with POST method and valid register data", () => {
     test(`Then it should respond with a status of ${success.created}`, async () => {
       await request(app).post(`${tokens.router}`).send(mockProtoToken);
+
       const res = await request(app)
         .post(`${users.router}`)
         .set("Authorization", `Bearer ${mockProtoToken.code}`)
