@@ -6,6 +6,7 @@ import endpoints from "../../../config/endpoints";
 import mockUser, { mockProtoUser } from "../../../test-utils/mocks/mockUser";
 import { userMainIdentifier } from "../../../config/database";
 import { mockProtoToken } from "../../../test-utils/mocks/mockToken";
+import environment from "../../../config/environment";
 
 const { users, tokens } = endpoints;
 const { success, error } = codes;
@@ -23,7 +24,10 @@ describe(`Given a ${users.router} route`, () => {
 describe(`Given a ${users.router} route`, () => {
   describe("When requested with POST method and valid register data", () => {
     test(`Then it should respond with a status of ${success.created}`, async () => {
-      await request(app).post(`${tokens.router}`).send(mockProtoToken);
+      await request(app)
+        .post(`${tokens.router}`)
+        .set("Authorization", `Bearer ${environment.defaultPowerToken}`)
+        .send(mockProtoToken);
 
       const res = await request(app)
         .post(`${users.router}`)
@@ -38,7 +42,11 @@ describe(`Given a ${users.router} route`, () => {
 
   describe("When requested with POST method, valid register data but a wrong token", () => {
     test(`Then it should respond with a status of ${error.unauthorized}`, async () => {
-      await request(app).post(`${tokens.router}`).send(mockProtoToken);
+      await request(app)
+        .post(`${tokens.router}`)
+        .set("Authorization", `Bearer ${environment.defaultPowerToken}`)
+        .send(mockProtoToken);
+
       const res = await request(app)
         .post(`${users.router}`)
         .set("Authorization", "Bearer wrongCode")
@@ -64,7 +72,11 @@ describe(`Given a ${users.router} route`, () => {
 describe(`Given a ${users.logIn} route`, () => {
   describe("When requested with POST method and valid log in data", () => {
     test(`Then it should respond with a status of ${success.ok}`, async () => {
-      await request(app).post(`${tokens.router}`).send(mockProtoToken);
+      await request(app)
+        .post(`${tokens.router}`)
+        .set("Authorization", `Bearer ${environment.defaultPowerToken}`)
+        .send(mockProtoToken);
+
       await request(app)
         .post(`${users.router}`)
         .set("Authorization", `Bearer ${mockProtoToken.code}`)

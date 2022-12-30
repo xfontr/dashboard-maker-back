@@ -17,13 +17,16 @@ const tokensRouter = express.Router();
 
 tokensRouter.post(
   root,
+
   validateRequest(tokenSchema),
   authentication,
+
   findItem(User, userMainIdentifier, tokens.emailAlreadyRegistered),
   findItem(User, userMainIdentifier, tokens.unauthorizedToCreate, {
     getValueFrom: "payload",
     storeAt: "authority",
   }),
+
   roleFilter("admin"),
   generateToken
 );

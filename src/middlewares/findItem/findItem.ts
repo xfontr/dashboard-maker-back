@@ -20,7 +20,7 @@ const findItem =
     }
 
     const ItemService = ServeDatabase<T>(model)(next);
-    debugger;
+
     const value = req[options.getValueFrom || "body"][attribute];
 
     const item = await ItemService.getByAttribute(attribute, value, error);
@@ -28,7 +28,7 @@ const findItem =
     if (!item || item === true) {
       return;
     }
-    debugger;
+
     if (options.storeAt) requestStores[options.storeAt](req, item[0]);
 
     next();

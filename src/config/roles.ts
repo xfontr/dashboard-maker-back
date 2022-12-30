@@ -1,27 +1,16 @@
-import Roles from "../types/Roles";
+import { UserRoles } from "../database/types/IUser";
+import Actions from "../types/Actions";
 
-const roles: Roles = {
-  highest: {
-    name: "superAdmin",
-    actions: {
-      createToken: ["admin", "user"],
-    },
+const roles: Record<UserRoles, Actions> = {
+  superAdmin: {
+    createToken: ["admin", "user"],
   },
 
-  high: {
-    name: "admin",
-    actions: {
-      createToken: ["user"],
-    },
+  admin: {
+    createToken: ["user"],
   },
 
-  medium: {
-    name: "admin",
-  },
-
-  low: {
-    name: "user",
-  },
+  user: {},
 };
 
 export default roles;
