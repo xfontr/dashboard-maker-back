@@ -1,5 +1,5 @@
 import mockUser from "../../test-utils/mocks/mockUser";
-import Token from "./Token";
+import Token from "./FullToken";
 
 const mockCreateToken = jest.fn().mockReturnValue("#");
 

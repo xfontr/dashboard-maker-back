@@ -1,19 +1,19 @@
 import { NextFunction, Request, Response } from "express";
-import codes from "../config/codes";
-import User from "../database/models/User";
-import IUser from "../database/types/IUser";
-import ServeDatabase from "../services/ServeDatabase/ServeDatabase";
-import CodedError from "../utils/CodedError/CodedError";
+import codes from "../../config/codes";
+import User from "../../database/models/User";
+import IUser from "../../database/types/IUser";
+import ServeDatabase from "../../services/ServeDatabase/ServeDatabase";
+import CodedError from "../../utils/CodedError/CodedError";
 import {
   compareHash,
   createHash,
-} from "../services/authentication/authentication";
-import catchCodedError from "../utils/catchCodedError/catchCodedError";
-import userMainIdentifier from "../config/database";
-import Token from "../utils/Token/Token";
-import LogInData from "../types/LogInData";
+} from "../../services/authentication/authentication";
+import catchCodedError from "../../utils/catchCodedError/catchCodedError";
+import { userMainIdentifier } from "../../config/database";
+import Token from "../../utils/Token/FullToken";
+import LogInData from "../../types/LogInData";
 
-const Serve = ServeDatabase<IUser>(User);
+const ServeUser = ServeDatabase<IUser>(User);
 
 const invalidSignUp = CodedError("conflict", "Invalid sign up data");
 const invalidLogIn = CodedError(
@@ -21,15 +21,17 @@ const invalidLogIn = CodedError(
   `Invalid ${userMainIdentifier} or password`
 );
 
+const { success } = codes;
+
 export const getAllUsers = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const UsersService = Serve(next);
+  const UsersService = ServeUser(next);
   const users = await UsersService.getAll();
 
-  res.status(codes.success.ok).json({ users });
+  res.status(success.ok).json({ users });
 };
 
 export const registerUser = async (
@@ -38,9 +40,9 @@ export const registerUser = async (
   next: NextFunction
 ) => {
   const tryThis = catchCodedError(next);
+  const UsersService = ServeUser(next);
 
   const user: IUser = req.body;
-  const UsersService = Serve(next);
 
   const doesUserExist = await UsersService.getByAttribute(
     userMainIdentifier,
@@ -60,8 +62,13 @@ export const registerUser = async (
 
   await UsersService.create({ ...user, password });
 
+  // TODO: Implement and test this, to cover more corner cases
+  // if (!newUser) return;
+
+  // TODO: Delete token from database once user is created
+
   res
-    .status(codes.success.created)
+    .status(success.created)
     .json({ register: "User registered successfully" });
 };
 
@@ -71,7 +78,7 @@ export const logInUser = async (
   next: NextFunction
 ) => {
   const tryThis = catchCodedError(next);
-  const UsersService = Serve(next);
+  const UsersService = ServeUser(next);
 
   const logInData: LogInData = req.body;
 
@@ -81,11 +88,11 @@ export const logInUser = async (
     invalidLogIn(Error("User doesn't exist"))
   );
 
-  if (dbUser === true) return;
+  if (!dbUser || dbUser === true) return;
 
   const isPasswordCorrect = await tryThis(
     compareHash,
-    [logInData.password, (dbUser as IUser[])[0].password],
+    [logInData.password, dbUser[0].password],
     "internalServerError"
   );
 
@@ -99,5 +106,5 @@ export const logInUser = async (
     return;
   }
 
-  res.status(codes.success.ok).json(Token((dbUser as IUser[])[0]));
+  res.status(success.ok).json(Token(dbUser[0]));
 };

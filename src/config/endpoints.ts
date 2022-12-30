@@ -4,6 +4,10 @@ const endpoints = {
     root: "/",
     logIn: "/log-in",
   },
+  tokens: {
+    router: "/tokens",
+    root: "/",
+  },
 };
 
 export default endpoints;
