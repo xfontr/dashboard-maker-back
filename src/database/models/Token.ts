@@ -8,9 +8,15 @@ const tokenSchema = new Schema<IToken>({
     required: true,
   },
 
-  token: {
+  code: {
     type: String,
     required: true,
+  },
+
+  isCodeRequired: {
+    type: Boolean,
+    required: true,
+    default: true,
   },
 
   creationDate: {

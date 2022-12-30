@@ -1,5 +1,5 @@
 {
-  "name": "widescope-back",
+  "name": "dashboard-maker-back",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -9,6 +9,7 @@
     "start": "node .",
     "start:dev": "nodemon -q",
     "test": "jest src --watchAll=false",
+    "test:dev": "jest src --watchAll=true",
     "test:coverage": "jest src --coverage --watchAll=false",
     "lint": "eslint ./src",
     "build": "npm run ts",

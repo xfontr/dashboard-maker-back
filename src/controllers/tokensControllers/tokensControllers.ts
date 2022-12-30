@@ -46,7 +46,7 @@ const generateToken = async (
 
   const tokenValue = (await tryThis(
     createHash,
-    [token.token],
+    [token.code],
     "internalServerError"
   )) as string;
 
@@ -59,7 +59,7 @@ const generateToken = async (
     );
   }
 
-  const newToken = await TokensService.create({ ...token, token: tokenValue });
+  const newToken = await TokensService.create({ ...token, code: tokenValue });
 
   if (!newToken) return;
 

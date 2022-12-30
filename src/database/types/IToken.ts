@@ -2,9 +2,10 @@ import { UserRoles } from "./IUser";
 
 type IToken = {
   email: string;
-  token: string;
+  code: string;
   creationDate: Date;
   role: UserRoles;
+  isCodeRequired: boolean;
 };
 
 export default IToken;

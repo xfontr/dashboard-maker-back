@@ -9,12 +9,6 @@ const optionsSchema = new Schema<IOptions>({
     default: environment.defaultPowerToken,
   },
 
-  registrationUsesToken: {
-    type: Boolean,
-    required: true,
-    default: true,
-  },
-
   tokenLife: {
     type: Number,
     required: true,
