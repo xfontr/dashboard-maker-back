@@ -5,6 +5,7 @@ import setDebug from "../services/setDebug";
 
 const debug = setDebug("validation-error");
 
+/** Catches joi validation errors and sends a bad request error */
 const validationError = (
   error: Error,
   req: Request,
