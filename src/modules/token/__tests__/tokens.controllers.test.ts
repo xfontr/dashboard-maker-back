@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import codes from "../../../config/codes";
+import ERROR_CODES from "../../../config/errorCodes";
 import generateToken from "../token.controllers";
 import Token from "../Token.model";
 import CodedError from "../../../common/utils/CodedError";
@@ -34,12 +34,12 @@ describe("Given a generateToken controller", () => {
     } as Partial<Response>;
     const next = jest.fn() as NextFunction;
 
-    test(`Then it should respond with a status of ${codes.success.created} and a success message`, async () => {
+    test(`Then it should respond with a status of ${ERROR_CODES.success.created} and a success message`, async () => {
       const successMessage = { token: "Token created successfully" };
 
       await generateToken(req, res as Response, next);
 
-      expect(res.status).toHaveBeenCalledWith(codes.success.created);
+      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.created);
       expect(res.json).toHaveBeenCalledWith(successMessage);
     });
 

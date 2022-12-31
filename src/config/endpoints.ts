@@ -1,4 +1,4 @@
-const endpoints = {
+const ENDPOINTS = {
   users: {
     router: "/users",
     root: "/",
@@ -10,4 +10,4 @@ const endpoints = {
   },
 };
 
-export default endpoints;
+export default ENDPOINTS;

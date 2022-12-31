@@ -1,14 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import codes from "../../../config/codes";
-import { userMainIdentifier } from "../../../config/database";
+import ERROR_CODES from "../../../config/errorCodes";
+import { USER_MAIN_IDENTIFIER } from "../../../config/database";
 import User from "../User.model";
 import camelToRegular from "../../../common/utils/camelToRegular";
 import CodedError from "../../../common/utils/CodedError";
 import FullToken from "../utils/FullToken/FullToken";
 import { getAllUsers, logInUser, registerUser } from "../users.controllers";
 import Token from "../../token/Token.model";
-import Errors from "../../../common/errors/Errors";
 import CustomRequest from "../../../common/types/CustomRequest";
 import mockUser, {
   mockUserAdmin,
@@ -17,6 +16,7 @@ import {
   mockFullToken,
   mockProtoToken,
 } from "../../../common/test-utils/mocks/mockToken";
+import userErrors from "../users.errors";
 
 let mockHashedPassword: string | Promise<never> = "validPassword";
 
@@ -42,10 +42,10 @@ describe("Given a getAllUsers controller", () => {
     } as Partial<Response>;
     const next = jest.fn() as NextFunction;
 
-    test(`Then it should respond with a status of ${codes.success.ok}`, async () => {
+    test(`Then it should respond with a status of ${ERROR_CODES.success.ok}`, async () => {
       await getAllUsers(req, res as Response, next);
 
-      expect(res.status).toHaveBeenCalledWith(codes.success.ok);
+      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
     });
 
     test("Then it should respond with the data found", async () => {
@@ -69,13 +69,13 @@ describe("Given a registerUser controller", () => {
     } as Partial<Response>;
     const next = jest.fn() as NextFunction;
 
-    test(`Then it should respond with a status of ${codes.success.created} and a success message`, async () => {
+    test(`Then it should respond with a status of ${ERROR_CODES.success.created} and a success message`, async () => {
       const successMessage = { register: "User registered successfully" };
       User.find = jest.fn().mockResolvedValue([]);
 
       await registerUser(req, res as Response, next);
 
-      expect(res.status).toHaveBeenCalledWith(codes.success.created);
+      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.created);
       expect(res.json).toHaveBeenCalledWith(successMessage);
       expect(Token.deleteMany).not.toHaveBeenCalled();
     });
@@ -139,7 +139,7 @@ describe("Given a registerUser controller", () => {
 
         await registerUser(reqWithBadRole, res as Response, next);
 
-        expect(next).toHaveBeenCalledWith(Errors.users.invalidRole);
+        expect(next).toHaveBeenCalledWith(userErrors.invalidRole);
         expect(res.status).not.toHaveBeenCalled();
       });
     });
@@ -150,7 +150,7 @@ describe("Given a logInUser controller", () => {
   describe("When called with a request with user log in data, a response and a next function", () => {
     const req = {
       body: {
-        [userMainIdentifier]: mockUser[userMainIdentifier],
+        [USER_MAIN_IDENTIFIER]: mockUser[USER_MAIN_IDENTIFIER],
         password: mockUser.password,
       },
       user: mockUser,
@@ -161,12 +161,12 @@ describe("Given a logInUser controller", () => {
     } as Partial<Response>;
     const next = jest.fn() as NextFunction;
 
-    test(`Then it should respond with a status of ${codes.success.ok} and a token`, async () => {
+    test(`Then it should respond with a status of ${ERROR_CODES.success.ok} and a token`, async () => {
       const expectedResponse = FullToken(mockUser);
 
       await logInUser(req, res as Response, next);
 
-      expect(res.status).toHaveBeenCalledWith(codes.success.ok);
+      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
       expect(res.json).toHaveBeenCalledWith(expectedResponse);
     });
 
@@ -178,7 +178,7 @@ describe("Given a logInUser controller", () => {
 
         await logInUser(req, res as Response, nextError);
 
-        expect(nextError).toHaveBeenCalledWith(Errors.users.invalidPassword);
+        expect(nextError).toHaveBeenCalledWith(userErrors.invalidPassword);
       });
     });
   });

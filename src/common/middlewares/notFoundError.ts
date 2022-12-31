@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import codes from "../../config/codes";
+import ERROR_CODES from "../../config/errorCodes";
 
 const notFoundError = (req: Request, res: Response) =>
-  res.status(codes.error.notFound).json({ error: "Endpoint not found" });
+  res.status(ERROR_CODES.error.notFound).json({ error: "Endpoint not found" });
 
 export default notFoundError;

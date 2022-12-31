@@ -1,13 +1,13 @@
 import { NextFunction } from "express";
 import { Model } from "mongoose";
-import codes from "../../../config/codes";
+import ERROR_CODES from "../../../config/errorCodes";
 import catchCodedError from "../../utils/catchCodedError";
 import { ICustomError } from "../../utils/CustomError";
 import MethodOptions from "./ServeDatabase.types";
 
 const {
   error: { conflict, notFound },
-} = codes;
+} = ERROR_CODES;
 
 export default <T>(model: Model<T>) =>
   (next: NextFunction) => {

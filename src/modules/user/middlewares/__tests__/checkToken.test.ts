@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import checkToken from "../checkToken";
-import { userMainIdentifier } from "../../../../config/database";
-import Errors from "../../../../common/errors/Errors";
+import { USER_MAIN_IDENTIFIER } from "../../../../config/database";
 import CustomRequest from "../../../../common/types/CustomRequest";
 import mockUser from "../../../../common/test-utils/mocks/mockUser";
 import { mockFullToken } from "../../../../common/test-utils/mocks/mockToken";
+import userErrors from "../../users.errors";
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -41,7 +41,7 @@ describe("Given a checkToken middleware", () => {
 
         await checkToken()(invalidReq, res, next);
 
-        expect(next).toHaveBeenCalledWith(Errors.users.invalidToken);
+        expect(next).toHaveBeenCalledWith(userErrors.invalidToken);
         expect(next).toHaveBeenCalledTimes(1);
       });
     });
@@ -52,14 +52,14 @@ describe("Given a checkToken middleware", () => {
           ...req,
           body: {
             ...mockUser,
-            [userMainIdentifier]: "randomStuff",
+            [USER_MAIN_IDENTIFIER]: "randomStuff",
             item: [mockFullToken],
           },
         } as Request;
 
         await checkToken()(invalidReq, res, next);
 
-        expect(next).toHaveBeenCalledWith(Errors.users.invalidToken);
+        expect(next).toHaveBeenCalledWith(userErrors.invalidToken);
         expect(next).toHaveBeenCalledTimes(1);
       });
     });
@@ -70,7 +70,7 @@ describe("Given a checkToken middleware", () => {
 
         await checkToken()(req, res, next);
 
-        expect(next).toHaveBeenCalledWith(Errors.users.invalidToken);
+        expect(next).toHaveBeenCalledWith(userErrors.invalidToken);
         expect(next).toHaveBeenCalledTimes(1);
       });
     });
@@ -95,7 +95,7 @@ describe("Given a checkToken middleware", () => {
           ...req,
           body: {
             ...mockUser,
-            [userMainIdentifier]: "randomStuff",
+            [USER_MAIN_IDENTIFIER]: "randomStuff",
           },
           token: { ...mockFullToken, isCodeRequired: false },
         } as CustomRequest;

@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
+import userErrors from "../../modules/user/users.errors";
 import { verifyToken } from "../services/authentication";
-import Errors from "../errors/Errors";
 import CustomRequest from "../types/CustomRequest";
 import Payload from "../types/Payload";
 import catchCodedError from "../utils/catchCodedError";
@@ -15,7 +15,7 @@ const authentication = async (
   const token = getBearerToken(req.headers.authorization);
 
   if (!token) {
-    next(Errors.users.invalidAuthToken(Error("The token provided is invalid")));
+    next(userErrors.invalidAuthToken(Error("The token provided is invalid")));
     return;
   }
 

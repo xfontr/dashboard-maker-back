@@ -1,8 +1,8 @@
 import { Joi } from "express-validation";
-import userData from "../../config/userData";
+import INPUT_RULES from "../../config/inputRules";
 import IUser, { UserRequiredData } from "./users.types";
 
-const { email, name } = userData;
+const { email, name } = INPUT_RULES;
 
 export const logInSchema = {
   body: Joi.object<Partial<UserRequiredData>>({

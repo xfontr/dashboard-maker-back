@@ -1,5 +1,5 @@
 import { Response } from "express";
-import Errors from "../../errors/Errors";
+import userErrors from "../../../modules/user/users.errors";
 import CustomRequest from "../../types/CustomRequest";
 import Payload from "../../types/Payload";
 import camelToRegular from "../../utils/camelToRegular";
@@ -53,7 +53,7 @@ describe("Given a authentication middleware", () => {
 
         await authentication(invalidReq, res as Response, next);
 
-        expect(next).toHaveBeenCalledWith(Errors.users.invalidAuthToken(error));
+        expect(next).toHaveBeenCalledWith(userErrors.invalidAuthToken(error));
         expect(next).toHaveBeenCalledTimes(1);
       });
     });

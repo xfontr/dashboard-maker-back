@@ -1,12 +1,12 @@
 import { model, Schema } from "mongoose";
-import environment from "../../config/environment";
+import ENVIRONMENT from "../../config/environment";
 import IOptions from "./options.types";
 
 const optionsSchema = new Schema<IOptions>({
   powerToken: {
     type: String,
     required: true,
-    default: environment.defaultPowerToken,
+    default: ENVIRONMENT.defaultPowerToken,
   },
 
   tokenLife: {

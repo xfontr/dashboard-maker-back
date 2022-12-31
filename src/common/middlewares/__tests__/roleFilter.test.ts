@@ -1,11 +1,11 @@
 import { NextFunction, Response } from "express";
-import { userMainIdentifier } from "../../../config/database";
-import environment from "../../../config/environment";
+import { USER_MAIN_IDENTIFIER } from "../../../config/database";
+import ENVIRONMENT from "../../../config/environment";
 import mockPayload from "../../test-utils/mocks/mockPayload";
 import mockUser, { mockUserSuperAdmin } from "../../test-utils/mocks/mockUser";
-import Errors from "../../errors/Errors";
 import CustomRequest from "../../types/CustomRequest";
 import roleFilter from "../roleFilter";
+import tokenErrors from "../../../modules/token/token.errors";
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -40,7 +40,7 @@ describe("Given a roleFilter function", () => {
       test("Then it should call next with an error", async () => {
         await roleFilter(req, res as Response, next);
 
-        expect(next).toHaveBeenCalledWith(Errors.tokens.unauthorizedToCreate);
+        expect(next).toHaveBeenCalledWith(tokenErrors.unauthorizedToCreate);
       });
     });
 
@@ -48,7 +48,7 @@ describe("Given a roleFilter function", () => {
       const req = {
         payload: {
           ...mockPayload,
-          [userMainIdentifier]: environment.defaultPowerEmail,
+          [USER_MAIN_IDENTIFIER]: ENVIRONMENT.defaultPowerEmail,
         },
         body: mockUser,
       } as CustomRequest;

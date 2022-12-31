@@ -1,6 +1,6 @@
 import "../../loadEnvironment";
 import DebugFunction, { Debug, Debugger } from "debug";
-import environment from "../../config/environment";
+import ENVIRONMENT from "../../config/environment";
 import setMessage from "./setMessage";
 import DebugColors from "../types/DebugColors";
 import DebugWithColors from "../types/DebugWithColors";
@@ -18,7 +18,7 @@ const baseSetDebug =
 
 export const setDebugWithoutColors = importDebugAndSetBaseLocation(
   DebugFunction,
-  environment.debug,
+  ENVIRONMENT.debug,
   baseSetDebug
 );
 

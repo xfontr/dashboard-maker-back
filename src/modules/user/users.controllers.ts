@@ -1,16 +1,16 @@
 import { NextFunction, Request, Response } from "express";
-import codes from "../../config/codes";
+import ERROR_CODES from "../../config/errorCodes";
 import IUser from "./users.types";
 import { compareHash, createHash } from "../../common/services/authentication";
 import catchCodedError from "../../common/utils/catchCodedError";
 import FullToken from "./utils/FullToken/FullToken";
 import LogInData from "../../common/types/LogInData";
-import { userMainIdentifier } from "../../config/database";
+import { USER_MAIN_IDENTIFIER } from "../../config/database";
 import CustomRequest from "../../common/types/CustomRequest";
-import Errors from "../../common/errors/Errors";
 import { ServeToken, ServeUser } from "../../common/services/ServeDatabase";
+import userErrors from "./users.errors";
 
-const { success } = codes;
+const { success } = ERROR_CODES;
 
 export const getAllUsers = async (
   req: Request,
@@ -38,7 +38,7 @@ export const registerUser = async (
   if (!password) return;
 
   if (req.token && req.token.role !== user.role) {
-    next(Errors.users.invalidRole);
+    next(userErrors.invalidRole);
     return;
   }
 
@@ -47,8 +47,8 @@ export const registerUser = async (
 
   if (req.token) {
     await TokensService.deleteByAttribute(
-      userMainIdentifier,
-      user[userMainIdentifier]
+      USER_MAIN_IDENTIFIER,
+      user[USER_MAIN_IDENTIFIER]
     );
   }
 
@@ -73,7 +73,7 @@ export const logInUser = async (
   ]);
 
   if (!isPasswordCorrect) {
-    next(Errors.users.invalidPassword);
+    next(userErrors.invalidPassword);
     return;
   }
 

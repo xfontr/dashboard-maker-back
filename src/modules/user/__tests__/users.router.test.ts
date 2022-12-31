@@ -1,17 +1,17 @@
 import "../../../setupTests";
 import request from "supertest";
-import codes from "../../../config/codes";
-import endpoints from "../../../config/endpoints";
-import { userMainIdentifier } from "../../../config/database";
-import environment from "../../../config/environment";
+import ERROR_CODES from "../../../config/errorCodes";
+import ENDPOINTS from "../../../config/endpoints";
+import { USER_MAIN_IDENTIFIER } from "../../../config/database";
+import ENVIRONMENT from "../../../config/environment";
 import app from "../../../app";
 import { mockProtoToken } from "../../../common/test-utils/mocks/mockToken";
 import mockUser, {
   mockProtoUser,
 } from "../../../common/test-utils/mocks/mockUser";
 
-const { users, tokens } = endpoints;
-const { success, error } = codes;
+const { users, tokens } = ENDPOINTS;
+const { success, error } = ERROR_CODES;
 
 describe(`Given a ${users.router} route`, () => {
   describe("When requested with GET method", () => {
@@ -28,7 +28,7 @@ describe(`Given a ${users.router} route`, () => {
     test(`Then it should respond with a status of ${success.created}`, async () => {
       await request(app)
         .post(`${tokens.router}`)
-        .set("Authorization", `Bearer ${environment.defaultPowerToken}`)
+        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
         .send(mockProtoToken);
 
       const res = await request(app)
@@ -46,7 +46,7 @@ describe(`Given a ${users.router} route`, () => {
     test(`Then it should respond with a status of ${error.unauthorized}`, async () => {
       await request(app)
         .post(`${tokens.router}`)
-        .set("Authorization", `Bearer ${environment.defaultPowerToken}`)
+        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
         .send(mockProtoToken);
 
       const res = await request(app)
@@ -76,7 +76,7 @@ describe(`Given a ${users.logIn} route`, () => {
     test(`Then it should respond with a status of ${success.ok}`, async () => {
       await request(app)
         .post(`${tokens.router}`)
-        .set("Authorization", `Bearer ${environment.defaultPowerToken}`)
+        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
         .send(mockProtoToken);
 
       await request(app)
@@ -89,7 +89,7 @@ describe(`Given a ${users.logIn} route`, () => {
       const res = await request(app)
         .post(`${users.router}/${users.logIn}`)
         .send({
-          [userMainIdentifier]: mockUser[userMainIdentifier],
+          [USER_MAIN_IDENTIFIER]: mockUser[USER_MAIN_IDENTIFIER],
           password: mockUser.password,
         });
 

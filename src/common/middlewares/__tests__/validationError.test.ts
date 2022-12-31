@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ValidationError } from "express-validation";
-import codes from "../../../config/codes";
+import ERROR_CODES from "../../../config/errorCodes";
 import validationError from "../validationError";
 
 const mockDebug = jest.fn();
@@ -43,10 +43,10 @@ describe("Given a validationError middleware", () => {
       {}
     );
 
-    test(`Then it should respond with a status of '${codes.error.badRequest}' and a error message`, () => {
+    test(`Then it should respond with a status of '${ERROR_CODES.error.badRequest}' and a error message`, () => {
       validationError(joiError, req, res as Response, next);
 
-      expect(res.status).toHaveBeenCalledWith(codes.error.badRequest);
+      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.error.badRequest);
       expect(res.json).toHaveBeenCalledWith({ error: "Bad Request" });
     });
 
