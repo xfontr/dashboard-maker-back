@@ -4,7 +4,7 @@ import {
   mockFullToken,
   mockProtoToken,
 } from "../../test-utils/mocks/mockToken";
-import generateToken from "./tokensControllers";
+import generateToken from "./tokens.controllers";
 import Token from "../../database/models/Token";
 import CodedError from "../../utils/CodedError/CodedError";
 import camelToRegular from "../../utils/camelToRegular/camelToRegular";

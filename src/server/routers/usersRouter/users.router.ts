@@ -5,7 +5,7 @@ import {
   getAllUsers,
   logInUser,
   registerUser,
-} from "../../../controllers/usersControllers/usersControllers";
+} from "../../../controllers/usersControllers/users.controllers";
 import Token from "../../../database/models/Token";
 import User from "../../../database/models/User";
 import checkToken from "../../../middlewares/checkToken/checkToken";

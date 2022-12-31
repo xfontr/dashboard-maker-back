@@ -7,7 +7,7 @@ import mockUser, { mockUserAdmin } from "../../test-utils/mocks/mockUser";
 import camelToRegular from "../../utils/camelToRegular/camelToRegular";
 import CodedError from "../../utils/CodedError/CodedError";
 import FullToken from "../../utils/Token/FullToken";
-import { getAllUsers, logInUser, registerUser } from "./usersControllers";
+import { getAllUsers, logInUser, registerUser } from "./users.controllers";
 import Token from "../../database/models/Token";
 import {
   mockFullToken,

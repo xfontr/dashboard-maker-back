@@ -2,12 +2,12 @@ import "../loadEnvironment";
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
-import usersRouter from "./routers/usersRouter/usersRouter";
+import usersRouter from "./routers/usersRouter/users.router";
 import endpoints from "../config/endpoints";
 import generalError from "../middlewares/generalError/generalError";
 import notFoundError from "../middlewares/notFoundError/notFoundError";
 import validationError from "../middlewares/validationError/validationError";
-import tokensRouter from "./routers/tokensRouter/tokensRouter";
+import tokensRouter from "./routers/tokensRouter/tokens.router";
 
 const app = express();
 

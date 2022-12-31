@@ -1,7 +1,7 @@
 import express from "express";
 import { userMainIdentifier } from "../../../config/database";
 import endpoints from "../../../config/endpoints";
-import generateToken from "../../../controllers/tokensControllers/tokensControllers";
+import generateToken from "../../../controllers/tokensControllers/tokens.controllers";
 import User from "../../../database/models/User";
 import authentication from "../../../middlewares/authentication/authentication";
 import findItem from "../../../middlewares/findItem/findItem";
