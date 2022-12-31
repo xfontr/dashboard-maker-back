@@ -1,8 +1,8 @@
+import app from "./app";
 import environment from "./config/environment";
-import connectDatabase from "./database";
-import app from "./server";
-import startServer from "./server/startServer";
-import setDebug from "./services/setDebug/setDebug";
+import startServer from "./server";
+import setDebug from "./common/services/setDebug";
+import connectDatabase from "./connectDatabase";
 
 const debug = setDebug("index");
 

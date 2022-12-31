@@ -1,4 +1,4 @@
-import IUser from "../database/types/IUser";
+import IUser from "../modules/user/users.types";
 
 export type UserData = Partial<{
   min: number;

@@ -1,5 +1,5 @@
-import { UserRoles } from "../database/types/IUser";
-import Actions from "../types/Actions";
+import { UserRoles } from "../modules/user/users.types";
+import Actions from "../common/types/Actions";
 
 export const roles: UserRoles[] = ["user", "admin", "superAdmin"];
 
