@@ -1,12 +1,12 @@
-import environment from "./config/environment";
-import connectDatabase from "./database";
-import app from "./server";
-import startServer from "./server/startServer";
-import setDebug from "./services/setDebug/setDebug";
+import app from "./app";
+import ENVIRONMENT from "./config/environment";
+import startServer from "./server";
+import setDebug from "./common/services/setDebug";
+import connectDatabase from "./connectDatabase";
 
 const debug = setDebug("index");
 
-const { port, database } = environment;
+const { port, database } = ENVIRONMENT;
 
 (async () => {
   try {

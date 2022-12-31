@@ -1,9 +1,9 @@
-import { UserRoles } from "../database/types/IUser";
-import Actions from "../types/Actions";
+import { UserRoles } from "../modules/user/users.types";
+import Actions from "../common/types/Actions";
 
 export const roles: UserRoles[] = ["user", "admin", "superAdmin"];
 
-const permissions: Record<UserRoles, Actions> = {
+const PERMISSIONS: Record<UserRoles, Actions> = {
   superAdmin: {
     createToken: 4,
   },
@@ -15,4 +15,4 @@ const permissions: Record<UserRoles, Actions> = {
   user: {},
 };
 
-export default permissions;
+export default PERMISSIONS;
