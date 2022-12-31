@@ -3,13 +3,16 @@ import bcrypt from "bcryptjs";
 import codes from "../../config/codes";
 import { userMainIdentifier } from "../../config/database";
 import User from "../../database/models/User";
-import mockUser from "../../test-utils/mocks/mockUser";
+import mockUser, { mockUserAdmin } from "../../test-utils/mocks/mockUser";
 import camelToRegular from "../../utils/camelToRegular/camelToRegular";
 import CodedError from "../../utils/CodedError/CodedError";
 import FullToken from "../../utils/Token/FullToken";
 import { getAllUsers, logInUser, registerUser } from "./usersControllers";
 import Token from "../../database/models/Token";
-import { mockProtoToken } from "../../test-utils/mocks/mockToken";
+import {
+  mockFullToken,
+  mockProtoToken,
+} from "../../test-utils/mocks/mockToken";
 import Errors from "../../services/Errors";
 import CustomRequest from "../../types/CustomRequest";
 
@@ -118,6 +121,23 @@ describe("Given a registerUser controller", () => {
         await registerUser(req, res as Response, next);
 
         expect(next).toHaveBeenCalledWith(badRequest);
+        expect(res.status).not.toHaveBeenCalled();
+      });
+    });
+
+    describe("And the token role doesn't match the user role", () => {
+      test("Then it should call next with an error", async () => {
+        const reqWithBadRole = {
+          body: mockUserAdmin,
+          token: { ...mockFullToken, role: "user" },
+        } as CustomRequest;
+
+        User.find = jest.fn().mockResolvedValue([]);
+        mockHashedPassword = "validPassword";
+
+        await registerUser(reqWithBadRole, res as Response, next);
+
+        expect(next).toHaveBeenCalledWith(Errors.users.invalidRole);
         expect(res.status).not.toHaveBeenCalled();
       });
     });
