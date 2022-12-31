@@ -24,7 +24,7 @@ describe("Given a CustomError function", () => {
         expectedError.publicMessage
       );
 
-      expect(customError).toStrictEqual(expectedError);
+      expect({ ...customError }).toStrictEqual(expectedError);
     });
   });
 
@@ -39,7 +39,7 @@ describe("Given a CustomError function", () => {
 
       const customError = CustomError(Error());
 
-      expect(customError).toStrictEqual(expectedError);
+      expect({ ...customError }).toStrictEqual(expectedError);
     });
   });
 });

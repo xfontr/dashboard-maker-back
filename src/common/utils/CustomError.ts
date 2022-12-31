@@ -8,16 +8,16 @@ export interface ICustomError extends Error {
 
 export default (
   (availableCodes: typeof codes.error) =>
-  (
-    { message }: Error,
-    code?: number,
-    publicMessage?: string
-  ): ICustomError => ({
-    name: code
-      ? `Error ${code}`
-      : `Error ${availableCodes.internalServerError}`,
-    code: code || availableCodes.internalServerError,
-    message: message || "Unknown error",
-    publicMessage: publicMessage || camelToRegular("internalServerError"),
-  })
+  ({ message }: Error, code?: number, publicMessage?: string): ICustomError =>
+    Object.setPrototypeOf(
+      {
+        name: code
+          ? `Error ${code}`
+          : `Error ${availableCodes.internalServerError}`,
+        code: code || availableCodes.internalServerError,
+        message: message || "Unknown error",
+        publicMessage: publicMessage || camelToRegular("internalServerError"),
+      },
+      Error()
+    )
 )(codes.error);

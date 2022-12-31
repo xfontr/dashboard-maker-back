@@ -19,7 +19,7 @@ describe("Given a CodedError function", () => {
 
       const codedError = CodedError("badRequest")(Error());
 
-      expect(codedError).toStrictEqual(expectedError);
+      expect({ ...codedError }).toStrictEqual(expectedError);
     });
   });
 
@@ -37,7 +37,7 @@ describe("Given a CodedError function", () => {
         expectedError.publicMessage
       )(Error(expectedError.message));
 
-      expect(codedError).toStrictEqual(expectedError);
+      expect({ ...codedError }).toStrictEqual(expectedError);
     });
   });
 });
