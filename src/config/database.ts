@@ -1,4 +1,4 @@
-import AcceptedIdentifiers from "../types/AcceptedIdentifiers";
+import AcceptedIdentifiers from "../common/types/AcceptedIdentifiers";
 
 /** Caution: avoid changing this variable, as it may break the database */
 export const userMainIdentifier: AcceptedIdentifiers = "email";

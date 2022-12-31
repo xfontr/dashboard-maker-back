@@ -1,9 +1,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
-import connectDB from "./database";
-import Token from "./database/models/Token";
-import User from "./database/models/User";
+import connectDatabase from "./connectDatabase";
+import Token from "./modules/token/Token.model";
+import User from "./modules/user/User.model";
 
 let mongoServer: MongoMemoryServer;
 
@@ -11,7 +11,7 @@ beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   const mongoUrl = mongoServer.getUri();
 
-  await connectDB(mongoUrl);
+  await connectDatabase(mongoUrl);
 });
 
 afterAll(async () => {
