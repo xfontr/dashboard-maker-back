@@ -6,7 +6,7 @@ import catchCodedError from "../../utils/catchCodedError/catchCodedError";
 import getBearerToken from "../../utils/getBearerToken/getBearerToken";
 import { MiddlewareOptions } from "../../types/requestOptions";
 import CustomRequest from "../../types/CustomRequest";
-import Errors from "../../services/Errors/Errors";
+import Errors from "../../services/Errors";
 
 const checkToken =
   (options: MiddlewareOptions = {}) =>

@@ -18,13 +18,14 @@ const generateToken = async (
 
   const token: IToken = req.body;
 
-  const tokenValue = (await tryThis(createHash, [token.code])) as string;
+  const tokenValue = await tryThis<string, string>(createHash, [token.code]);
   if (!tokenValue) return;
 
   const newToken = await TokensService.create(
     { ...token, code: tokenValue },
     { replace: true, mainIdentifier: userMainIdentifier }
   );
+
   if (!newToken) return;
 
   res.status(success.created).json({ token: "Token created successfully" });

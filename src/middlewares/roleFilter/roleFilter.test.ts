@@ -1,7 +1,7 @@
 import { NextFunction, Response } from "express";
 import { userMainIdentifier } from "../../config/database";
 import environment from "../../config/environment";
-import Errors from "../../services/Errors/Errors";
+import Errors from "../../services/Errors";
 import mockPayload from "../../test-utils/mocks/mockPayload";
 import mockUser, { mockUserSuperAdmin } from "../../test-utils/mocks/mockUser";
 import CustomRequest from "../../types/CustomRequest";

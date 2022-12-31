@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import environment from "../../config/environment";
-import Errors from "../../services/Errors/Errors";
+import Errors from "../../services/Errors";
 import CustomRequest from "../../types/CustomRequest";
 import setAllowedRoles from "../../utils/setAllowedRoles/setAllowedRoles";
 

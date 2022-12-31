@@ -10,7 +10,7 @@ import FullToken from "../../utils/Token/FullToken";
 import { getAllUsers, logInUser, registerUser } from "./usersControllers";
 import Token from "../../database/models/Token";
 import { mockProtoToken } from "../../test-utils/mocks/mockToken";
-import Errors from "../../services/Errors/Errors";
+import Errors from "../../services/Errors";
 import CustomRequest from "../../types/CustomRequest";
 
 let mockHashedPassword: string | Promise<never> = "validPassword";

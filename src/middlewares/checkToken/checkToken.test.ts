@@ -4,7 +4,7 @@ import { mockFullToken } from "../../test-utils/mocks/mockToken";
 import mockUser from "../../test-utils/mocks/mockUser";
 import checkToken from "./checkToken";
 import { userMainIdentifier } from "../../config/database";
-import Errors from "../../services/Errors/Errors";
+import Errors from "../../services/Errors";
 import CustomRequest from "../../types/CustomRequest";
 
 beforeEach(() => {
