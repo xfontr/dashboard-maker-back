@@ -12,7 +12,7 @@ import checkToken from "../../../middlewares/checkToken/checkToken";
 import findItem from "../../../middlewares/findItem/findItem";
 import logInSchema from "../../../schemas/logIn.schema";
 import registerSchema from "../../../schemas/register.schema";
-import Errors from "../../../services/Errors/Errors";
+import Errors from "../../../services/Errors";
 import validateRequest from "../../../services/validateRequest/validateRequest";
 
 const usersRouter = express.Router();

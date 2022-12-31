@@ -11,7 +11,7 @@ import LogInData from "../../types/LogInData";
 import { userMainIdentifier } from "../../config/database";
 import { ServeToken, ServeUser } from "../../database/servedModels";
 import CustomRequest from "../../types/CustomRequest";
-import Errors from "../../services/Errors/Errors";
+import Errors from "../../services/Errors";
 
 const { success } = codes;
 

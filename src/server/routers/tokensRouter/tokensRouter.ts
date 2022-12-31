@@ -7,7 +7,7 @@ import authentication from "../../../middlewares/authentication/authentication";
 import findItem from "../../../middlewares/findItem/findItem";
 import roleFilter from "../../../middlewares/roleFilter/roleFilter";
 import tokenSchema from "../../../schemas/token.schema";
-import Errors from "../../../services/Errors/Errors";
+import Errors from "../../../services/Errors";
 import validateRequest from "../../../services/validateRequest/validateRequest";
 
 const { root } = endpoints.tokens;
@@ -27,7 +27,7 @@ tokensRouter.post(
     storeAt: "authority",
   }),
 
-  roleFilter("admin"),
+  roleFilter,
   generateToken
 );
 

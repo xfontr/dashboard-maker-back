@@ -1,5 +1,5 @@
-import { userMainIdentifier } from "../../config/database";
-import CodedError from "../../utils/CodedError/CodedError";
+import { userMainIdentifier } from "../config/database";
+import CodedError from "../utils/CodedError/CodedError";
 
 const RegistrationTokens = () => ({
   emailAlreadyRegistered: CodedError(

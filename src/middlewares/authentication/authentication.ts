@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import { verifyToken } from "../../services/authentication/authentication";
-import Errors from "../../services/Errors/Errors";
+import Errors from "../../services/Errors";
 import CustomRequest from "../../types/CustomRequest";
 import Payload from "../../types/Payload";
 import catchCodedError from "../../utils/catchCodedError/catchCodedError";
