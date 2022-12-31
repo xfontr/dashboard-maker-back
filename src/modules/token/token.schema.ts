@@ -1,8 +1,8 @@
 import { Joi } from "express-validation";
-import userData from "../../config/userData";
+import INPUT_RULES from "../../config/inputRules";
 import IToken from "./token.types";
 
-const { email } = userData;
+const { email } = INPUT_RULES;
 
 const tokenSchema = {
   body: Joi.object<Partial<IToken>>({

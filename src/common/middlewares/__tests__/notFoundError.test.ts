@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import codes from "../../../config/codes";
+import ERROR_CODES from "../../../config/errorCodes";
 import notFoundError from "../notFoundError";
 
 describe("Given a notFoundError function", () => {
@@ -10,10 +10,10 @@ describe("Given a notFoundError function", () => {
       json: jest.fn(),
     } as Partial<Response>;
 
-    test(`Then it should respond with a status of '${codes.error.notFound}'`, () => {
+    test(`Then it should respond with a status of '${ERROR_CODES.error.notFound}'`, () => {
       notFoundError(req as Request, res as Response);
 
-      expect(res.status).toHaveBeenCalledWith(codes.error.notFound);
+      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.error.notFound);
     });
 
     test("Then it should send an error message", () => {

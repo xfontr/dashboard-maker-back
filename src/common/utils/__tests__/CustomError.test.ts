@@ -1,4 +1,4 @@
-import codes from "../../../config/codes";
+import ERROR_CODES from "../../../config/errorCodes";
 import camelToRegular from "../camelToRegular";
 import CustomError, { ICustomError } from "../CustomError";
 
@@ -24,22 +24,22 @@ describe("Given a CustomError function", () => {
         expectedError.publicMessage
       );
 
-      expect(customError).toStrictEqual(expectedError);
+      expect({ ...customError }).toStrictEqual(expectedError);
     });
   });
 
   describe("When instantiated without parameters", () => {
     test("Then it should return an error with the default message and name", () => {
       const expectedError: ICustomError = {
-        name: `Error ${codes.error.internalServerError}`,
-        code: codes.error.internalServerError,
+        name: `Error ${ERROR_CODES.error.internalServerError}`,
+        code: ERROR_CODES.error.internalServerError,
         message: "Unknown error",
         publicMessage: camelToRegular("internalServerError"),
       };
 
       const customError = CustomError(Error());
 
-      expect(customError).toStrictEqual(expectedError);
+      expect({ ...customError }).toStrictEqual(expectedError);
     });
   });
 });

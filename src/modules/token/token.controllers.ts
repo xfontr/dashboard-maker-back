@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import codes from "../../config/codes";
-import { userMainIdentifier } from "../../config/database";
+import ERROR_CODES from "../../config/errorCodes";
+import { USER_MAIN_IDENTIFIER } from "../../config/database";
 import { createHash } from "../../common/services/authentication";
 import catchCodedError from "../../common/utils/catchCodedError";
 import { ServeToken } from "../../common/services/ServeDatabase";
 import IToken from "./token.types";
 
-const { success } = codes;
+const { success } = ERROR_CODES;
 
 const generateToken = async (
   req: Request,
@@ -23,7 +23,7 @@ const generateToken = async (
 
   const newToken = await TokensService.create(
     { ...token, code: tokenValue },
-    { replace: true, mainIdentifier: userMainIdentifier }
+    { replace: true, mainIdentifier: USER_MAIN_IDENTIFIER }
   );
 
   if (!newToken) return;

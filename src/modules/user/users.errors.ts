@@ -1,17 +1,5 @@
-import { userMainIdentifier } from "../../config/database";
-import CodedError from "../utils/CodedError";
-
-const RegistrationTokens = () => ({
-  emailAlreadyRegistered: CodedError(
-    "conflict",
-    "The requested token can't be authorized"
-  )(Error("The token's email is already registered")),
-
-  unauthorizedToCreate: CodedError(
-    "unauthorized",
-    "The requested token can't be authorized"
-  )(Error("The person requesting the token is not allowed to")),
-});
+import CodedError from "../../common/utils/CodedError";
+import { USER_MAIN_IDENTIFIER } from "../../config/database";
 
 const AuthTokens = () => ({
   invalidAuthToken: CodedError(
@@ -45,25 +33,19 @@ const Register = () => ({
 const LogIn = () => ({
   logInUserDoesNotExist: CodedError(
     "notFound",
-    `Invalid ${userMainIdentifier} or password`
+    `Invalid ${USER_MAIN_IDENTIFIER} or password`
   )(Error("User doesn't exist")),
 
   invalidPassword: CodedError(
     "badRequest",
-    `Invalid ${userMainIdentifier} or password`
+    `Invalid ${USER_MAIN_IDENTIFIER} or password`
   )(Error("Invalid password")),
 });
 
-const Errors = (() => ({
-  tokens: {
-    ...RegistrationTokens(),
-  },
+const userErrors = {
+  ...AuthTokens(),
+  ...Register(),
+  ...LogIn(),
+};
 
-  users: {
-    ...AuthTokens(),
-    ...Register(),
-    ...LogIn(),
-  },
-}))();
-
-export default Errors;
+export default userErrors;

@@ -1,4 +1,4 @@
-import codes from "../../config/codes";
+import ERROR_CODES from "../../config/errorCodes";
 import camelToRegular from "./camelToRegular";
 
 export interface ICustomError extends Error {
@@ -7,17 +7,17 @@ export interface ICustomError extends Error {
 }
 
 export default (
-  (availableCodes: typeof codes.error) =>
-  (
-    { message }: Error,
-    code?: number,
-    publicMessage?: string
-  ): ICustomError => ({
-    name: code
-      ? `Error ${code}`
-      : `Error ${availableCodes.internalServerError}`,
-    code: code || availableCodes.internalServerError,
-    message: message || "Unknown error",
-    publicMessage: publicMessage || camelToRegular("internalServerError"),
-  })
-)(codes.error);
+  (availableCodes: typeof ERROR_CODES.error) =>
+  ({ message }: Error, code?: number, publicMessage?: string): ICustomError =>
+    Object.setPrototypeOf(
+      {
+        name: code
+          ? `Error ${code}`
+          : `Error ${availableCodes.internalServerError}`,
+        code: code || availableCodes.internalServerError,
+        message: message || "Unknown error",
+        publicMessage: publicMessage || camelToRegular("internalServerError"),
+      },
+      Error()
+    )
+)(ERROR_CODES.error);

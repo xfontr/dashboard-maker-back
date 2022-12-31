@@ -4,7 +4,7 @@ import cors from "cors";
 import morgan from "morgan";
 import usersRouter from "./modules/user/users.router";
 import tokensRouter from "./modules/token/token.router";
-import endpoints from "./config/endpoints";
+import ENDPOINTS from "./config/endpoints";
 import generalError from "./common/middlewares/generalError";
 import notFoundError from "./common/middlewares/notFoundError";
 import validationError from "./common/middlewares/validationError";
@@ -21,8 +21,8 @@ app.use(
   express.json()
 );
 
-app.use(endpoints.users.router, usersRouter);
-app.use(endpoints.tokens.router, tokensRouter);
+app.use(ENDPOINTS.users.router, usersRouter);
+app.use(ENDPOINTS.tokens.router, tokensRouter);
 
 app.use(notFoundError);
 app.use(validationError);

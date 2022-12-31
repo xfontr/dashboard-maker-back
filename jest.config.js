@@ -4,10 +4,12 @@ module.exports = {
   testEnvironment: "node",
   collectCoverageFrom: [
     "src/**/*.ts",
-    "!src/server/*.ts",
     "!src/index.ts",
+    "!src/app.ts",
+    "!src/connectDatabase.ts",
+    "!src/server.ts",
+    "!src/common/services/Database.ts",
     "!src/config/*.ts",
-    "!src/database/*.ts",
-    "!src/database/**/*.ts",
+    "!src/**/*.model.ts",
   ],
 };

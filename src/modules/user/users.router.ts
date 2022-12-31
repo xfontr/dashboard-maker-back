@@ -1,19 +1,18 @@
 import express from "express";
 import findItem from "../../common/middlewares/findItem";
-import Errors from "../../common/errors/Errors";
 import validateRequest from "../../common/services/validateRequest";
-import { isTokenRequired, userMainIdentifier } from "../../config/database";
-import endpoints from "../../config/endpoints";
+import { IS_TOKEN_REQUIRED, USER_MAIN_IDENTIFIER } from "../../config/database";
+import ENDPOINTS from "../../config/endpoints";
 import Token from "../token/Token.model";
 import checkToken from "./middlewares/checkToken";
 import User from "./User.model";
 import { logInSchema, registerSchema } from "./users.schema";
 import { getAllUsers, logInUser, registerUser } from "./users.controllers";
+import userErrors from "./users.errors";
 
 const usersRouter = express.Router();
 
-const { root, logIn } = endpoints.users;
-const { users } = Errors;
+const { root, logIn } = ENDPOINTS.users;
 
 usersRouter.get(root, getAllUsers);
 
@@ -22,12 +21,12 @@ usersRouter.get(root, getAllUsers);
 usersRouter.post(
   root,
   validateRequest(registerSchema),
-  findItem(Token, userMainIdentifier, users.notFoundToken, {
+  findItem(Token, USER_MAIN_IDENTIFIER, userErrors.notFoundToken, {
     storeAt: "token",
-    skip: !isTokenRequired,
+    skip: !IS_TOKEN_REQUIRED,
   }),
-  findItem(User, userMainIdentifier, users.invalidSignUp),
-  checkToken({ skip: !isTokenRequired }),
+  findItem(User, USER_MAIN_IDENTIFIER, userErrors.invalidSignUp),
+  checkToken({ skip: !IS_TOKEN_REQUIRED }),
   registerUser
 );
 
@@ -36,7 +35,7 @@ usersRouter.post(
 usersRouter.post(
   logIn,
   validateRequest(logInSchema),
-  findItem(User, userMainIdentifier, users.logInUserDoesNotExist, {
+  findItem(User, USER_MAIN_IDENTIFIER, userErrors.logInUserDoesNotExist, {
     storeAt: "user",
   }),
   logInUser

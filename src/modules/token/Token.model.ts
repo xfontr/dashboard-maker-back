@@ -1,9 +1,9 @@
 import { model, Schema } from "mongoose";
-import { userMainIdentifier } from "../../config/database";
+import { USER_MAIN_IDENTIFIER } from "../../config/database";
 import IToken from "./token.types";
 
 const tokenSchema = new Schema<IToken>({
-  [userMainIdentifier]: {
+  [USER_MAIN_IDENTIFIER]: {
     type: String,
     required: true,
   },

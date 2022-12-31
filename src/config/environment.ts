@@ -2,7 +2,7 @@ import "../loadEnvironment";
 
 const { env } = process;
 
-const environment = {
+const ENVIRONMENT = {
   debug: env.DEBUG ?? "*",
   port: (env.PORT as unknown as number) ?? 4_000,
   database: env.MONGO_DB,
@@ -13,4 +13,4 @@ const environment = {
   defaultPowerPassword: env.DEFAULT_POWER_PASSWORD,
 };
 
-export default environment;
+export default ENVIRONMENT;

@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import environment from "../../config/environment";
+import ENVIRONMENT from "../../config/environment";
 import Payload from "../types/Payload";
 
 export const createHash = (password: string): Promise<string> => {
@@ -14,7 +14,7 @@ export const compareHash = (
 ): Promise<boolean> => bcrypt.compare(dataToCompare, hash);
 
 export const createToken = (payload: Payload): string =>
-  jwt.sign(payload, environment.authSecret);
+  jwt.sign(payload, ENVIRONMENT.authSecret);
 
 export const verifyToken = (token: string): string | JwtPayload =>
-  jwt.verify(token, environment.authSecret);
+  jwt.verify(token, ENVIRONMENT.authSecret);

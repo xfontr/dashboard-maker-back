@@ -1,11 +1,11 @@
-import codes from "../../config/codes";
+import ERROR_CODES from "../../config/errorCodes";
 import camelToRegular from "./camelToRegular";
 import CustomError, { ICustomError } from "./CustomError";
 
-export type Codes = keyof typeof codes.error;
+export type Codes = keyof typeof ERROR_CODES.error;
 
 export default (
-  (availableCodes: typeof codes.error) =>
+  (availableCodes: typeof ERROR_CODES.error) =>
   (code: Codes, publicMessage?: string) =>
   (error: Error): ICustomError => {
     const newError = error;
@@ -20,4 +20,4 @@ export default (
         "Something went wrong. Please contact the administrator to address the issue"
     );
   }
-)(codes.error);
+)(ERROR_CODES.error);
