@@ -17,7 +17,10 @@ jobs:
         run: npm install
       - name: Run test coverage
         run: npm run test:coverage
+        env:
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          DEFAULT_POWER_TOKEN: ${{ secrets.DEFAULT_POWER_TOKEN }}
+          DEFAULT_POWER_EMAIL: ${{ secrets.DEFAULT_POWER_EMAIL }}
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master

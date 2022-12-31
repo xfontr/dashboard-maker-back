@@ -7,6 +7,7 @@ import endpoints from "../config/endpoints";
 import generalError from "../middlewares/generalError/generalError";
 import notFoundError from "../middlewares/notFoundError/notFoundError";
 import validationError from "../middlewares/validationError/validationError";
+import tokensRouter from "./routers/tokensRouter/tokensRouter";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(
 );
 
 app.use(endpoints.users.router, usersRouter);
+app.use(endpoints.tokens.router, tokensRouter);
 
 app.use(validationError);
 app.use(notFoundError);

@@ -47,7 +47,7 @@ describe("Given a ServeDatabase factory function", () => {
       });
     });
 
-    describe("Then it should return a getByAttrbiute method that should", () => {
+    describe("Then it should return a getByAttribute method that should", () => {
       test("call the find method with specific parameters and return its response", async () => {
         const response = { users: ["Test"] };
         const model = {
@@ -103,17 +103,60 @@ describe("Given a ServeDatabase factory function", () => {
     });
 
     describe("Then it should return a create method that should", () => {
-      test("call the method to create a document", async () => {
+      test("call the method to create a document and return it", async () => {
         const user = { name: "Test" } as IUser;
         const model = {
+          find: jest.fn().mockResolvedValue({ ...user, id: "id" }),
+          deleteOne: jest.fn(),
           create: jest.fn().mockResolvedValue({ ...user, id: "id" }),
         } as unknown as Partial<Model<IUser>>;
 
         const TestServe = ServeDatabase(model as Model<IUser>)(next);
 
-        await TestServe.create(user);
+        const response = await TestServe.create(user);
 
         expect(model.create).toHaveBeenCalled();
+        expect(response).toStrictEqual({ ...user, id: "id" });
+
+        expect(model.deleteOne).not.toHaveBeenCalled();
+        expect(model.find).not.toHaveBeenCalled();
+      });
+
+      test("call the method to create a document and replace the existent document if requested", async () => {
+        const user = { name: "Test" } as IUser;
+        const model = {
+          find: jest.fn().mockResolvedValue({ ...user, id: "id" }),
+          deleteOne: jest.fn(),
+          create: jest.fn().mockResolvedValue({ ...user, id: "id" }),
+        } as unknown as Partial<Model<IUser>>;
+
+        const TestServe = ServeDatabase(model as Model<IUser>)(next);
+
+        await TestServe.create(user, { replace: true, mainIdentifier: "id" });
+
+        expect(model.find).toHaveBeenCalled();
+        expect(model.deleteOne).toHaveBeenCalled();
+        expect(model.create).toHaveBeenCalled();
+      });
+    });
+
+    describe("Then it should return a deleteByAttribute method that should", () => {
+      test("call the delete method with specific parameters and return its response", async () => {
+        const model = {
+          deleteMany: jest.fn().mockResolvedValue("response"),
+        } as unknown as Partial<Model<IUser>>;
+
+        const attribute = "email";
+        const value = "test@test.com";
+
+        const TestServe = ServeDatabase(model as Model<IUser>)(next);
+
+        const response = await TestServe.deleteByAttribute(attribute, value);
+
+        expect(model.deleteMany).toHaveBeenCalledWith({
+          [attribute]: value,
+        });
+        expect(response).toBe("response");
       });
     });
   });

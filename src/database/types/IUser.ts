@@ -1,4 +1,4 @@
-export type UserRoles = "user" | "admin";
+export type UserRoles = "user" | "admin" | "superAdmin";
 
 export type UserRequiredData = {
   id?: string;
@@ -23,7 +23,6 @@ export type UserAddress = Partial<{
   addressExtraInfo: string;
 }>;
 
-export default interface IUser
-  extends UserRequiredData,
-    UserName,
-    UserAddress {}
+interface IUser extends UserRequiredData, UserName, UserAddress {}
+
+export default IUser;

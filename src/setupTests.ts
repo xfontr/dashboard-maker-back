@@ -2,6 +2,7 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import connectDB from "./database";
+import Token from "./database/models/Token";
 import User from "./database/models/User";
 
 let mongoServer: MongoMemoryServer;
@@ -20,4 +21,5 @@ afterAll(async () => {
 
 afterEach(async () => {
   await User.deleteMany();
+  await Token.deleteMany();
 });

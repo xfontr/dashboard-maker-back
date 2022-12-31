@@ -17,8 +17,8 @@ jobs:
           files: ".editorconfig"
           allow_failure: true
 
-      - name: EditorConfig validation
-        uses: snow-actions/eclint@v1.0.1
+      # - name: EditorConfig validation
+      #   uses: snow-actions/eclint@v1.0.1
 
       - name: Ensure node_modules is ignored by Git
         uses: dkershner6/gitignore-parser@v1
