@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { USER_MAIN_IDENTIFIER } from "../../../config/database";
+import { MAIN_IDENTIFIER } from "../../../config/database";
 import ENVIRONMENT from "../../../config/environment";
 import mockPayload from "../../test-utils/mocks/mockPayload";
 import mockUser, { mockUserSuperAdmin } from "../../test-utils/mocks/mockUser";
@@ -48,7 +48,7 @@ describe("Given a roleFilter function", () => {
       const req = {
         payload: {
           ...mockPayload,
-          [USER_MAIN_IDENTIFIER]: ENVIRONMENT.defaultPowerEmail,
+          [MAIN_IDENTIFIER]: ENVIRONMENT.defaultPowerEmail,
         },
         body: mockUser,
       } as CustomRequest;

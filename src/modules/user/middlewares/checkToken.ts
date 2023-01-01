@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { USER_MAIN_IDENTIFIER } from "../../../config/database";
+import { MAIN_IDENTIFIER } from "../../../config/database";
 import { compareHash } from "../../../common/services/authentication";
 import AcceptedIdentifiers from "../../../common/types/AcceptedIdentifiers";
 import catchCodedError from "../../../common/utils/catchCodedError";
@@ -19,7 +19,7 @@ const checkToken =
     const tryThis = catchCodedError(next);
     const code = getBearerToken(req.headers.authorization);
 
-    const userIdentifier: AcceptedIdentifiers = req.body[USER_MAIN_IDENTIFIER];
+    const userIdentifier: AcceptedIdentifiers = req.body[MAIN_IDENTIFIER];
     const dbToken = req.token;
 
     if (!dbToken.isCodeRequired) {
@@ -27,7 +27,7 @@ const checkToken =
       return;
     }
 
-    if (!code || dbToken[USER_MAIN_IDENTIFIER] !== userIdentifier) {
+    if (!code || dbToken[MAIN_IDENTIFIER] !== userIdentifier) {
       next(userErrors.invalidToken);
       return;
     }

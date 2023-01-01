@@ -1,5 +1,5 @@
 import CodedError from "../../common/utils/CodedError";
-import { USER_MAIN_IDENTIFIER } from "../../config/database";
+import { MAIN_IDENTIFIER } from "../../config/database";
 
 const AuthTokens = () => ({
   invalidAuthToken: CodedError(
@@ -33,12 +33,12 @@ const Register = () => ({
 const LogIn = () => ({
   logInUserDoesNotExist: CodedError(
     "notFound",
-    `Invalid ${USER_MAIN_IDENTIFIER} or password`
+    `Invalid ${MAIN_IDENTIFIER} or password`
   )(Error("User doesn't exist")),
 
   invalidPassword: CodedError(
     "badRequest",
-    `Invalid ${USER_MAIN_IDENTIFIER} or password`
+    `Invalid ${MAIN_IDENTIFIER} or password`
   )(Error("Invalid password")),
 });
 

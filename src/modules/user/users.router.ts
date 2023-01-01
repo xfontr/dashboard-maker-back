@@ -1,7 +1,7 @@
 import express from "express";
 import findItem from "../../common/middlewares/findItem";
 import validateRequest from "../../common/services/validateRequest";
-import { IS_TOKEN_REQUIRED, USER_MAIN_IDENTIFIER } from "../../config/database";
+import { IS_TOKEN_REQUIRED, MAIN_IDENTIFIER } from "../../config/database";
 import ENDPOINTS from "../../config/endpoints";
 import Token from "../token/Token.model";
 import checkToken from "./middlewares/checkToken";
@@ -21,11 +21,11 @@ usersRouter.get(root, getAllUsers);
 usersRouter.post(
   root,
   validateRequest(registerSchema),
-  findItem(Token, USER_MAIN_IDENTIFIER, userErrors.notFoundToken, {
+  findItem(Token, MAIN_IDENTIFIER, userErrors.notFoundToken, {
     storeAt: "token",
     skip: !IS_TOKEN_REQUIRED,
   }),
-  findItem(User, USER_MAIN_IDENTIFIER, userErrors.invalidSignUp),
+  findItem(User, MAIN_IDENTIFIER, userErrors.invalidSignUp),
   checkToken({ skip: !IS_TOKEN_REQUIRED }),
   registerUser
 );
@@ -35,7 +35,7 @@ usersRouter.post(
 usersRouter.post(
   logIn,
   validateRequest(logInSchema),
-  findItem(User, USER_MAIN_IDENTIFIER, userErrors.logInUserDoesNotExist, {
+  findItem(User, MAIN_IDENTIFIER, userErrors.logInUserDoesNotExist, {
     storeAt: "user",
   }),
   logInUser

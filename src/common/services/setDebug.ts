@@ -14,7 +14,7 @@ const importDebugAndSetBaseLocation = (
 const baseSetDebug =
   (debug: Debug, baseLocation: string) =>
   (currentLocation: string): Debugger =>
-    debug(`${baseLocation.slice(0, -2)}:${currentLocation}`);
+    debug(`${baseLocation.slice(0, -+`${":*".length}`)}:${currentLocation}`);
 
 export const setDebugWithoutColors = importDebugAndSetBaseLocation(
   DebugFunction,

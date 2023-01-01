@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import ERROR_CODES from "../../../config/errorCodes";
-import { USER_MAIN_IDENTIFIER } from "../../../config/database";
+import { MAIN_IDENTIFIER } from "../../../config/database";
 import User from "../User.model";
 import camelToRegular from "../../../common/utils/camelToRegular";
 import CodedError from "../../../common/utils/CodedError";
@@ -150,7 +150,7 @@ describe("Given a logInUser controller", () => {
   describe("When called with a request with user log in data, a response and a next function", () => {
     const req = {
       body: {
-        [USER_MAIN_IDENTIFIER]: mockUser[USER_MAIN_IDENTIFIER],
+        [MAIN_IDENTIFIER]: mockUser[MAIN_IDENTIFIER],
         password: mockUser.password,
       },
       user: mockUser,
