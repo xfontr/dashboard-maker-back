@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import checkToken from "../checkToken";
-import { USER_MAIN_IDENTIFIER } from "../../../../config/database";
+import { MAIN_IDENTIFIER } from "../../../../config/database";
 import CustomRequest from "../../../../common/types/CustomRequest";
 import mockUser from "../../../../common/test-utils/mocks/mockUser";
 import { mockFullToken } from "../../../../common/test-utils/mocks/mockToken";
@@ -52,7 +52,7 @@ describe("Given a checkToken middleware", () => {
           ...req,
           body: {
             ...mockUser,
-            [USER_MAIN_IDENTIFIER]: "randomStuff",
+            [MAIN_IDENTIFIER]: "randomStuff",
             item: [mockFullToken],
           },
         } as Request;
@@ -95,7 +95,7 @@ describe("Given a checkToken middleware", () => {
           ...req,
           body: {
             ...mockUser,
-            [USER_MAIN_IDENTIFIER]: "randomStuff",
+            [MAIN_IDENTIFIER]: "randomStuff",
           },
           token: { ...mockFullToken, isCodeRequired: false },
         } as CustomRequest;

@@ -6,6 +6,19 @@ import { FindOptions } from "../types/requestOptions";
 import { ICustomError } from "../utils/CustomError";
 import requestStores from "../utils/requestStores";
 
+/**
+ * Middleware that finds an item matching the specified attribute, by using the
+ * main identifier
+ *
+ * @param error This param sets the error that will be sent if something goes
+ *   wrong while finding the object.
+ *
+ *   If the error passed is of conflict type {409} or not found {404}, it will
+ *   throw an error if it finds the item (when conflict) or if it doesn't (when
+ *   not found)
+ * @param options Object that allows to skip this middleware if a condition is
+ *   met, and to store the findings in the request header at the desired place
+ */
 const findItem =
   <T>(
     model: Model<T>,

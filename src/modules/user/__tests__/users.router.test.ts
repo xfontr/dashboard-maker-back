@@ -2,7 +2,7 @@ import "../../../setupTests";
 import request from "supertest";
 import ERROR_CODES from "../../../config/errorCodes";
 import ENDPOINTS from "../../../config/endpoints";
-import { USER_MAIN_IDENTIFIER } from "../../../config/database";
+import { MAIN_IDENTIFIER } from "../../../config/database";
 import ENVIRONMENT from "../../../config/environment";
 import app from "../../../app";
 import { mockProtoToken } from "../../../common/test-utils/mocks/mockToken";
@@ -89,7 +89,7 @@ describe(`Given a ${users.logIn} route`, () => {
       const res = await request(app)
         .post(`${users.router}/${users.logIn}`)
         .send({
-          [USER_MAIN_IDENTIFIER]: mockUser[USER_MAIN_IDENTIFIER],
+          [MAIN_IDENTIFIER]: mockUser[MAIN_IDENTIFIER],
           password: mockUser.password,
         });
 

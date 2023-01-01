@@ -5,7 +5,7 @@ import { compareHash, createHash } from "../../common/services/authentication";
 import catchCodedError from "../../common/utils/catchCodedError";
 import FullToken from "./utils/FullToken/FullToken";
 import LogInData from "../../common/types/LogInData";
-import { USER_MAIN_IDENTIFIER } from "../../config/database";
+import { MAIN_IDENTIFIER } from "../../config/database";
 import CustomRequest from "../../common/types/CustomRequest";
 import { ServeToken, ServeUser } from "../../common/services/ServeDatabase";
 import userErrors from "./users.errors";
@@ -47,8 +47,8 @@ export const registerUser = async (
 
   if (req.token) {
     await TokensService.deleteByAttribute(
-      USER_MAIN_IDENTIFIER,
-      user[USER_MAIN_IDENTIFIER]
+      MAIN_IDENTIFIER,
+      user[MAIN_IDENTIFIER]
     );
   }
 
