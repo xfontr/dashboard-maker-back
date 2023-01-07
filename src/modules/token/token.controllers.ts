@@ -5,10 +5,11 @@ import { createHash } from "../../common/services/authentication";
 import catchCodedError from "../../common/utils/catchCodedError";
 import { ServeToken } from "../../common/services/ServeDatabase";
 import IToken from "./token.types";
+import CustomRequest from "../../common/types/CustomRequest";
 
 const { success } = ERROR_CODES;
 
-const generateToken = async (
+export const generateToken = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -31,4 +32,6 @@ const generateToken = async (
   res.status(success.created).json({ token: "Token created successfully" });
 };
 
-export default generateToken;
+export const verifyToken = async (req: CustomRequest, res: Response) => {
+  res.status(success.ok).json({ token: "The token requested is valid" });
+};

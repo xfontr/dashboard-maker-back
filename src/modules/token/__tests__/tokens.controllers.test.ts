@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import ERROR_CODES from "../../../config/errorCodes";
-import generateToken from "../token.controllers";
+import { generateToken } from "../token.controllers";
 import Token from "../Token.model";
 import CodedError from "../../../common/utils/CodedError";
 import camelToRegular from "../../../common/utils/camelToRegular";

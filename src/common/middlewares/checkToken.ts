@@ -1,12 +1,12 @@
 import { NextFunction, Response } from "express";
-import { MAIN_IDENTIFIER } from "../../../config/database";
-import { compareHash } from "../../../common/services/authentication";
-import AcceptedIdentifiers from "../../../common/types/AcceptedIdentifiers";
-import catchCodedError from "../../../common/utils/catchCodedError";
-import getBearerToken from "../../../common/utils/getBearerToken";
-import { MiddlewareOptions } from "../../../common/types/requestOptions";
-import CustomRequest from "../../../common/types/CustomRequest";
-import userErrors from "../users.errors";
+import { MAIN_IDENTIFIER } from "../../config/database";
+import { compareHash } from "../services/authentication";
+import AcceptedIdentifiers from "../types/AcceptedIdentifiers";
+import catchCodedError from "../utils/catchCodedError";
+import getBearerToken from "../utils/getBearerToken";
+import { MiddlewareOptions } from "../types/requestOptions";
+import CustomRequest from "../types/CustomRequest";
+import userErrors from "../../modules/user/users.errors";
 
 const checkToken =
   (options: MiddlewareOptions = {}) =>
