@@ -96,3 +96,54 @@ describe(`Given a ${tokens.router} route`, () => {
     });
   });
 });
+
+describe(`Given a ${tokens.verify} route`, () => {
+  describe("When requested with POST method and valid token data", () => {
+    test(`Then it should respond with a status of ${success.ok}`, async () => {
+      await request(app)
+        .post(`${tokens.router}`)
+        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
+        .send(mockProtoToken);
+
+      const res = await request(app)
+        .post(`${tokens.router}${tokens.verify}`)
+        .set("Authorization", `Bearer ${mockProtoToken.code}`)
+        .send({
+          [MAIN_IDENTIFIER]: mockProtoToken[MAIN_IDENTIFIER],
+        });
+
+      expect(res.statusCode).toBe(success.ok);
+    });
+  });
+
+  describe("When requested with POST method and invalid token data", () => {
+    test(`Then it should respond with a status of ${error.unauthorized}`, async () => {
+      await request(app)
+        .post(`${tokens.router}`)
+        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
+        .send(mockProtoToken);
+
+      const res = await request(app)
+        .post(`${tokens.router}${tokens.verify}`)
+        .set("Authorization", `Bearer `)
+        .send({
+          [MAIN_IDENTIFIER]: mockProtoToken[MAIN_IDENTIFIER],
+        });
+
+      expect(res.statusCode).toBe(error.unauthorized);
+    });
+  });
+
+  describe("When requested with POST method and an non-existent token", () => {
+    test(`Then it should respond with a status of ${error.notFound}`, async () => {
+      const res = await request(app)
+        .post(`${tokens.router}${tokens.verify}`)
+        .set("Authorization", `Bearer ${mockProtoToken.code}`)
+        .send({
+          [MAIN_IDENTIFIER]: mockProtoToken[MAIN_IDENTIFIER],
+        });
+
+      expect(res.statusCode).toBe(error.notFound);
+    });
+  });
+});
