@@ -12,8 +12,16 @@ const RegistrationTokens = () => ({
   )(Error("The person requesting the token is not allowed to")),
 });
 
+const VerifyToken = () => ({
+  tokenNotFound: CodedError(
+    "notFound",
+    "The token provided seems invalid. Please, contact administration if the error persists"
+  )(Error("The token doesn't exist")),
+});
+
 const tokenErrors = {
   ...RegistrationTokens(),
+  ...VerifyToken(),
 };
 
 export default tokenErrors;

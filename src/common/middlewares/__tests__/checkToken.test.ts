@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import checkToken from "../checkToken";
-import { MAIN_IDENTIFIER } from "../../../../config/database";
-import CustomRequest from "../../../../common/types/CustomRequest";
-import mockUser from "../../../../common/test-utils/mocks/mockUser";
-import { mockFullToken } from "../../../../common/test-utils/mocks/mockToken";
-import userErrors from "../../users.errors";
+import { MAIN_IDENTIFIER } from "../../../config/database";
+import CustomRequest from "../../types/CustomRequest";
+import mockUser from "../../test-utils/mocks/mockUser";
+import { mockFullToken } from "../../test-utils/mocks/mockToken";
+import userErrors from "../../../modules/user/users.errors";
 
 beforeEach(() => {
   jest.clearAllMocks();

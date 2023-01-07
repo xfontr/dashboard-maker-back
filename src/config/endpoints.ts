@@ -7,6 +7,7 @@ const ENDPOINTS = {
   tokens: {
     router: "/tokens",
     root: "/",
+    verify: "/verify",
   },
 };
 

@@ -4,7 +4,7 @@ import validateRequest from "../../common/services/validateRequest";
 import { IS_TOKEN_REQUIRED, MAIN_IDENTIFIER } from "../../config/database";
 import ENDPOINTS from "../../config/endpoints";
 import Token from "../token/Token.model";
-import checkToken from "./middlewares/checkToken";
+import checkToken from "../../common/middlewares/checkToken";
 import User from "./User.model";
 import { logInSchema, registerSchema } from "./users.schema";
 import { getAllUsers, logInUser, registerUser } from "./users.controllers";
