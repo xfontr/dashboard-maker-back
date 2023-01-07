@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import ERROR_CODES from "../../../config/errorCodes";
-import { generateToken } from "../token.controllers";
+import { generateToken, verifyToken } from "../token.controllers";
 import Token from "../Token.model";
 import CodedError from "../../../common/utils/CodedError";
 import camelToRegular from "../../../common/utils/camelToRegular";
@@ -77,6 +77,27 @@ describe("Given a generateToken controller", () => {
         expect(next).toHaveBeenCalledTimes(1);
         expect(res.status).not.toHaveBeenCalled();
       });
+    });
+  });
+});
+
+describe("Given a verifyToken controller", () => {
+  describe("When called with a request, a response and a next function", () => {
+    const req = {
+      body: mockProtoToken,
+    } as Request;
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as Partial<Response>;
+
+    test(`Then it should respond with a status of ${ERROR_CODES.success.ok} and a success message`, async () => {
+      const successMessage = { token: "The token requested is valid" };
+
+      await verifyToken(req, res as Response);
+
+      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
+      expect(res.json).toHaveBeenCalledWith(successMessage);
     });
   });
 });
