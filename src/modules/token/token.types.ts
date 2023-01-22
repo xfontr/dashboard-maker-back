@@ -1,7 +1,8 @@
+import { MAIN_IDENTIFIER } from "../../config/database";
 import { UserRoles } from "../user/users.types";
 
 type IToken = {
-  email: string;
+  [MAIN_IDENTIFIER]: string;
   code: string;
   creationDate: Date;
   role: UserRoles;

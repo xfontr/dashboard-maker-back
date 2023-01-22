@@ -33,5 +33,5 @@ export const generateToken = async (
 };
 
 export const verifyToken = async (req: CustomRequest, res: Response) => {
-  res.status(success.ok).json({ token: "The token requested is valid" });
+  res.status(success.ok).json({ token: req.token });
 };

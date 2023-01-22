@@ -13,6 +13,7 @@ export const tokenSchema = {
       .email({ minDomainSegments: 2 })
       .required(),
     role: Joi.string().required(),
+    isCodeRequired: Joi.boolean(),
   }),
 };
 
