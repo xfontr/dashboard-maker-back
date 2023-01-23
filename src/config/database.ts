@@ -11,3 +11,8 @@ export const MAIN_IDENTIFIER: AcceptedIdentifiers = "email";
  * variable once the app is up could lead to unexpected behavior
  */
 export const IS_TOKEN_REQUIRED = true;
+
+export const AUTH_TOKEN_EXPIRATION = {
+  token: "800s",
+  refreshToken: "1d",
+};

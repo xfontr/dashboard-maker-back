@@ -22,6 +22,11 @@ const requiredData: Omit<Record<keyof UserRequiredData, object>, "id"> = {
     required: true,
     default: "user" as UserRoles,
   },
+
+  authToken: {
+    type: String,
+    required: false,
+  },
 };
 
 const userNameData: Record<keyof UserName, object> = {

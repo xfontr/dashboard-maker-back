@@ -3,6 +3,7 @@ import { Model } from "mongoose";
 import ServeDatabase from "../services/ServeDatabase/ServeDatabase";
 import CustomRequest from "../types/CustomRequest";
 import { FindOptions } from "../types/requestOptions";
+import CodedError from "../utils/CodedError";
 import { ICustomError } from "../utils/CustomError";
 import requestStores from "../utils/requestStores";
 
@@ -35,6 +36,17 @@ const findItem =
     const ItemService = ServeDatabase<T>(model)(next);
 
     const value = req[options.getValueFrom || "body"][attribute];
+
+    // TODO: Test test this new condition
+
+    if (!value) {
+      next(
+        CodedError(
+          "badRequest",
+          "Invalid request"
+        )(Error(`The attribute ${attribute as string} is not defined`))
+      );
+    }
 
     const item = await ItemService.getByAttribute(attribute, value, error);
 

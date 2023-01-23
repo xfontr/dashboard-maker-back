@@ -1,7 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import ERROR_CODES from "../../config/errorCodes";
 import IUser from "./users.types";
-import { compareHash, createHash } from "../../common/services/authentication";
+import {
+  compareHash,
+  createHash,
+  createRefreshToken,
+  verifyRefreshToken,
+} from "../../common/services/authentication";
 import catchCodedError from "../../common/utils/catchCodedError";
 import FullToken from "./utils/FullToken/FullToken";
 import LogInData from "../../common/types/LogInData";
@@ -57,11 +62,16 @@ export const registerUser = async (
     .json({ register: "User registered successfully" });
 };
 
+// TODO: Add a refresh token also, and set maximum times for both tokens
+// TODO: Add the refresh token to the user model
+// TODO: Send the token in the cookies
+
 export const logInUser = async (
   req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
+  const UsersService = ServeUser(next);
   const tryThis = catchCodedError(next);
 
   const logInData: LogInData = req.body;
@@ -77,5 +87,37 @@ export const logInUser = async (
     return;
   }
 
-  res.status(success.ok).json(FullToken(dbUser));
+  const authToken = FullToken(dbUser);
+  const refreshAuthToken = createRefreshToken({
+    id: dbUser.id,
+    [MAIN_IDENTIFIER]: dbUser[MAIN_IDENTIFIER],
+  });
+
+  await UsersService.updateById(dbUser.id!, { authToken: refreshAuthToken });
+
+  res.cookie("authToken", refreshAuthToken, {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+
+  res.status(success.ok).json(authToken);
+};
+
+// TODO: Test this and the router
+
+export const refreshToken = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const verifiedToken = verifyRefreshToken(req.cookies.authToken);
+
+  if (!verifiedToken) {
+    next(userErrors.forbiddenToken);
+    return;
+  }
+
+  res.status(success.created).json(FullToken(req.user));
 };

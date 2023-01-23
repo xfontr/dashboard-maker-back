@@ -15,5 +15,5 @@ export interface FindOptions extends MiddlewareOptions {
    * The request attribute that holds the value that will be used to find the
    * item
    */
-  getValueFrom?: Stores | "body";
+  getValueFrom?: Stores | "cookies" | "body";
 }
