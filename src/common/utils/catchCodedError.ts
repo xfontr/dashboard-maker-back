@@ -5,7 +5,7 @@ import CodedError, { Codes } from "./CodedError";
 export default (next: NextFunction) =>
   async <T, R>(
     callback: Function,
-    args: (object | object[] | T | T[])[],
+    args: (object | object[] | T | T[] | string)[],
     errorType: Codes = "internalServerError"
   ): Promise<R | void> => {
     try {
