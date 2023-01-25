@@ -3,6 +3,7 @@ const ENDPOINTS = {
     router: "/users",
     root: "/",
     logIn: "/log-in",
+    logOut: "/log-out",
     refresh: "/refresh",
   },
   tokens: {
