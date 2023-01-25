@@ -6,7 +6,11 @@ import {
   compareHash,
   createHash,
   verifyToken,
+  createRefreshToken,
+  verifyRefreshToken,
 } from "../authentication";
+import ENVIRONMENT from "../../../config/environment";
+import { AUTH_TOKEN_EXPIRATION } from "../../../config/database";
 
 const mockJwtPayload = { id: "", iat: 1512341253 };
 
@@ -14,9 +18,12 @@ const mockSign = jest.fn().mockReturnValue("#");
 const mockVerify = jest.fn().mockReturnValue(mockJwtPayload);
 
 jest.mock("jsonwebtoken", () => ({
-  sign: (payload: Payload) => mockSign(payload),
-  verify: (token: string) => mockVerify(token),
+  sign: (payload: Payload, secret: string, options: object) =>
+    mockSign(payload, secret, options),
+  verify: (token: string, secret: string) => mockVerify(token, secret),
 }));
+
+beforeEach(() => jest.clearAllMocks());
 
 describe("Given a hashCreate function", () => {
   describe("When instantiated with a password as an argument", () => {
@@ -44,7 +51,31 @@ describe("Given a createToken function", () => {
 
       const returnedValue = createToken(mockToken);
 
-      expect(mockSign).toHaveBeenCalledWith(mockToken);
+      expect(mockSign).toHaveBeenCalledWith(mockToken, ENVIRONMENT.authSecret, {
+        expiresIn: AUTH_TOKEN_EXPIRATION.token,
+      });
+      expect(returnedValue).toBe("#");
+    });
+  });
+});
+
+describe("Given a createRefreshToken function", () => {
+  describe("When called with a payload as an argument", () => {
+    test("Then it should call jwt and return its returned value", () => {
+      const mockToken: Payload = {
+        id: "1234",
+        email: "aaa",
+      };
+
+      const returnedValue = createRefreshToken(mockToken);
+
+      expect(mockSign).toHaveBeenCalledWith(
+        mockToken,
+        ENVIRONMENT.refreshAuthSecret,
+        {
+          expiresIn: AUTH_TOKEN_EXPIRATION.refreshToken,
+        }
+      );
       expect(returnedValue).toBe("#");
     });
   });
@@ -71,7 +102,21 @@ describe("Given a verifyToken function", () => {
     test("Then it should call jwt to verify it matches the secret and return a valid payload object", () => {
       const returnedValue = verifyToken("token");
 
-      expect(mockVerify).toHaveBeenCalledWith("token");
+      expect(mockVerify).toHaveBeenCalledWith("token", ENVIRONMENT.authSecret);
+      expect(returnedValue).toBe(mockJwtPayload);
+    });
+  });
+});
+
+describe("Given a verifyRefreshToken function", () => {
+  describe("When called with a strings (a token)", () => {
+    test("Then it should call jwt to verify it matches the secret and return a valid payload object", () => {
+      const returnedValue = verifyRefreshToken("token");
+
+      expect(mockVerify).toHaveBeenCalledWith(
+        "token",
+        ENVIRONMENT.refreshAuthSecret
+      );
       expect(returnedValue).toBe(mockJwtPayload);
     });
   });

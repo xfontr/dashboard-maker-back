@@ -62,10 +62,6 @@ export const registerUser = async (
     .json({ register: "User registered successfully" });
 };
 
-// TODO: Add a refresh token also, and set maximum times for both tokens
-// TODO: Add the refresh token to the user model
-// TODO: Send the token in the cookies
-
 export const logInUser = async (
   req: CustomRequest,
   res: Response,
@@ -88,6 +84,7 @@ export const logInUser = async (
   }
 
   const authToken = FullToken(dbUser);
+
   const refreshAuthToken = createRefreshToken({
     id: dbUser.id,
     [MAIN_IDENTIFIER]: dbUser[MAIN_IDENTIFIER],

@@ -151,8 +151,6 @@ export default <T>(model: Model<T>) =>
       },
     });
 
-    // TODO: Test new update method
-
     const Update = () => ({
       updateById: async (itemId: string, updates: Partial<T>) => {
         const response = await tryThis<T, T>(

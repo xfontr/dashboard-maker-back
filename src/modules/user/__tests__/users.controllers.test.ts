@@ -158,7 +158,8 @@ describe("Given a logInUser controller", () => {
     const res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
-    } as Partial<Response>;
+      cookie: jest.fn(),
+    } as unknown as Partial<Response>;
     const next = jest.fn() as NextFunction;
 
     test(`Then it should respond with a status of ${ERROR_CODES.success.ok} and a token`, async () => {
@@ -168,6 +169,20 @@ describe("Given a logInUser controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
       expect(res.json).toHaveBeenCalledWith(expectedResponse);
+      expect(res.cookie).toHaveBeenCalled();
+
+      const cookieCalled = (res.cookie as jest.Mock).mock.calls[0];
+      const tokenInitialLetters = "ey";
+      const cookieOptions = {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+        maxAge: 24 * 60 * 60 * 1000,
+      };
+
+      expect(cookieCalled[0]).toBe("authToken");
+      expect(cookieCalled[1].startsWith(tokenInitialLetters)).toBeTruthy();
+      expect(cookieCalled[2]).toStrictEqual(cookieOptions);
     });
 
     describe("And the user password is incorrect", () => {

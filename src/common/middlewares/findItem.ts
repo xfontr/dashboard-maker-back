@@ -37,8 +37,6 @@ const findItem =
 
     const value = req[options.getValueFrom || "body"][attribute];
 
-    // TODO: Test test this new condition
-
     if (!value) {
       next(
         CodedError(
@@ -46,6 +44,7 @@ const findItem =
           "Invalid request"
         )(Error(`The attribute ${attribute as string} is not defined`))
       );
+      return;
     }
 
     const item = await ItemService.getByAttribute(attribute, value, error);
