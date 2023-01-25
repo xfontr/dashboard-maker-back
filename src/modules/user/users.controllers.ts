@@ -102,8 +102,6 @@ export const logInUser = async (
   res.status(success.ok).json(authToken);
 };
 
-// TODO: Test this and the router
-
 export const refreshToken = async (
   req: CustomRequest,
   res: Response,
@@ -116,5 +114,5 @@ export const refreshToken = async (
     return;
   }
 
-  res.status(success.created).json(FullToken(req.user));
+  res.status(success.ok).json(FullToken(req.user));
 };
