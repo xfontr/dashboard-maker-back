@@ -7,12 +7,17 @@ import Token from "../token/Token.model";
 import checkToken from "../../common/middlewares/checkToken";
 import User from "./User.model";
 import { logInSchema, registerSchema } from "./users.schema";
-import { getAllUsers, logInUser, registerUser } from "./users.controllers";
+import {
+  getAllUsers,
+  logInUser,
+  refreshToken,
+  registerUser,
+} from "./users.controllers";
 import userErrors from "./users.errors";
 
 const usersRouter = express.Router();
 
-const { root, logIn } = ENDPOINTS.users;
+const { root, logIn, refresh } = ENDPOINTS.users;
 
 usersRouter.get(root, getAllUsers);
 
@@ -39,6 +44,17 @@ usersRouter.post(
     storeAt: "user",
   }),
   logInUser
+);
+
+// REFRESH TOKEN
+
+usersRouter.get(
+  refresh,
+  findItem(User, "authToken", userErrors.noToken, {
+    getValueFrom: "cookies",
+    storeAt: "user",
+  }),
+  refreshToken
 );
 
 export default usersRouter;

@@ -6,7 +6,7 @@ import Payload from "../types/Payload";
 import catchCodedError from "../utils/catchCodedError";
 import getBearerToken from "../utils/getBearerToken";
 
-/** Middleware that verifies the password out of the authorization header */
+/** Middleware that verifies the token out of the authorization header */
 const authentication = async (
   req: CustomRequest,
   res: Response,

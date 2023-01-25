@@ -5,12 +5,12 @@ export type UserRequiredData = {
   password: string;
   email: string;
   role?: UserRoles;
+  authToken?: string;
 };
 
 export type UserName = Partial<{
   name: string;
-  firstName: string;
-  secondName: string;
+  surname: string;
   username: string;
 }>;
 
@@ -20,6 +20,7 @@ export type UserAddress = Partial<{
   street: string;
   stairs: string;
   block: string;
+  address: string;
   addressExtraInfo: string;
 }>;
 

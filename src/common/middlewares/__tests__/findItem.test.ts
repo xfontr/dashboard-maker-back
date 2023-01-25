@@ -24,6 +24,32 @@ describe("Given a findItem middleware", () => {
       const res = {} as Response;
       const next = jest.fn() as NextFunction;
 
+      describe("If the attribute specified is not defined", () => {
+        test("Then it should call next with an error", async () => {
+          const expectedError = CodedError(
+            "badRequest",
+            "Invalid request"
+          )(Error(`The attribute ${MAIN_IDENTIFIER} is not defined`));
+
+          const model = {
+            find: (): IUser[] => [],
+          } as unknown as Model<IUser>;
+
+          const mockUndefinedReq = {
+            body: { ...req.body, [MAIN_IDENTIFIER]: undefined },
+          } as Request;
+
+          await findItem(model, MAIN_IDENTIFIER, conflictError)(
+            mockUndefinedReq,
+            res,
+            next
+          );
+
+          expect(next).toHaveBeenCalledWith(expectedError);
+          expect(next).toHaveBeenCalledTimes(1);
+        });
+      });
+
       test("Then it should find and call next if the finding doesn't match the error", async () => {
         const model = {
           find: (): IUser[] => [],

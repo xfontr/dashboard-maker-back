@@ -8,6 +8,7 @@ import {
   mockFullToken,
   mockProtoToken,
 } from "../../../common/test-utils/mocks/mockToken";
+import CustomRequest from "../../../common/types/CustomRequest";
 
 let mockCreatedHash: string | Promise<never> = "validPassword";
 
@@ -85,19 +86,20 @@ describe("Given a verifyToken controller", () => {
   describe("When called with a request, a response and a next function", () => {
     const req = {
       body: mockProtoToken,
-    } as Request;
+      token: mockFullToken,
+    } as CustomRequest;
     const res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
     } as Partial<Response>;
 
-    test(`Then it should respond with a status of ${ERROR_CODES.success.ok} and a success message`, async () => {
-      const successMessage = { token: "The token requested is valid" };
+    test(`Then it should respond with a status of ${ERROR_CODES.success.ok} and the token`, async () => {
+      const response = { token: mockFullToken };
 
       await verifyToken(req, res as Response);
 
       expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
-      expect(res.json).toHaveBeenCalledWith(successMessage);
+      expect(res.json).toHaveBeenCalledWith(response);
     });
   });
 });

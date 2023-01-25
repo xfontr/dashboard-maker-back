@@ -11,5 +11,6 @@ module.exports = {
     "!src/common/services/Database.ts",
     "!src/config/*.ts",
     "!src/**/*.model.ts",
+    "!src/**/*.types.ts",
   ],
 };

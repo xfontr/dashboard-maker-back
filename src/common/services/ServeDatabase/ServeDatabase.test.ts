@@ -1,6 +1,7 @@
 import { NextFunction } from "express";
 import { Model } from "mongoose";
 import IUser from "../../../modules/user/users.types";
+import mockUser from "../../test-utils/mocks/mockUser";
 import camelToRegular from "../../utils/camelToRegular";
 import CodedError from "../../utils/CodedError";
 import ServeDatabase from "./ServeDatabase";
@@ -192,6 +193,24 @@ describe("Given a ServeDatabase factory function", () => {
         expect(model.deleteMany).toHaveBeenCalledWith({
           [attribute]: value,
         });
+        expect(response).toBe("response");
+      });
+    });
+
+    describe("Then it should return a updateById method that should", () => {
+      test("call the update method with specific parameters and return its response", async () => {
+        const model = {
+          findByIdAndUpdate: jest.fn().mockResolvedValue("response"),
+        } as unknown as Partial<Model<IUser>>;
+
+        const { id } = mockUser;
+        const toUpdate: Partial<IUser> = { role: "admin" };
+
+        const TestServe = ServeDatabase(model as Model<IUser>)(next);
+
+        const response = await TestServe.updateById(id, toUpdate);
+
+        expect(model.findByIdAndUpdate).toHaveBeenCalledWith(id, toUpdate);
         expect(response).toBe("response");
       });
     });

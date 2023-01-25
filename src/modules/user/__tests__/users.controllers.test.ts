@@ -6,7 +6,12 @@ import User from "../User.model";
 import camelToRegular from "../../../common/utils/camelToRegular";
 import CodedError from "../../../common/utils/CodedError";
 import FullToken from "../utils/FullToken/FullToken";
-import { getAllUsers, logInUser, registerUser } from "../users.controllers";
+import {
+  getAllUsers,
+  logInUser,
+  refreshToken,
+  registerUser,
+} from "../users.controllers";
 import Token from "../../token/Token.model";
 import CustomRequest from "../../../common/types/CustomRequest";
 import mockUser, {
@@ -19,6 +24,7 @@ import {
 import userErrors from "../users.errors";
 
 let mockHashedPassword: string | Promise<never> = "validPassword";
+let mockIsTokenVerified = true;
 
 beforeEach(() => {
   bcrypt.compare = jest.fn().mockResolvedValue("#");
@@ -31,6 +37,7 @@ beforeEach(() => {
 jest.mock("../../../common/services/authentication", () => ({
   ...jest.requireActual("../../../common/services/authentication"),
   createHash: () => mockHashedPassword,
+  verifyRefreshToken: () => mockIsTokenVerified,
 }));
 
 describe("Given a getAllUsers controller", () => {
@@ -158,7 +165,8 @@ describe("Given a logInUser controller", () => {
     const res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
-    } as Partial<Response>;
+      cookie: jest.fn(),
+    } as unknown as Partial<Response>;
     const next = jest.fn() as NextFunction;
 
     test(`Then it should respond with a status of ${ERROR_CODES.success.ok} and a token`, async () => {
@@ -168,6 +176,20 @@ describe("Given a logInUser controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
       expect(res.json).toHaveBeenCalledWith(expectedResponse);
+      expect(res.cookie).toHaveBeenCalled();
+
+      const cookieCalled = (res.cookie as jest.Mock).mock.calls[0];
+      const tokenInitialLetters = "ey";
+      const cookieOptions = {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+        maxAge: 24 * 60 * 60 * 1000,
+      };
+
+      expect(cookieCalled[0]).toBe("authToken");
+      expect(cookieCalled[1].startsWith(tokenInitialLetters)).toBeTruthy();
+      expect(cookieCalled[2]).toStrictEqual(cookieOptions);
     });
 
     describe("And the user password is incorrect", () => {
@@ -179,6 +201,47 @@ describe("Given a logInUser controller", () => {
         await logInUser(req, res as Response, nextError);
 
         expect(nextError).toHaveBeenCalledWith(userErrors.invalidPassword);
+      });
+    });
+  });
+});
+
+describe("Given a refreshToken controller", () => {
+  describe("When called with a request with cookies, a response and a next function", () => {
+    const req = {
+      cookies: {
+        authToken: "authCookie",
+      },
+      user: mockUser,
+    } as CustomRequest;
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as Partial<Response>;
+
+    const next = jest.fn() as NextFunction;
+
+    test(`Then it should respond with a status of ${ERROR_CODES.success.ok} and a token`, async () => {
+      const expectedResponse = FullToken(mockUser);
+
+      await refreshToken(req, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
+      expect(res.json).toHaveBeenCalledWith(expectedResponse);
+    });
+
+    describe("And the token is not verified", () => {
+      test("Then it should call next with an error", async () => {
+        mockIsTokenVerified = false;
+
+        const nextError = jest.fn() as NextFunction;
+
+        bcrypt.compare = jest.fn().mockResolvedValue(false);
+
+        await refreshToken(req, res as Response, nextError);
+
+        expect(nextError).toHaveBeenCalledWith(userErrors.forbiddenToken);
       });
     });
   });

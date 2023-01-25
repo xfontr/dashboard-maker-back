@@ -6,6 +6,14 @@ const AuthTokens = () => ({
     "badRequest",
     "Invalid request, could not create token"
   ),
+  noToken: CodedError(
+    "unauthorized",
+    "Unauthorized request"
+  )(Error("There is no token or the token provided is not valid")),
+  forbiddenToken: CodedError(
+    "forbidden",
+    "The requested action is forbidden"
+  )(Error("The token provided does not match with the user token")),
 });
 
 const Register = () => ({

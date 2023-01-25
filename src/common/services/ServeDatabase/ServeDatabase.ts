@@ -151,5 +151,16 @@ export default <T>(model: Model<T>) =>
       },
     });
 
-    return { ...Get(), ...Create(), ...Delete() };
+    const Update = () => ({
+      updateById: async (itemId: string, updates: Partial<T>) => {
+        const response = await tryThis<T, T>(
+          model.findByIdAndUpdate.bind(model),
+          [itemId, updates]
+        );
+
+        return response;
+      },
+    });
+
+    return { ...Get(), ...Create(), ...Delete(), ...Update() };
   };

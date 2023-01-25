@@ -10,7 +10,6 @@ export default (
   (error: Error): ICustomError => {
     const newError = error;
 
-    newError.name = `Error ${availableCodes[code]}`;
     newError.message = error.message || camelToRegular(code);
 
     return CustomError(

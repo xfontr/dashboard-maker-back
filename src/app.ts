@@ -2,6 +2,7 @@ import "./loadEnvironment";
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
 import usersRouter from "./modules/user/users.router";
 import tokensRouter from "./modules/token/token.router";
 import ENDPOINTS from "./config/endpoints";
@@ -18,7 +19,8 @@ app.use(
     origin: "*",
   }),
   morgan("dev"),
-  express.json()
+  express.json(),
+  cookieParser()
 );
 
 app.use(ENDPOINTS.users.router, usersRouter);
