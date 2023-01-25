@@ -10,6 +10,7 @@ import { logInSchema, registerSchema } from "./users.schema";
 import {
   getAllUsers,
   logInUser,
+  logOutUser,
   refreshToken,
   registerUser,
 } from "./users.controllers";
@@ -17,7 +18,7 @@ import userErrors from "./users.errors";
 
 const usersRouter = express.Router();
 
-const { root, logIn, refresh } = ENDPOINTS.users;
+const { root, logIn, refresh, logOut } = ENDPOINTS.users;
 
 usersRouter.get(root, getAllUsers);
 
@@ -50,11 +51,22 @@ usersRouter.post(
 
 usersRouter.get(
   refresh,
-  findItem(User, "authToken", userErrors.noToken, {
+  findItem(User, "authToken", userErrors.noLinkedToken, {
     getValueFrom: "cookies",
     storeAt: "user",
   }),
   refreshToken
+);
+
+// LOGOUT
+
+usersRouter.patch(
+  logOut,
+  findItem(User, "authToken", userErrors.noLinkedToken, {
+    getValueFrom: "cookies",
+    storeAt: "user",
+  }),
+  logOutUser
 );
 
 export default usersRouter;

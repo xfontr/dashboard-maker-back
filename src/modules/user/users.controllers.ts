@@ -90,7 +90,7 @@ export const logInUser = async (
     [MAIN_IDENTIFIER]: dbUser[MAIN_IDENTIFIER],
   });
 
-  await UsersService.updateById(dbUser.id!, { authToken: refreshAuthToken });
+  await UsersService.updateById(dbUser.id, { authToken: refreshAuthToken });
 
   res.cookie("authToken", refreshAuthToken, {
     httpOnly: true,
@@ -115,4 +115,19 @@ export const refreshToken = async (
   }
 
   res.status(success.ok).json(FullToken(req.user));
+};
+
+export const logOutUser = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const UsersService = ServeUser(next);
+
+  const dbResponse = await UsersService.updateById(req.user!.id, {
+    authToken: "",
+  });
+  if (!dbResponse) return;
+
+  res.status(success.ok).json({ logOut: "User logged out" });
 };

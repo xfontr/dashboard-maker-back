@@ -7,7 +7,7 @@ export default (next: NextFunction) =>
     callback: Function,
     args: (object | object[] | T | T[] | string)[],
     errorType: Codes = "internalServerError"
-  ): Promise<R | void> => {
+  ): Promise<R | undefined> => {
     try {
       const response = await callback(...args);
 

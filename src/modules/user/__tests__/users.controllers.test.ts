@@ -4,11 +4,12 @@ import ERROR_CODES from "../../../config/errorCodes";
 import { MAIN_IDENTIFIER } from "../../../config/database";
 import User from "../User.model";
 import camelToRegular from "../../../common/utils/camelToRegular";
-import CodedError from "../../../common/utils/CodedError";
+import CodedError, { Codes } from "../../../common/utils/CodedError";
 import FullToken from "../utils/FullToken/FullToken";
 import {
   getAllUsers,
   logInUser,
+  logOutUser,
   refreshToken,
   registerUser,
 } from "../users.controllers";
@@ -30,6 +31,7 @@ beforeEach(() => {
   bcrypt.compare = jest.fn().mockResolvedValue("#");
   User.find = jest.fn().mockResolvedValue([mockUser]);
   User.create = jest.fn().mockResolvedValue(mockUser);
+  User.findByIdAndUpdate = jest.fn().mockResolvedValue(mockUser);
   Token.deleteMany = jest.fn();
   jest.clearAllMocks();
 });
@@ -242,6 +244,51 @@ describe("Given a refreshToken controller", () => {
         await refreshToken(req, res as Response, nextError);
 
         expect(nextError).toHaveBeenCalledWith(userErrors.forbiddenToken);
+      });
+    });
+  });
+});
+
+describe("Given a logOutUser controller", () => {
+  describe("When called with a request, a response and a next function", () => {
+    const req = {
+      user: mockUser,
+    } as CustomRequest;
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as Partial<Response>;
+
+    const next = jest.fn() as NextFunction;
+
+    test(`Then it should respond with a status of ${ERROR_CODES.success.ok} and a token`, async () => {
+      User.findByIdAndUpdate = jest.fn().mockResolvedValue(mockUser);
+      const expectedResponse = { logOut: "User logged out" };
+
+      await logOutUser(req, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
+      expect(res.json).toHaveBeenCalledWith(expectedResponse);
+    });
+
+    describe("And something goes wrong while updating the user", () => {
+      test("Then it should call next with an error", async () => {
+        const error = new Error();
+        const errorType: Codes = "internalServerError";
+        const expectedError = CodedError(
+          errorType,
+          camelToRegular(errorType)
+        )(error);
+
+        User.findByIdAndUpdate = jest.fn().mockRejectedValue(error);
+
+        const nextError = jest.fn() as NextFunction;
+
+        await logOutUser(req, res as Response, nextError);
+
+        expect(nextError).toHaveBeenCalledWith(expectedError);
+        expect(res.status).not.toHaveBeenCalled();
       });
     });
   });
