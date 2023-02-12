@@ -5,6 +5,7 @@ import mockUser from "./mockUser";
 const mockPayload: Payload = {
   [MAIN_IDENTIFIER]: mockUser[MAIN_IDENTIFIER],
   id: "id",
+  role: mockUser.role,
 };
 
 export default mockPayload;

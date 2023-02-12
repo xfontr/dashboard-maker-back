@@ -88,6 +88,7 @@ export const logInUser = async (
   const refreshAuthToken = createRefreshToken({
     id: dbUser.id,
     [MAIN_IDENTIFIER]: dbUser[MAIN_IDENTIFIER],
+    role: dbUser.role,
   });
 
   await UsersService.updateById(dbUser.id, { authToken: refreshAuthToken });
@@ -124,7 +125,7 @@ export const logOutUser = async (
 ) => {
   const UsersService = ServeUser(next);
 
-  const dbResponse = await UsersService.updateById(req.user!.id, {
+  const dbResponse = await UsersService.updateById(req.user.id, {
     authToken: "",
   });
   if (!dbResponse) return;
