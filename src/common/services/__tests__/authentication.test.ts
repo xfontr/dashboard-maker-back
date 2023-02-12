@@ -11,6 +11,7 @@ import {
 } from "../authentication";
 import ENVIRONMENT from "../../../config/environment";
 import { AUTH_TOKEN_EXPIRATION } from "../../../config/database";
+import mockPayload from "../../test-utils/mocks/mockPayload";
 
 const mockJwtPayload = { id: "", iat: 1512341253 };
 
@@ -44,16 +45,15 @@ describe("Given a hashCreate function", () => {
 describe("Given a createToken function", () => {
   describe("When called with a payload as an argument", () => {
     test("Then it should call jwt and return its returned value", () => {
-      const mockToken: Payload = {
-        id: "1234",
-        email: "aaa",
-      };
+      const returnedValue = createToken(mockPayload);
 
-      const returnedValue = createToken(mockToken);
-
-      expect(mockSign).toHaveBeenCalledWith(mockToken, ENVIRONMENT.authSecret, {
-        expiresIn: AUTH_TOKEN_EXPIRATION.token,
-      });
+      expect(mockSign).toHaveBeenCalledWith(
+        mockPayload,
+        ENVIRONMENT.authSecret,
+        {
+          expiresIn: AUTH_TOKEN_EXPIRATION.token,
+        }
+      );
       expect(returnedValue).toBe("#");
     });
   });
@@ -62,15 +62,10 @@ describe("Given a createToken function", () => {
 describe("Given a createRefreshToken function", () => {
   describe("When called with a payload as an argument", () => {
     test("Then it should call jwt and return its returned value", () => {
-      const mockToken: Payload = {
-        id: "1234",
-        email: "aaa",
-      };
-
-      const returnedValue = createRefreshToken(mockToken);
+      const returnedValue = createRefreshToken(mockPayload);
 
       expect(mockSign).toHaveBeenCalledWith(
-        mockToken,
+        mockPayload,
         ENVIRONMENT.refreshAuthSecret,
         {
           expiresIn: AUTH_TOKEN_EXPIRATION.refreshToken,

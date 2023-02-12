@@ -9,15 +9,14 @@ import ENDPOINTS from "./config/endpoints";
 import generalError from "./common/middlewares/generalError";
 import notFoundError from "./common/middlewares/notFoundError";
 import validationError from "./common/middlewares/validationError";
+import ENVIRONMENT from "./config/environment";
 
 const app = express();
 
 app.disable("x-powered-by");
 
 app.use(
-  cors({
-    origin: "*",
-  }),
+  cors({ credentials: true, origin: ENVIRONMENT.origin }),
   morgan("dev"),
   express.json(),
   cookieParser()
