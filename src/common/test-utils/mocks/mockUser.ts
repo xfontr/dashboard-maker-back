@@ -1,16 +1,16 @@
-import { USER_MAIN_IDENTIFIER } from "../../../config/database";
+import { MAIN_IDENTIFIER } from "../../../config/database";
 import IUser from "../../../modules/user/users.types";
 
 export const mockProtoUser: IUser = {
   name: "Name",
-  [USER_MAIN_IDENTIFIER]: "email@email.com",
+  [MAIN_IDENTIFIER]: "email@email.com",
   password: "adminadmin",
   role: "user",
 };
 
 const mockUser: IUser = {
   name: "Name",
-  [USER_MAIN_IDENTIFIER]: "email@email.com",
+  [MAIN_IDENTIFIER]: "email@email.com",
   password: "adminadmin",
   role: "user",
   id: "id",

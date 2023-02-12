@@ -22,12 +22,16 @@ const requiredData: Omit<Record<keyof UserRequiredData, object>, "id"> = {
     required: true,
     default: "user" as UserRoles,
   },
+
+  authToken: {
+    type: String,
+    required: false,
+  },
 };
 
 const userNameData: Record<keyof UserName, object> = {
   name: String,
-  firstName: String,
-  secondName: String,
+  surname: String,
   username: String,
 };
 
@@ -38,6 +42,7 @@ const userAddressData: Record<keyof UserAddress, object> = {
   stairs: String,
   block: String,
   addressExtraInfo: String,
+  address: String,
 };
 
 const userSchema = new Schema<IUser>({

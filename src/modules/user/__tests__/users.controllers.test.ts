@@ -1,12 +1,18 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import ERROR_CODES from "../../../config/errorCodes";
-import { USER_MAIN_IDENTIFIER } from "../../../config/database";
+import { MAIN_IDENTIFIER } from "../../../config/database";
 import User from "../User.model";
 import camelToRegular from "../../../common/utils/camelToRegular";
-import CodedError from "../../../common/utils/CodedError";
+import CodedError, { Codes } from "../../../common/utils/CodedError";
 import FullToken from "../utils/FullToken/FullToken";
-import { getAllUsers, logInUser, registerUser } from "../users.controllers";
+import {
+  getAllUsers,
+  logInUser,
+  logOutUser,
+  refreshToken,
+  registerUser,
+} from "../users.controllers";
 import Token from "../../token/Token.model";
 import CustomRequest from "../../../common/types/CustomRequest";
 import mockUser, {
@@ -19,11 +25,13 @@ import {
 import userErrors from "../users.errors";
 
 let mockHashedPassword: string | Promise<never> = "validPassword";
+let mockIsTokenVerified = true;
 
 beforeEach(() => {
   bcrypt.compare = jest.fn().mockResolvedValue("#");
   User.find = jest.fn().mockResolvedValue([mockUser]);
   User.create = jest.fn().mockResolvedValue(mockUser);
+  User.findByIdAndUpdate = jest.fn().mockResolvedValue(mockUser);
   Token.deleteMany = jest.fn();
   jest.clearAllMocks();
 });
@@ -31,6 +39,7 @@ beforeEach(() => {
 jest.mock("../../../common/services/authentication", () => ({
   ...jest.requireActual("../../../common/services/authentication"),
   createHash: () => mockHashedPassword,
+  verifyRefreshToken: () => mockIsTokenVerified,
 }));
 
 describe("Given a getAllUsers controller", () => {
@@ -150,7 +159,7 @@ describe("Given a logInUser controller", () => {
   describe("When called with a request with user log in data, a response and a next function", () => {
     const req = {
       body: {
-        [USER_MAIN_IDENTIFIER]: mockUser[USER_MAIN_IDENTIFIER],
+        [MAIN_IDENTIFIER]: mockUser[MAIN_IDENTIFIER],
         password: mockUser.password,
       },
       user: mockUser,
@@ -158,7 +167,8 @@ describe("Given a logInUser controller", () => {
     const res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
-    } as Partial<Response>;
+      cookie: jest.fn(),
+    } as unknown as Partial<Response>;
     const next = jest.fn() as NextFunction;
 
     test(`Then it should respond with a status of ${ERROR_CODES.success.ok} and a token`, async () => {
@@ -168,6 +178,20 @@ describe("Given a logInUser controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
       expect(res.json).toHaveBeenCalledWith(expectedResponse);
+      expect(res.cookie).toHaveBeenCalled();
+
+      const cookieCalled = (res.cookie as jest.Mock).mock.calls[0];
+      const tokenInitialLetters = "ey";
+      const cookieOptions = {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+        maxAge: 24 * 60 * 60 * 1000,
+      };
+
+      expect(cookieCalled[0]).toBe("authToken");
+      expect(cookieCalled[1].startsWith(tokenInitialLetters)).toBeTruthy();
+      expect(cookieCalled[2]).toStrictEqual(cookieOptions);
     });
 
     describe("And the user password is incorrect", () => {
@@ -179,6 +203,92 @@ describe("Given a logInUser controller", () => {
         await logInUser(req, res as Response, nextError);
 
         expect(nextError).toHaveBeenCalledWith(userErrors.invalidPassword);
+      });
+    });
+  });
+});
+
+describe("Given a refreshToken controller", () => {
+  describe("When called with a request with cookies, a response and a next function", () => {
+    const req = {
+      cookies: {
+        authToken: "authCookie",
+      },
+      user: mockUser,
+    } as CustomRequest;
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as Partial<Response>;
+
+    const next = jest.fn() as NextFunction;
+
+    test(`Then it should respond with a status of ${ERROR_CODES.success.ok} and a token`, async () => {
+      const expectedResponse = FullToken(mockUser);
+
+      await refreshToken(req, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
+      expect(res.json).toHaveBeenCalledWith(expectedResponse);
+    });
+
+    describe("And the token is not verified", () => {
+      test("Then it should call next with an error", async () => {
+        mockIsTokenVerified = false;
+
+        const nextError = jest.fn() as NextFunction;
+
+        bcrypt.compare = jest.fn().mockResolvedValue(false);
+
+        await refreshToken(req, res as Response, nextError);
+
+        expect(nextError).toHaveBeenCalledWith(userErrors.forbiddenToken);
+      });
+    });
+  });
+});
+
+describe("Given a logOutUser controller", () => {
+  describe("When called with a request, a response and a next function", () => {
+    const req = {
+      user: mockUser,
+    } as CustomRequest;
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as Partial<Response>;
+
+    const next = jest.fn() as NextFunction;
+
+    test(`Then it should respond with a status of ${ERROR_CODES.success.ok} and a token`, async () => {
+      User.findByIdAndUpdate = jest.fn().mockResolvedValue(mockUser);
+      const expectedResponse = { logOut: "User logged out" };
+
+      await logOutUser(req, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
+      expect(res.json).toHaveBeenCalledWith(expectedResponse);
+    });
+
+    describe("And something goes wrong while updating the user", () => {
+      test("Then it should call next with an error", async () => {
+        const error = new Error();
+        const errorType: Codes = "internalServerError";
+        const expectedError = CodedError(
+          errorType,
+          camelToRegular(errorType)
+        )(error);
+
+        User.findByIdAndUpdate = jest.fn().mockRejectedValue(error);
+
+        const nextError = jest.fn() as NextFunction;
+
+        await logOutUser(req, res as Response, nextError);
+
+        expect(nextError).toHaveBeenCalledWith(expectedError);
+        expect(res.status).not.toHaveBeenCalled();
       });
     });
   });

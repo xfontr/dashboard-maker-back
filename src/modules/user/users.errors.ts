@@ -1,11 +1,26 @@
 import CodedError from "../../common/utils/CodedError";
-import { USER_MAIN_IDENTIFIER } from "../../config/database";
+import { MAIN_IDENTIFIER } from "../../config/database";
 
 const AuthTokens = () => ({
   invalidAuthToken: CodedError(
     "badRequest",
     "Invalid request, could not create token"
   ),
+
+  noToken: CodedError(
+    "unauthorized",
+    "Unauthorized request"
+  )(Error("There is no token or the token provided is not valid")),
+
+  forbiddenToken: CodedError(
+    "forbidden",
+    "The requested action is forbidden"
+  )(Error("The token provided does not match with the user token")),
+
+  noLinkedToken: CodedError(
+    "notFound",
+    "Unauthorized request"
+  )(Error("Could not find a user with the requested token")),
 });
 
 const Register = () => ({
@@ -33,12 +48,12 @@ const Register = () => ({
 const LogIn = () => ({
   logInUserDoesNotExist: CodedError(
     "notFound",
-    `Invalid ${USER_MAIN_IDENTIFIER} or password`
+    `Invalid ${MAIN_IDENTIFIER} or password`
   )(Error("User doesn't exist")),
 
   invalidPassword: CodedError(
     "badRequest",
-    `Invalid ${USER_MAIN_IDENTIFIER} or password`
+    `Invalid ${MAIN_IDENTIFIER} or password`
   )(Error("Invalid password")),
 });
 

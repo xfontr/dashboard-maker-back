@@ -3,7 +3,7 @@ import request from "supertest";
 import ENDPOINTS from "../../../config/endpoints";
 import ERROR_CODES from "../../../config/errorCodes";
 import ENVIRONMENT from "../../../config/environment";
-import { USER_MAIN_IDENTIFIER } from "../../../config/database";
+import { MAIN_IDENTIFIER } from "../../../config/database";
 import { mockProtoToken } from "../../../common/test-utils/mocks/mockToken";
 import app from "../../../app";
 import mockUser, {
@@ -77,7 +77,7 @@ describe(`Given a ${tokens.router} route`, () => {
       await request(app)
         .post(`${users.router}/${users.logIn}`)
         .send({
-          [USER_MAIN_IDENTIFIER]: mockUser[USER_MAIN_IDENTIFIER],
+          [MAIN_IDENTIFIER]: mockUser[MAIN_IDENTIFIER],
           password: mockUser.password,
         })
         .then(({ body: { user } }) => {
@@ -89,10 +89,61 @@ describe(`Given a ${tokens.router} route`, () => {
         .set("Authorization", `Bearer ${lowAuthorityAuthToken}`)
         .send({
           ...mockProtoToken,
-          [USER_MAIN_IDENTIFIER]: "random@random.com",
+          [MAIN_IDENTIFIER]: "random@random.com",
         });
 
       expect(res.statusCode).toBe(error.unauthorized);
+    });
+  });
+});
+
+describe(`Given a ${tokens.verify} route`, () => {
+  describe("When requested with POST method and valid token data", () => {
+    test(`Then it should respond with a status of ${success.ok}`, async () => {
+      await request(app)
+        .post(`${tokens.router}`)
+        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
+        .send(mockProtoToken);
+
+      const res = await request(app)
+        .post(`${tokens.router}${tokens.verify}`)
+        .set("Authorization", `Bearer ${mockProtoToken.code}`)
+        .send({
+          [MAIN_IDENTIFIER]: mockProtoToken[MAIN_IDENTIFIER],
+        });
+
+      expect(res.statusCode).toBe(success.ok);
+    });
+  });
+
+  describe("When requested with POST method and invalid token data", () => {
+    test(`Then it should respond with a status of ${error.unauthorized}`, async () => {
+      await request(app)
+        .post(`${tokens.router}`)
+        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
+        .send(mockProtoToken);
+
+      const res = await request(app)
+        .post(`${tokens.router}${tokens.verify}`)
+        .set("Authorization", `Bearer `)
+        .send({
+          [MAIN_IDENTIFIER]: mockProtoToken[MAIN_IDENTIFIER],
+        });
+
+      expect(res.statusCode).toBe(error.unauthorized);
+    });
+  });
+
+  describe("When requested with POST method and an non-existent token", () => {
+    test(`Then it should respond with a status of ${error.notFound}`, async () => {
+      const res = await request(app)
+        .post(`${tokens.router}${tokens.verify}`)
+        .set("Authorization", `Bearer ${mockProtoToken.code}`)
+        .send({
+          [MAIN_IDENTIFIER]: mockProtoToken[MAIN_IDENTIFIER],
+        });
+
+      expect(res.statusCode).toBe(error.notFound);
     });
   });
 });

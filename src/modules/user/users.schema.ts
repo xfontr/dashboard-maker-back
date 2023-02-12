@@ -25,5 +25,9 @@ export const registerSchema = {
       .email({ minDomainSegments: 2 })
       .required(),
     role: Joi.string().required(),
+    surname: Joi.string().min(name.min).max(name.max),
+    address: Joi.string().min(5).max(70),
+    city: Joi.string().min(3).max(40),
+    postalCode: Joi.number().min(3).max(12),
   }),
 };

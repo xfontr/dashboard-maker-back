@@ -1,11 +1,16 @@
 import { NextFunction, Request, Response } from "express";
 import ERROR_CODES from "../../config/errorCodes";
 import IUser from "./users.types";
-import { compareHash, createHash } from "../../common/services/authentication";
+import {
+  compareHash,
+  createHash,
+  createRefreshToken,
+  verifyRefreshToken,
+} from "../../common/services/authentication";
 import catchCodedError from "../../common/utils/catchCodedError";
 import FullToken from "./utils/FullToken/FullToken";
 import LogInData from "../../common/types/LogInData";
-import { USER_MAIN_IDENTIFIER } from "../../config/database";
+import { MAIN_IDENTIFIER } from "../../config/database";
 import CustomRequest from "../../common/types/CustomRequest";
 import { ServeToken, ServeUser } from "../../common/services/ServeDatabase";
 import userErrors from "./users.errors";
@@ -47,8 +52,8 @@ export const registerUser = async (
 
   if (req.token) {
     await TokensService.deleteByAttribute(
-      USER_MAIN_IDENTIFIER,
-      user[USER_MAIN_IDENTIFIER]
+      MAIN_IDENTIFIER,
+      user[MAIN_IDENTIFIER]
     );
   }
 
@@ -62,6 +67,7 @@ export const logInUser = async (
   res: Response,
   next: NextFunction
 ) => {
+  const UsersService = ServeUser(next);
   const tryThis = catchCodedError(next);
 
   const logInData: LogInData = req.body;
@@ -77,5 +83,52 @@ export const logInUser = async (
     return;
   }
 
-  res.status(success.ok).json(FullToken(dbUser));
+  const authToken = FullToken(dbUser);
+
+  const refreshAuthToken = createRefreshToken({
+    id: dbUser.id,
+    [MAIN_IDENTIFIER]: dbUser[MAIN_IDENTIFIER],
+    role: dbUser.role,
+  });
+
+  await UsersService.updateById(dbUser.id, { authToken: refreshAuthToken });
+
+  res.cookie("authToken", refreshAuthToken, {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+
+  res.status(success.ok).json(authToken);
+};
+
+export const refreshToken = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const verifiedToken = verifyRefreshToken(req.cookies.authToken);
+
+  if (!verifiedToken) {
+    next(userErrors.forbiddenToken);
+    return;
+  }
+
+  res.status(success.ok).json(FullToken(req.user));
+};
+
+export const logOutUser = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const UsersService = ServeUser(next);
+
+  const dbResponse = await UsersService.updateById(req.user.id, {
+    authToken: "",
+  });
+  if (!dbResponse) return;
+
+  res.status(success.ok).json({ logOut: "User logged out" });
 };

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { Model } from "mongoose";
-import { USER_MAIN_IDENTIFIER } from "../../../config/database";
+import { MAIN_IDENTIFIER } from "../../../config/database";
 import IUser from "../../../modules/user/users.types";
 import mockUser from "../../test-utils/mocks/mockUser";
 import CustomRequest from "../../types/CustomRequest";
@@ -24,16 +24,38 @@ describe("Given a findItem middleware", () => {
       const res = {} as Response;
       const next = jest.fn() as NextFunction;
 
+      describe("If the attribute specified is not defined", () => {
+        test("Then it should call next with an error", async () => {
+          const expectedError = CodedError(
+            "badRequest",
+            "Invalid request"
+          )(Error(`The attribute ${MAIN_IDENTIFIER} is not defined`));
+
+          const model = {
+            find: (): IUser[] => [],
+          } as unknown as Model<IUser>;
+
+          const mockUndefinedReq = {
+            body: { ...req.body, [MAIN_IDENTIFIER]: undefined },
+          } as Request;
+
+          await findItem(model, MAIN_IDENTIFIER, conflictError)(
+            mockUndefinedReq,
+            res,
+            next
+          );
+
+          expect(next).toHaveBeenCalledWith(expectedError);
+          expect(next).toHaveBeenCalledTimes(1);
+        });
+      });
+
       test("Then it should find and call next if the finding doesn't match the error", async () => {
         const model = {
           find: (): IUser[] => [],
         } as unknown as Model<IUser>;
 
-        await findItem(model, USER_MAIN_IDENTIFIER, conflictError)(
-          req,
-          res,
-          next
-        );
+        await findItem(model, MAIN_IDENTIFIER, conflictError)(req, res, next);
 
         expect(next).toHaveBeenCalledWith();
       });
@@ -43,11 +65,7 @@ describe("Given a findItem middleware", () => {
           find: () => [mockUser],
         } as unknown as Model<IUser>;
 
-        await findItem(model, USER_MAIN_IDENTIFIER, conflictError)(
-          req,
-          res,
-          next
-        );
+        await findItem(model, MAIN_IDENTIFIER, conflictError)(req, res, next);
 
         expect(next).toHaveBeenCalledWith(conflictError);
         expect(next).toHaveBeenCalledTimes(1);
@@ -66,7 +84,7 @@ describe("Given a findItem middleware", () => {
 
           await findItem(
             model,
-            USER_MAIN_IDENTIFIER,
+            MAIN_IDENTIFIER,
             notFoundError,
             options
           )(customReq, res, next);
@@ -89,7 +107,7 @@ describe("Given a findItem middleware", () => {
 
           await findItem(
             model,
-            USER_MAIN_IDENTIFIER,
+            MAIN_IDENTIFIER,
             notFoundError,
             options
           )(cleanReq, res, next);
