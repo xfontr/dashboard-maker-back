@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import ERROR_CODES from "../../config/errorCodes";
 import { MAIN_IDENTIFIER } from "../../config/database";
 import { createHash } from "../../common/services/authentication";
@@ -6,18 +6,28 @@ import catchCodedError from "../../common/utils/catchCodedError";
 import { ServeToken } from "../../common/services/ServeDatabase";
 import IToken from "./token.types";
 import CustomRequest from "../../common/types/CustomRequest";
+import isAuthorizedToRequest from "./token.utils";
+import tokenErrors from "./token.errors";
 
 const { success } = ERROR_CODES;
 
 export const generateToken = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
   const TokensService = ServeToken(next);
   const tryThis = catchCodedError(next);
 
+  const requestorData = req.payload;
   const token: IToken = req.body;
+
+  if (
+    !isAuthorizedToRequest(requestorData.role, token.role, requestorData.email)
+  ) {
+    next(tokenErrors.unauthorizedToCreate);
+    return;
+  }
 
   const tokenValue = await tryThis<string, string>(createHash, [token.code]);
   if (!tokenValue) return;
