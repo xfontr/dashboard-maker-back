@@ -7,7 +7,6 @@ interface CustomRequest extends Request {
   payload?: Payload;
   user?: IUser;
   token?: IToken;
-  authority?: IUser;
 }
 
 export default CustomRequest;

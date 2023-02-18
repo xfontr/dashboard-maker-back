@@ -1,7 +1,9 @@
+import { UserRoles } from "../../modules/user/users.types";
+
 interface Payload {
   email: string;
   id: string;
-  role: string;
+  role: UserRoles;
 }
 
 export default Payload;
