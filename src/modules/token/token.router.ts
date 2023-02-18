@@ -5,7 +5,6 @@ import { generateToken, verifyToken } from "./token.controllers";
 import User from "../user/User.model";
 import authentication from "../../common/middlewares/authentication";
 import findItem from "../../common/middlewares/findItem";
-import roleFilter from "../../common/middlewares/roleFilter";
 import { tokenSchema, verifyTokenSchema } from "./token.schema";
 import validateRequest from "../../common/services/validateRequest";
 import tokenErrors from "./token.errors";
@@ -25,10 +24,8 @@ tokensRouter.post(
   findItem(User, MAIN_IDENTIFIER, tokenErrors.emailAlreadyRegistered),
   findItem(User, MAIN_IDENTIFIER, tokenErrors.unauthorizedToCreate, {
     getValueFrom: "payload",
-    storeAt: "authority",
   }),
 
-  roleFilter,
   generateToken
 );
 
