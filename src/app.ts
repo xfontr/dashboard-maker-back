@@ -4,7 +4,7 @@ import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import usersRouter from "./modules/user/users.router";
-import tokensRouter from "./modules/token/token.router";
+import signTokensRouter from "./modules/signToken/signToken.router";
 import ENDPOINTS from "./config/endpoints";
 import generalError from "./common/middlewares/generalError";
 import notFoundError from "./common/middlewares/notFoundError";
@@ -23,7 +23,7 @@ app.use(
 );
 
 app.use(ENDPOINTS.users.router, usersRouter);
-app.use(ENDPOINTS.tokens.router, tokensRouter);
+app.use(ENDPOINTS.signTokens.router, signTokensRouter);
 
 app.use(notFoundError);
 app.use(validationError);

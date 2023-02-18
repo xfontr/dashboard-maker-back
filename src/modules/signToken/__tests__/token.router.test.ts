@@ -1,7 +1,7 @@
 import "../../../setupTests";
 import request from "supertest";
 import ENDPOINTS from "../../../config/endpoints";
-import ERROR_CODES from "../../../config/errorCodes";
+import HTTP_CODES from "../../../config/errorCodes";
 import ENVIRONMENT from "../../../config/environment";
 import { MAIN_IDENTIFIER } from "../../../config/database";
 import { mockProtoToken } from "../../../common/test-utils/mocks/mockToken";
@@ -10,8 +10,8 @@ import mockUser, {
   mockProtoUser,
 } from "../../../common/test-utils/mocks/mockUser";
 
-const { tokens, users } = ENDPOINTS;
-const { error, success } = ERROR_CODES;
+const { signTokens: tokens, users } = ENDPOINTS;
+const { error, success } = HTTP_CODES;
 
 describe(`Given a ${tokens.router} route`, () => {
   describe("When requested with POST method and valid token data", () => {

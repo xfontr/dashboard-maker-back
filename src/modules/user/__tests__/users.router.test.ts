@@ -1,6 +1,6 @@
 import "../../../setupTests";
 import request from "supertest";
-import ERROR_CODES from "../../../config/errorCodes";
+import HTTP_CODES from "../../../config/errorCodes";
 import ENDPOINTS from "../../../config/endpoints";
 import { MAIN_IDENTIFIER } from "../../../config/database";
 import ENVIRONMENT from "../../../config/environment";
@@ -11,8 +11,8 @@ import mockUser, {
 } from "../../../common/test-utils/mocks/mockUser";
 import User from "../User.model";
 
-const { users, tokens } = ENDPOINTS;
-const { success, error } = ERROR_CODES;
+const { users, signTokens: tokens } = ENDPOINTS;
+const { success, error } = HTTP_CODES;
 
 describe(`Given a ${users.router} route`, () => {
   describe("When requested with GET method", () => {

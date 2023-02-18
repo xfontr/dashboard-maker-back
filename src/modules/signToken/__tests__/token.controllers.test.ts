@@ -1,8 +1,8 @@
 import { NextFunction, Response } from "express";
 import bcrypt from "bcryptjs";
-import ERROR_CODES from "../../../config/errorCodes";
-import { generateToken, verifyToken } from "../token.controllers";
-import Token from "../Token.model";
+import HTTP_CODES from "../../../config/errorCodes";
+import { generateToken, verifyToken } from "../signToken.controllers";
+import Token from "../SignToken.model";
 import CodedError from "../../../common/utils/CodedError";
 import camelToRegular from "../../../common/utils/camelToRegular";
 import {
@@ -11,7 +11,7 @@ import {
 } from "../../../common/test-utils/mocks/mockToken";
 import CustomRequest from "../../../common/types/CustomRequest";
 import mockPayload from "../../../common/test-utils/mocks/mockPayload";
-import tokenErrors from "../token.errors";
+import tokenErrors from "../signToken.errors";
 
 beforeEach(() => {
   Token.create = jest.fn().mockResolvedValue(mockFullToken);
@@ -32,14 +32,14 @@ describe("Given a generateToken controller", () => {
     } as Partial<Response>;
     const next = jest.fn() as NextFunction;
 
-    test(`Then it should respond with a status of ${ERROR_CODES.success.created} and a success message`, async () => {
+    test(`Then it should respond with a status of ${HTTP_CODES.success.created} and a success message`, async () => {
       bcrypt.hash = () => Promise.resolve("#");
 
       const successMessage = { token: "Token created successfully" };
 
       await generateToken(req, res as Response, next);
 
-      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.created);
+      expect(res.status).toHaveBeenCalledWith(HTTP_CODES.success.created);
       expect(res.json).toHaveBeenCalledWith(successMessage);
     });
 
@@ -107,12 +107,12 @@ describe("Given a verifyToken controller", () => {
       json: jest.fn(),
     } as Partial<Response>;
 
-    test(`Then it should respond with a status of ${ERROR_CODES.success.ok} and the token`, async () => {
+    test(`Then it should respond with a status of ${HTTP_CODES.success.ok} and the token`, async () => {
       const response = { token: mockFullToken };
 
       await verifyToken(req, res as Response);
 
-      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
+      expect(res.status).toHaveBeenCalledWith(HTTP_CODES.success.ok);
       expect(res.json).toHaveBeenCalledWith(response);
     });
   });

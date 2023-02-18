@@ -6,7 +6,7 @@ const ENDPOINTS = {
     logOut: "/log-out",
     refresh: "/refresh",
   },
-  tokens: {
+  signTokens: {
     router: "/tokens",
     root: "/",
     verify: "/verify",

@@ -1,6 +1,6 @@
 import ENVIRONMENT from "../../../config/environment";
 import { UserRoles } from "../../user/users.types";
-import isAuthorizedToRequest from "../token.utils";
+import isAuthorizedToRequest from "../signToken.utils";
 
 describe("Given a isAuthorizedToRequest function", () => {
   describe("When called with a requestor role of 'admin', and a requested role of 'user'", () => {

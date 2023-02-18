@@ -1,21 +1,21 @@
 import express from "express";
 import { MAIN_IDENTIFIER } from "../../config/database";
 import ENDPOINTS from "../../config/endpoints";
-import { generateToken, verifyToken } from "./token.controllers";
+import { generateToken, verifyToken } from "./signToken.controllers";
 import User from "../user/User.model";
 import authentication from "../../common/middlewares/authentication";
 import findItem from "../../common/middlewares/findItem";
-import { tokenSchema, verifyTokenSchema } from "./token.schema";
+import { tokenSchema, verifyTokenSchema } from "./signToken.schema";
 import validateRequest from "../../common/services/validateRequest";
-import tokenErrors from "./token.errors";
-import Token from "./Token.model";
+import tokenErrors from "./signToken.errors";
+import Token from "./SignToken.model";
 import checkToken from "../../common/middlewares/checkToken";
 
-const { root, verify } = ENDPOINTS.tokens;
+const { root, verify } = ENDPOINTS.signTokens;
 
-const tokensRouter = express.Router();
+const signTokensRouter = express.Router();
 
-tokensRouter.post(
+signTokensRouter.post(
   root,
 
   validateRequest(tokenSchema),
@@ -29,7 +29,7 @@ tokensRouter.post(
   generateToken
 );
 
-tokensRouter.post(
+signTokensRouter.post(
   verify,
 
   validateRequest(verifyTokenSchema),
@@ -43,4 +43,4 @@ tokensRouter.post(
   verifyToken
 );
 
-export default tokensRouter;
+export default signTokensRouter;

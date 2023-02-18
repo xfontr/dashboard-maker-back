@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ValidationError } from "express-validation";
-import ERROR_CODES from "../../config/errorCodes";
+import HTTP_CODES from "../../config/errorCodes";
 import setDebug from "../services/setDebug";
 
 const debug = setDebug("validation-error");
@@ -15,7 +15,7 @@ const validationError = (
   if (error instanceof ValidationError) {
     debug("highError", `Validation error: ${error.message}`);
     error.details.body.forEach(({ message }) => debug("error", message));
-    res.status(ERROR_CODES.error.badRequest).json({ error: "Bad Request" });
+    res.status(HTTP_CODES.error.badRequest).json({ error: "Bad Request" });
     return;
   }
 

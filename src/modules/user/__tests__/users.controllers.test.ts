@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import ERROR_CODES from "../../../config/errorCodes";
+import HTTP_CODES from "../../../config/errorCodes";
 import { MAIN_IDENTIFIER } from "../../../config/database";
 import User from "../User.model";
 import camelToRegular from "../../../common/utils/camelToRegular";
@@ -13,7 +13,7 @@ import {
   refreshToken,
   registerUser,
 } from "../users.controllers";
-import Token from "../../token/Token.model";
+import Token from "../../signToken/SignToken.model";
 import CustomRequest from "../../../common/types/CustomRequest";
 import mockUser, {
   mockUserAdmin,
@@ -51,10 +51,10 @@ describe("Given a getAllUsers controller", () => {
     } as Partial<Response>;
     const next = jest.fn() as NextFunction;
 
-    test(`Then it should respond with a status of ${ERROR_CODES.success.ok}`, async () => {
+    test(`Then it should respond with a status of ${HTTP_CODES.success.ok}`, async () => {
       await getAllUsers(req, res as Response, next);
 
-      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
+      expect(res.status).toHaveBeenCalledWith(HTTP_CODES.success.ok);
     });
 
     test("Then it should respond with the data found", async () => {
@@ -78,13 +78,13 @@ describe("Given a registerUser controller", () => {
     } as Partial<Response>;
     const next = jest.fn() as NextFunction;
 
-    test(`Then it should respond with a status of ${ERROR_CODES.success.created} and a success message`, async () => {
+    test(`Then it should respond with a status of ${HTTP_CODES.success.created} and a success message`, async () => {
       const successMessage = { register: "User registered successfully" };
       User.find = jest.fn().mockResolvedValue([]);
 
       await registerUser(req, res as Response, next);
 
-      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.created);
+      expect(res.status).toHaveBeenCalledWith(HTTP_CODES.success.created);
       expect(res.json).toHaveBeenCalledWith(successMessage);
       expect(Token.deleteMany).not.toHaveBeenCalled();
     });
@@ -171,12 +171,12 @@ describe("Given a logInUser controller", () => {
     } as unknown as Partial<Response>;
     const next = jest.fn() as NextFunction;
 
-    test(`Then it should respond with a status of ${ERROR_CODES.success.ok} and a token`, async () => {
+    test(`Then it should respond with a status of ${HTTP_CODES.success.ok} and a token`, async () => {
       const expectedResponse = FullToken(mockUser);
 
       await logInUser(req, res as Response, next);
 
-      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
+      expect(res.status).toHaveBeenCalledWith(HTTP_CODES.success.ok);
       expect(res.json).toHaveBeenCalledWith(expectedResponse);
       expect(res.cookie).toHaveBeenCalled();
 
@@ -224,12 +224,12 @@ describe("Given a refreshToken controller", () => {
 
     const next = jest.fn() as NextFunction;
 
-    test(`Then it should respond with a status of ${ERROR_CODES.success.ok} and a token`, async () => {
+    test(`Then it should respond with a status of ${HTTP_CODES.success.ok} and a token`, async () => {
       const expectedResponse = FullToken(mockUser);
 
       await refreshToken(req, res as Response, next);
 
-      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
+      expect(res.status).toHaveBeenCalledWith(HTTP_CODES.success.ok);
       expect(res.json).toHaveBeenCalledWith(expectedResponse);
     });
 
@@ -262,13 +262,13 @@ describe("Given a logOutUser controller", () => {
 
     const next = jest.fn() as NextFunction;
 
-    test(`Then it should respond with a status of ${ERROR_CODES.success.ok} and a token`, async () => {
+    test(`Then it should respond with a status of ${HTTP_CODES.success.ok} and a token`, async () => {
       User.findByIdAndUpdate = jest.fn().mockResolvedValue(mockUser);
       const expectedResponse = { logOut: "User logged out" };
 
       await logOutUser(req, res as Response, next);
 
-      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
+      expect(res.status).toHaveBeenCalledWith(HTTP_CODES.success.ok);
       expect(res.json).toHaveBeenCalledWith(expectedResponse);
     });
 

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import ERROR_CODES from "../../config/errorCodes";
+import HTTP_CODES from "../../config/errorCodes";
 import IUser from "./users.types";
 import {
   compareHash,
@@ -15,7 +15,7 @@ import CustomRequest from "../../common/types/CustomRequest";
 import { ServeToken, ServeUser } from "../../common/services/ServeDatabase";
 import userErrors from "./users.errors";
 
-const { success } = ERROR_CODES;
+const { success } = HTTP_CODES;
 
 export const getAllUsers = async (
   req: Request,

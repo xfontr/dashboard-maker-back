@@ -1,8 +1,8 @@
 import { model, Schema } from "mongoose";
 import { MAIN_IDENTIFIER } from "../../config/database";
-import IToken from "./token.types";
+import ISignToken from "./signToken.types";
 
-const tokenSchema = new Schema<IToken>({
+const tokenSchema = new Schema<ISignToken>({
   [MAIN_IDENTIFIER]: {
     type: String,
     required: true,
