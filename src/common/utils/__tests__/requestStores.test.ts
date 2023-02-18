@@ -4,7 +4,7 @@ import mockUser from "../../test-utils/mocks/mockUser";
 import CustomRequest from "../../types/CustomRequest";
 import requestStores from "../requestStores";
 
-const { token, payload, authority, user } = requestStores;
+const { token, payload, user } = requestStores;
 
 describe("Given a token method", () => {
   describe("When called with a custom request and a token item", () => {
@@ -26,18 +26,6 @@ describe("Given a payload method", () => {
       payload(req, mockPayload);
 
       expect(req.payload).toStrictEqual(mockPayload);
-    });
-  });
-});
-
-describe("Given a authority method", () => {
-  describe("When called with a custom request and a authority item", () => {
-    test("Then it should assign said item to the request 'authority' attribute", () => {
-      const req = {} as CustomRequest;
-
-      authority(req, mockUser);
-
-      expect(req.authority).toStrictEqual(mockUser);
     });
   });
 });
