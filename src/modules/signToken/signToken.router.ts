@@ -1,14 +1,11 @@
 import express from "express";
-import { MAIN_IDENTIFIER } from "../../config/database";
 import ENDPOINTS from "../../config/endpoints";
 import { generateSignToken, verifySignToken } from "./signToken.controllers";
-import User from "../user/User.model";
 import authentication from "../../common/middlewares/authentication";
-import findItem from "../../common/middlewares/findItem";
+import { findSignToken, findUser } from "../../common/middlewares/findItem";
 import { signTokenSchema, verifySignTokenSchema } from "./signToken.schema";
 import validateRequest from "../../common/services/validateRequest";
 import signTokenErrors from "./signToken.errors";
-import Token from "./SignToken.model";
 
 const { root, verify } = ENDPOINTS.signTokens;
 
@@ -20,9 +17,12 @@ signTokensRouter.post(
   validateRequest(signTokenSchema),
   authentication,
 
-  findItem(User, MAIN_IDENTIFIER, signTokenErrors.emailAlreadyRegistered),
-  findItem(User, MAIN_IDENTIFIER, signTokenErrors.unauthorizedToCreate, {
+  findUser({
+    specialError: signTokenErrors.emailAlreadyRegistered,
+  }),
+  findUser({
     getValueFrom: "payload",
+    specialError: signTokenErrors.unauthorizedToCreate,
   }),
 
   generateSignToken
@@ -33,8 +33,8 @@ signTokensRouter.post(
 
   validateRequest(verifySignTokenSchema),
 
-  findItem(Token, MAIN_IDENTIFIER, signTokenErrors.signTokenNotFound, {
-    storeAt: "token",
+  findSignToken({
+    specialError: signTokenErrors.signTokenNotFound,
   }),
 
   verifySignToken

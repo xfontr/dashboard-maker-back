@@ -10,7 +10,7 @@ const isSignTokenValid = async (
   req: CustomRequest,
   next: NextFunction,
   skip: boolean = false
-): Promise<Boolean> => {
+): Promise<boolean> => {
   if (skip || !req.token.isCodeRequired) return true;
 
   const tryThis = catchCodedError(next);

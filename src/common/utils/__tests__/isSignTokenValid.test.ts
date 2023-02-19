@@ -25,7 +25,7 @@ describe("Given a checkToken middleware", () => {
 
     describe("And there is a valid existent token", () => {
       test("Then it should return true and not call next", async () => {
-        const result = await isSignTokenValid(req, next, false);
+        const result = await isSignTokenValid(req, next);
 
         expect(next).not.toHaveBeenCalled();
         expect(result).toBeTruthy();
@@ -39,7 +39,7 @@ describe("Given a checkToken middleware", () => {
           headers: { authorization: "invalidToken" },
         } as CustomRequest;
 
-        const result = await isSignTokenValid(invalidReq, next, false);
+        const result = await isSignTokenValid(invalidReq, next);
 
         expect(next).toHaveBeenCalledWith(userErrors.invalidToken);
         expect(next).toHaveBeenCalledTimes(1);
@@ -58,7 +58,7 @@ describe("Given a checkToken middleware", () => {
           },
         } as CustomRequest;
 
-        await isSignTokenValid(invalidReq, next, false);
+        await isSignTokenValid(invalidReq, next);
 
         expect(next).toHaveBeenCalledWith(userErrors.invalidToken);
         expect(next).toHaveBeenCalledTimes(1);
@@ -69,7 +69,7 @@ describe("Given a checkToken middleware", () => {
       test("Then it should call next with an error", async () => {
         bcrypt.compare = jest.fn().mockResolvedValue(false);
 
-        const result = await isSignTokenValid(req, next, false);
+        const result = await isSignTokenValid(req, next);
 
         expect(next).toHaveBeenCalledWith(userErrors.invalidToken);
         expect(next).toHaveBeenCalledTimes(1);
@@ -101,7 +101,7 @@ describe("Given a checkToken middleware", () => {
           token: { ...mockFullToken, isCodeRequired: false },
         } as CustomRequest;
 
-        const result = await isSignTokenValid(skipReq, next, false);
+        const result = await isSignTokenValid(skipReq, next);
 
         expect(next).not.toHaveBeenCalled();
         expect(bcrypt.compare).not.toHaveBeenCalled();

@@ -1,10 +1,7 @@
 import express from "express";
-import findItem from "../../common/middlewares/findItem";
+import { findSignToken, findUser } from "../../common/middlewares/findItem";
 import validateRequest from "../../common/services/validateRequest";
-import { IS_TOKEN_REQUIRED, MAIN_IDENTIFIER } from "../../config/database";
 import ENDPOINTS from "../../config/endpoints";
-import Token from "../signToken/SignToken.model";
-import User from "./User.model";
 import { logInSchema, registerSchema } from "./users.schema";
 import {
   getAllUsers,
@@ -26,11 +23,12 @@ usersRouter.get(root, getAllUsers);
 usersRouter.post(
   root,
   validateRequest(registerSchema),
-  findItem(Token, MAIN_IDENTIFIER, userErrors.notFoundToken, {
-    storeAt: "token",
-    skip: !IS_TOKEN_REQUIRED,
+  findSignToken({
+    specialError: userErrors.notFoundToken,
   }),
-  findItem(User, MAIN_IDENTIFIER, userErrors.invalidSignUp),
+  findUser({
+    specialError: userErrors.invalidSignUp,
+  }),
   registerUser
 );
 
@@ -39,8 +37,8 @@ usersRouter.post(
 usersRouter.post(
   logIn,
   validateRequest(logInSchema),
-  findItem(User, MAIN_IDENTIFIER, userErrors.logInUserDoesNotExist, {
-    storeAt: "user",
+  findUser({
+    specialError: userErrors.logInUserDoesNotExist,
   }),
   logInUser
 );
@@ -49,9 +47,10 @@ usersRouter.post(
 
 usersRouter.get(
   refresh,
-  findItem(User, "authToken", userErrors.noLinkedToken, {
+  findUser({
+    attribute: "authToken",
     getValueFrom: "cookies",
-    storeAt: "user",
+    specialError: userErrors.noLinkedToken,
   }),
   refreshToken
 );
@@ -60,9 +59,10 @@ usersRouter.get(
 
 usersRouter.patch(
   logOut,
-  findItem(User, "authToken", userErrors.noLinkedToken, {
+  findUser({
+    attribute: "authToken",
     getValueFrom: "cookies",
-    storeAt: "user",
+    specialError: userErrors.noLinkedToken,
   }),
   logOutUser
 );
