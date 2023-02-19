@@ -33,7 +33,7 @@ const findItem =
 
       const ItemService = ServeDatabase<T>(model)(next);
 
-      const value = req[options.getValueFrom || "body"][options.attribute];
+      const value = req[options.getValueFrom][options.attribute];
 
       if (!value) {
         next(invalidRequest(options.attribute as string));

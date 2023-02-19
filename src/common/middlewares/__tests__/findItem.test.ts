@@ -39,7 +39,7 @@ describe("Given a findItem middleware", () => {
             body: { ...req.body, [MAIN_IDENTIFIER]: undefined },
           } as Request;
 
-          await findItem(model, {})({ specialError: conflictError })(
+          await findItem(model, { specialError: conflictError })()(
             mockUndefinedReq,
             res,
             next
@@ -93,7 +93,7 @@ describe("Given a findItem middleware", () => {
             find: (): IUser[] => [mockUser],
           } as unknown as Model<IUser>;
 
-          await findItem(model, {})(options)(customReq, res, next);
+          await findItem(model, options)()(customReq, res, next);
 
           expect(customReq.token).toStrictEqual(mockUser);
           expect(next).toHaveBeenCalledWith();
