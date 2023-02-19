@@ -10,6 +10,11 @@ const RegistrationTokens = () => ({
     "unauthorized",
     "The requested token can't be authorized"
   )(Error("The person requesting the token is not allowed to")),
+
+  tokenAlreadyExists: CodedError(
+    "conflict",
+    "The requested token can't be authorized"
+  )(Error("The token requested already exists for the same identifier")),
 });
 
 const VerifySignToken = () => ({
