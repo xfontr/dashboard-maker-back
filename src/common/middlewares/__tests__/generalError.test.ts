@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import ERROR_CODES from "../../../config/errorCodes";
+import HTTP_CODES from "../../../config/errorCodes";
 import CodedError from "../../utils/CodedError";
 import generalError from "../generalError";
 
@@ -26,9 +26,9 @@ describe("Given a generalError function (middleware)", () => {
     const customError = CodedError("internalServerError")(Error());
     generalError(customError, req as Request, res as Response, next);
 
-    test(`Then it should respond with a status of '${ERROR_CODES.error.internalServerError}'`, () => {
+    test(`Then it should respond with a status of '${HTTP_CODES.error.internalServerError}'`, () => {
       expect(res.status).toHaveBeenCalledWith(
-        ERROR_CODES.error.internalServerError
+        HTTP_CODES.error.internalServerError
       );
     });
 

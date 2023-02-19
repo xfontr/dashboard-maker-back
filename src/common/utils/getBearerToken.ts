@@ -3,10 +3,7 @@ const { initials, length } = {
   length: 7,
 };
 
-export default (token?: string) => {
-  if (!token || !token.startsWith(initials)) {
-    return false;
-  }
+const getBearerToken = (token?: string): false | string =>
+  !token || !token.startsWith(initials) ? false : token.slice(length);
 
-  return token.slice(length);
-};
+export default getBearerToken;

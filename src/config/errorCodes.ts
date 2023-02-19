@@ -1,4 +1,4 @@
-const ERROR_CODES = {
+const HTTP_CODES = {
   success: {
     ok: 200,
     created: 201,
@@ -17,4 +17,4 @@ const ERROR_CODES = {
   },
 };
 
-export default ERROR_CODES;
+export default HTTP_CODES;

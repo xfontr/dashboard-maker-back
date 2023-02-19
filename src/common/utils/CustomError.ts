@@ -1,4 +1,4 @@
-import ERROR_CODES from "../../config/errorCodes";
+import HTTP_CODES from "../../config/errorCodes";
 import camelToRegular from "./camelToRegular";
 
 export interface ICustomError extends Error {
@@ -7,7 +7,7 @@ export interface ICustomError extends Error {
 }
 
 export default (
-  (availableCodes: typeof ERROR_CODES.error) =>
+  (availableCodes: typeof HTTP_CODES.error) =>
   ({ message }: Error, code?: number, publicMessage?: string): ICustomError =>
     Object.setPrototypeOf(
       {
@@ -20,4 +20,4 @@ export default (
       },
       Error()
     )
-)(ERROR_CODES.error);
+)(HTTP_CODES.error);

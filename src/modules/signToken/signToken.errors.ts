@@ -12,16 +12,16 @@ const RegistrationTokens = () => ({
   )(Error("The person requesting the token is not allowed to")),
 });
 
-const VerifyToken = () => ({
-  tokenNotFound: CodedError(
+const VerifySignToken = () => ({
+  signTokenNotFound: CodedError(
     "notFound",
     "The token provided seems invalid. Please, contact administration if the error persists"
   )(Error("The token doesn't exist")),
 });
 
-const tokenErrors = {
+const signTokenErrors = {
   ...RegistrationTokens(),
-  ...VerifyToken(),
+  ...VerifySignToken(),
 };
 
-export default tokenErrors;
+export default signTokenErrors;

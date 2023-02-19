@@ -1,8 +1,8 @@
 import { NextFunction, Response } from "express";
 import bcrypt from "bcryptjs";
-import ERROR_CODES from "../../../config/errorCodes";
-import { generateToken, verifyToken } from "../token.controllers";
-import Token from "../Token.model";
+import HTTP_CODES from "../../../config/errorCodes";
+import { generateSignToken, verifySignToken } from "../signToken.controllers";
+import Token from "../SignToken.model";
 import CodedError from "../../../common/utils/CodedError";
 import camelToRegular from "../../../common/utils/camelToRegular";
 import {
@@ -11,7 +11,9 @@ import {
 } from "../../../common/test-utils/mocks/mockToken";
 import CustomRequest from "../../../common/types/CustomRequest";
 import mockPayload from "../../../common/test-utils/mocks/mockPayload";
-import tokenErrors from "../token.errors";
+import signTokenErrors from "../signToken.errors";
+import userErrors from "../../user/users.errors";
+import mockUser from "../../../common/test-utils/mocks/mockUser";
 
 beforeEach(() => {
   Token.create = jest.fn().mockResolvedValue(mockFullToken);
@@ -19,6 +21,15 @@ beforeEach(() => {
   Token.deleteOne = jest.fn();
   jest.clearAllMocks();
 });
+
+const mockIsTokenRequired = jest.fn().mockReturnValue(true);
+
+jest.mock("../../../config/database", () => ({
+  ...jest.requireActual("../../../config/database"),
+  get IS_TOKEN_REQUIRED() {
+    return mockIsTokenRequired();
+  },
+}));
 
 describe("Given a generateToken controller", () => {
   describe("When called with a request, a response and a next function", () => {
@@ -32,14 +43,14 @@ describe("Given a generateToken controller", () => {
     } as Partial<Response>;
     const next = jest.fn() as NextFunction;
 
-    test(`Then it should respond with a status of ${ERROR_CODES.success.created} and a success message`, async () => {
+    test(`Then it should respond with a status of ${HTTP_CODES.success.created} and a success message`, async () => {
       bcrypt.hash = () => Promise.resolve("#");
 
       const successMessage = { token: "Token created successfully" };
 
-      await generateToken(req, res as Response, next);
+      await generateSignToken(req, res as Response, next);
 
-      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.created);
+      expect(res.status).toHaveBeenCalledWith(HTTP_CODES.success.created);
       expect(res.json).toHaveBeenCalledWith(successMessage);
     });
 
@@ -52,7 +63,7 @@ describe("Given a generateToken controller", () => {
           camelToRegular("internalServerError")
         )(Error());
 
-        await generateToken(req, res as Response, next);
+        await generateSignToken(req, res as Response, next);
 
         expect(next).toHaveBeenCalledWith(internalServerError);
         expect(next).toHaveBeenCalledTimes(1);
@@ -71,7 +82,7 @@ describe("Given a generateToken controller", () => {
           camelToRegular("badRequest")
         )(Error());
 
-        await generateToken(req, res as Response, next);
+        await generateSignToken(req, res as Response, next);
 
         expect(next).toHaveBeenCalledWith(badRequest);
         expect(next).toHaveBeenCalledTimes(1);
@@ -86,9 +97,9 @@ describe("Given a generateToken controller", () => {
           payload: { ...mockPayload, role: "user" },
         } as CustomRequest;
 
-        await generateToken(notAuthReq, res as Response, next);
+        await generateSignToken(notAuthReq, res as Response, next);
 
-        expect(next).toHaveBeenCalledWith(tokenErrors.unauthorizedToCreate);
+        expect(next).toHaveBeenCalledWith(signTokenErrors.unauthorizedToCreate);
         expect(next).toHaveBeenCalledTimes(1);
         expect(res.status).not.toHaveBeenCalled();
       });
@@ -106,13 +117,49 @@ describe("Given a verifyToken controller", () => {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
     } as Partial<Response>;
+    const next = jest.fn() as NextFunction;
 
-    test(`Then it should respond with a status of ${ERROR_CODES.success.ok} and the token`, async () => {
+    describe("If there is no token required", () => {
+      test(`Then it should respond with a status of ${HTTP_CODES.success.ok} and the token`, async () => {
+        mockIsTokenRequired.mockReturnValue(false);
+
+        const response = { token: mockFullToken };
+
+        await verifySignToken(req, res as Response, next);
+
+        expect(res.status).toHaveBeenCalledWith(HTTP_CODES.success.ok);
+        expect(res.json).toHaveBeenCalledWith(response);
+      });
+    });
+
+    describe("If a token is required", () => {
+      test("Then it should call next with error if the token is not valid", async () => {
+        mockIsTokenRequired.mockReturnValue(true);
+
+        await verifySignToken(req, res as Response, next);
+
+        expect(next).toHaveBeenCalledWith(userErrors.invalidToken);
+      });
+    });
+
+    test("Then it should respond with a success status if the token is valid", async () => {
+      bcrypt.compare = () => Promise.resolve(true);
+
+      const reqWithToken = {
+        body: mockUser,
+        token: mockFullToken,
+        headers: {
+          authorization: `Bearer ${mockFullToken.code}`,
+        },
+      } as CustomRequest;
+
+      mockIsTokenRequired.mockReturnValue(true);
+
       const response = { token: mockFullToken };
 
-      await verifyToken(req, res as Response);
+      await verifySignToken(reqWithToken, res as Response, next);
 
-      expect(res.status).toHaveBeenCalledWith(ERROR_CODES.success.ok);
+      expect(res.status).toHaveBeenCalledWith(HTTP_CODES.success.ok);
       expect(res.json).toHaveBeenCalledWith(response);
     });
   });
