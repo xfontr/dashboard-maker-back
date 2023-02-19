@@ -44,6 +44,16 @@ describe(`Given a ${tokens.router} route`, () => {
     });
   });
 
+  describe("When requested with POST method and the token already exists", () => {
+    test(`Then it should respond with a status of ${error.conflict}`, async () => {
+      await createSignToken();
+
+      const res = await createSignToken();
+
+      expect(res.statusCode).toBe(error.conflict);
+    });
+  });
+
   describe("When requested with POST method and the user is already registered", () => {
     test(`Then it should respond with a status of ${error.conflict}`, async () => {
       await createSignToken();

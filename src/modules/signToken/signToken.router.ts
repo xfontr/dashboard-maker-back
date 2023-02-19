@@ -15,11 +15,18 @@ signTokensRouter.post(
   root,
 
   validateRequest(signTokenSchema),
+
+  findSignToken({
+    specialError: signTokenErrors.tokenAlreadyExists,
+    skip: false,
+  }),
+
   authentication,
 
   findUser({
     specialError: signTokenErrors.emailAlreadyRegistered,
   }),
+
   findUser({
     getValueFrom: "payload",
     specialError: signTokenErrors.unauthorizedToCreate,

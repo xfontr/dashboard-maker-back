@@ -4,7 +4,6 @@ import { IS_TOKEN_REQUIRED, MAIN_IDENTIFIER } from "../../config/database";
 import { createHash } from "../../common/services/authentication";
 import catchCodedError from "../../common/utils/catchCodedError";
 import { ServeToken } from "../../common/services/ServeDatabase";
-import ISignToken from "./signToken.types";
 import CustomRequest from "../../common/types/CustomRequest";
 import isAuthorizedToRequest from "./signToken.utils";
 import signTokenErrors from "./signToken.errors";
@@ -21,20 +20,25 @@ export const generateSignToken = async (
   const tryThis = catchCodedError(next);
 
   const requestorData = req.payload;
-  const token: ISignToken = req.body;
 
   if (
-    !isAuthorizedToRequest(requestorData.role, token.role, requestorData.email)
+    !isAuthorizedToRequest(
+      requestorData.role,
+      req.token.role,
+      requestorData.email
+    )
   ) {
     next(signTokenErrors.unauthorizedToCreate);
     return;
   }
 
-  const tokenValue = await tryThis<string, string>(createHash, [token.code]);
+  const tokenValue = await tryThis<string, string>(createHash, [
+    req.token.code,
+  ]);
   if (!tokenValue) return;
 
   const newToken = await TokensService.create(
-    { ...token, code: tokenValue },
+    { ...req.token, code: tokenValue },
     { replace: true, mainIdentifier: MAIN_IDENTIFIER }
   );
 

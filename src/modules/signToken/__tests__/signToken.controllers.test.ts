@@ -34,7 +34,7 @@ jest.mock("../../../config/database", () => ({
 describe("Given a generateToken controller", () => {
   describe("When called with a request, a response and a next function", () => {
     const req = {
-      body: mockProtoToken,
+      token: mockProtoToken,
       payload: { ...mockPayload, role: "admin" },
     } as CustomRequest;
     const res = {
@@ -93,7 +93,7 @@ describe("Given a generateToken controller", () => {
     describe("And the requesting user is not authorized", () => {
       test("Then it should call next with an error and not respond", async () => {
         const notAuthReq = {
-          body: mockProtoToken,
+          token: mockProtoToken,
           payload: { ...mockPayload, role: "user" },
         } as CustomRequest;
 

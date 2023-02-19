@@ -1,6 +1,6 @@
 import CustomRequest, { IStores } from "../types/CustomRequest";
 
-const storeNames: (keyof IStores)[] = ["payload", "token", "user"];
+const stores: (keyof IStores)[] = ["payload", "token", "user"];
 
 const Store =
   (storeName: keyof IStores): Function =>
@@ -9,16 +9,16 @@ const Store =
   };
 
 const baseRequestStores = (
-  stores: (keyof IStores)[]
+  storeNames: (keyof IStores)[]
 ): Record<keyof IStores, Function> =>
-  stores.reduce(
-    (finalStore, currentStore) => ({
+  storeNames.reduce(
+    (finalStore, storeName) => ({
       ...finalStore,
-      [currentStore]: Store(currentStore),
+      [storeName]: Store(storeName),
     }),
     {} as Record<keyof IStores, Function>
   );
 
-const requestStores = baseRequestStores(storeNames);
+const requestStores = baseRequestStores(stores);
 
 export default requestStores;

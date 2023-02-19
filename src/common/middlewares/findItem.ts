@@ -48,7 +48,11 @@ const findItem =
 
       if (!item || item === true) return;
 
-      if (options.storeAt) requestStores[options.storeAt](req, item[0]);
+      if (options.storeAt)
+        requestStores[options.storeAt](
+          req,
+          item[0] ?? req[options.getValueFrom]
+        );
 
       next();
     };
