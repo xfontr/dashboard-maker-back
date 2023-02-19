@@ -1,6 +1,5 @@
 import "../../../setupTests";
 import request from "supertest";
-import bcrypt from "bcryptjs";
 import ENDPOINTS from "../../../config/endpoints";
 import HTTP_CODES from "../../../config/errorCodes";
 import ENVIRONMENT from "../../../config/environment";
