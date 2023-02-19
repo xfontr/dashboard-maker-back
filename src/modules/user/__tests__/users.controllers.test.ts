@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import HTTP_CODES from "../../../config/errorCodes";
-import { MAIN_IDENTIFIER } from "../../../config/database";
+import * as databaseConfigs from "../../../config/database";
 import User from "../User.model";
 import camelToRegular from "../../../common/utils/camelToRegular";
 import CodedError, { Codes } from "../../../common/utils/CodedError";
@@ -18,10 +18,7 @@ import CustomRequest from "../../../common/types/CustomRequest";
 import mockUser, {
   mockUserAdmin,
 } from "../../../common/test-utils/mocks/mockUser";
-import {
-  mockFullToken,
-  mockProtoToken,
-} from "../../../common/test-utils/mocks/mockToken";
+import { mockFullToken } from "../../../common/test-utils/mocks/mockToken";
 import userErrors from "../users.errors";
 
 let mockHashedPassword: string | Promise<never> = "validPassword";
@@ -40,6 +37,15 @@ jest.mock("../../../common/services/authentication", () => ({
   ...jest.requireActual("../../../common/services/authentication"),
   createHash: () => mockHashedPassword,
   verifyRefreshToken: () => mockIsTokenVerified,
+}));
+
+const mockIsTokenRequired = jest.fn().mockReturnValue(true);
+
+jest.mock("../../../config/database", () => ({
+  ...jest.requireActual("../../../config/database"),
+  get IS_TOKEN_REQUIRED() {
+    return mockIsTokenRequired();
+  },
 }));
 
 describe("Given a getAllUsers controller", () => {
@@ -69,9 +75,10 @@ describe("Given a getAllUsers controller", () => {
 
 describe("Given a registerUser controller", () => {
   describe("When called with a request with a user, a response and a next function", () => {
+    bcrypt.compare = jest.fn().mockResolvedValue("#");
     const req = {
       body: mockUser,
-    } as Request;
+    } as CustomRequest;
     const res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
@@ -79,6 +86,7 @@ describe("Given a registerUser controller", () => {
     const next = jest.fn() as NextFunction;
 
     test(`Then it should respond with a status of ${HTTP_CODES.success.created} and a success message`, async () => {
+      mockIsTokenRequired.mockReturnValue(false);
       const successMessage = { register: "User registered successfully" };
       User.find = jest.fn().mockResolvedValue([]);
 
@@ -91,10 +99,14 @@ describe("Given a registerUser controller", () => {
 
     test("Then it should delete the token, if any", async () => {
       const reqWithToken = {
-        body: { ...mockUser },
-        token: mockProtoToken,
+        body: mockUser,
+        token: mockFullToken,
+        headers: {
+          authorization: `Bearer ${mockFullToken.code}`,
+        },
       } as CustomRequest;
 
+      mockIsTokenRequired.mockReturnValue(true);
       User.find = jest.fn().mockResolvedValue([]);
 
       await registerUser(reqWithToken, res as Response, next);
@@ -104,6 +116,7 @@ describe("Given a registerUser controller", () => {
 
     describe("And the hashing of the password fails", () => {
       test("Then it should call next with an error", async () => {
+        mockIsTokenRequired.mockReturnValue(false);
         User.find = jest.fn().mockResolvedValue([]);
         mockHashedPassword = Promise.reject(new Error());
 
@@ -120,6 +133,7 @@ describe("Given a registerUser controller", () => {
 
     describe("And the creation of the user fails", () => {
       test("Then it should not call the response methods", async () => {
+        mockIsTokenRequired.mockReturnValue(false);
         User.find = jest.fn().mockResolvedValue([]);
         User.create = jest.fn().mockRejectedValue(new Error());
         mockHashedPassword = "validPassword";
@@ -138,9 +152,13 @@ describe("Given a registerUser controller", () => {
 
     describe("And the token role doesn't match the user role", () => {
       test("Then it should call next with an error", async () => {
+        mockIsTokenRequired.mockReturnValue(true);
         const reqWithBadRole = {
           body: mockUserAdmin,
           token: { ...mockFullToken, role: "user" },
+          headers: {
+            authorization: `Bearer ${mockFullToken.code}`,
+          },
         } as CustomRequest;
 
         User.find = jest.fn().mockResolvedValue([]);
@@ -159,7 +177,8 @@ describe("Given a logInUser controller", () => {
   describe("When called with a request with user log in data, a response and a next function", () => {
     const req = {
       body: {
-        [MAIN_IDENTIFIER]: mockUser[MAIN_IDENTIFIER],
+        [databaseConfigs.MAIN_IDENTIFIER]:
+          mockUser[databaseConfigs.MAIN_IDENTIFIER],
         password: mockUser.password,
       },
       user: mockUser,

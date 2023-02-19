@@ -10,10 +10,11 @@ import {
 import catchCodedError from "../../common/utils/catchCodedError";
 import FullToken from "./utils/FullToken/FullToken";
 import LogInData from "../../common/types/LogInData";
-import { MAIN_IDENTIFIER } from "../../config/database";
+import { IS_TOKEN_REQUIRED, MAIN_IDENTIFIER } from "../../config/database";
 import CustomRequest from "../../common/types/CustomRequest";
 import { ServeToken, ServeUser } from "../../common/services/ServeDatabase";
 import userErrors from "./users.errors";
+import isSignTokenValid from "../../common/utils/isSignTokenValid";
 
 const { success } = HTTP_CODES;
 
@@ -33,6 +34,9 @@ export const registerUser = async (
   res: Response,
   next: NextFunction
 ) => {
+  const isTokenValid = await isSignTokenValid(req, next, !IS_TOKEN_REQUIRED);
+  if (!isTokenValid) return;
+
   const tryThis = catchCodedError(next);
   const UsersService = ServeUser(next);
   const TokensService = ServeToken(next);

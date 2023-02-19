@@ -4,7 +4,6 @@ import validateRequest from "../../common/services/validateRequest";
 import { IS_TOKEN_REQUIRED, MAIN_IDENTIFIER } from "../../config/database";
 import ENDPOINTS from "../../config/endpoints";
 import Token from "../signToken/SignToken.model";
-import checkToken from "../../common/middlewares/checkToken";
 import User from "./User.model";
 import { logInSchema, registerSchema } from "./users.schema";
 import {
@@ -32,7 +31,6 @@ usersRouter.post(
     skip: !IS_TOKEN_REQUIRED,
   }),
   findItem(User, MAIN_IDENTIFIER, userErrors.invalidSignUp),
-  checkToken({ skip: !IS_TOKEN_REQUIRED }),
   registerUser
 );
 
