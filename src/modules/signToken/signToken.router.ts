@@ -1,15 +1,14 @@
 import express from "express";
 import { MAIN_IDENTIFIER } from "../../config/database";
 import ENDPOINTS from "../../config/endpoints";
-import { generateToken, verifyToken } from "./signToken.controllers";
+import { generateSignToken, verifySignToken } from "./signToken.controllers";
 import User from "../user/User.model";
 import authentication from "../../common/middlewares/authentication";
 import findItem from "../../common/middlewares/findItem";
-import { tokenSchema, verifyTokenSchema } from "./signToken.schema";
+import { signTokenSchema, verifySignTokenSchema } from "./signToken.schema";
 import validateRequest from "../../common/services/validateRequest";
-import tokenErrors from "./signToken.errors";
+import signTokenErrors from "./signToken.errors";
 import Token from "./SignToken.model";
-import checkToken from "../../common/middlewares/checkToken";
 
 const { root, verify } = ENDPOINTS.signTokens;
 
@@ -18,29 +17,27 @@ const signTokensRouter = express.Router();
 signTokensRouter.post(
   root,
 
-  validateRequest(tokenSchema),
+  validateRequest(signTokenSchema),
   authentication,
 
-  findItem(User, MAIN_IDENTIFIER, tokenErrors.emailAlreadyRegistered),
-  findItem(User, MAIN_IDENTIFIER, tokenErrors.unauthorizedToCreate, {
+  findItem(User, MAIN_IDENTIFIER, signTokenErrors.emailAlreadyRegistered),
+  findItem(User, MAIN_IDENTIFIER, signTokenErrors.unauthorizedToCreate, {
     getValueFrom: "payload",
   }),
 
-  generateToken
+  generateSignToken
 );
 
 signTokensRouter.post(
   verify,
 
-  validateRequest(verifyTokenSchema),
+  validateRequest(verifySignTokenSchema),
 
-  findItem(Token, MAIN_IDENTIFIER, tokenErrors.tokenNotFound, {
+  findItem(Token, MAIN_IDENTIFIER, signTokenErrors.signTokenNotFound, {
     storeAt: "token",
   }),
 
-  checkToken(),
-
-  verifyToken
+  verifySignToken
 );
 
 export default signTokensRouter;

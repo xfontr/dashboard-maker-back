@@ -1,17 +1,18 @@
 import { NextFunction, Response } from "express";
 import HTTP_CODES from "../../config/errorCodes";
-import { MAIN_IDENTIFIER } from "../../config/database";
+import { IS_TOKEN_REQUIRED, MAIN_IDENTIFIER } from "../../config/database";
 import { createHash } from "../../common/services/authentication";
 import catchCodedError from "../../common/utils/catchCodedError";
 import { ServeToken } from "../../common/services/ServeDatabase";
 import ISignToken from "./signToken.types";
 import CustomRequest from "../../common/types/CustomRequest";
 import isAuthorizedToRequest from "./signToken.utils";
-import tokenErrors from "./signToken.errors";
+import signTokenErrors from "./signToken.errors";
+import isSignTokenValid from "../../common/utils/isSignTokenValid";
 
 const { success } = HTTP_CODES;
 
-export const generateToken = async (
+export const generateSignToken = async (
   req: CustomRequest,
   res: Response,
   next: NextFunction
@@ -25,7 +26,7 @@ export const generateToken = async (
   if (
     !isAuthorizedToRequest(requestorData.role, token.role, requestorData.email)
   ) {
-    next(tokenErrors.unauthorizedToCreate);
+    next(signTokenErrors.unauthorizedToCreate);
     return;
   }
 
@@ -42,6 +43,14 @@ export const generateToken = async (
   res.status(success.created).json({ token: "Token created successfully" });
 };
 
-export const verifyToken = async (req: CustomRequest, res: Response) => {
+export const verifySignToken = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const isTokenValid = await isSignTokenValid(req, next, !IS_TOKEN_REQUIRED);
+
+  if (!isTokenValid) return;
+
   res.status(success.ok).json({ token: req.token });
 };

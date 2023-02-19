@@ -1,5 +1,6 @@
 import "../../../setupTests";
 import request from "supertest";
+import bcrypt from "bcryptjs";
 import ENDPOINTS from "../../../config/endpoints";
 import HTTP_CODES from "../../../config/errorCodes";
 import ENVIRONMENT from "../../../config/environment";
@@ -13,13 +14,24 @@ import mockUser, {
 const { signTokens: tokens, users } = ENDPOINTS;
 const { error, success } = HTTP_CODES;
 
+const createSignToken = () =>
+  request(app)
+    .post(tokens.router)
+    .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
+    .send(mockProtoToken);
+
+const registerUser = () =>
+  request(app)
+    .post(users.router)
+    .set("Authorization", `Bearer ${mockProtoToken.code}`)
+    .send({
+      ...mockProtoUser,
+    });
+
 describe(`Given a ${tokens.router} route`, () => {
   describe("When requested with POST method and valid token data", () => {
     test(`Then it should respond with a status of ${success.created}`, async () => {
-      const res = await request(app)
-        .post(`${tokens.router}`)
-        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
-        .send(mockProtoToken);
+      const res = await createSignToken();
 
       expect(res.statusCode).toBe(success.created);
     });
@@ -27,9 +39,7 @@ describe(`Given a ${tokens.router} route`, () => {
 
   describe("When requested with POST method and invalid token data", () => {
     test(`Then it should respond with a status of ${error.badRequest}`, async () => {
-      const res = await request(app)
-        .post(`${tokens.router}`)
-        .send({ name: "Test" });
+      const res = await request(app).post(tokens.router).send({ name: "Test" });
 
       expect(res.statusCode).toBe(error.badRequest);
     });
@@ -37,22 +47,11 @@ describe(`Given a ${tokens.router} route`, () => {
 
   describe("When requested with POST method and the user is already registered", () => {
     test(`Then it should respond with a status of ${error.conflict}`, async () => {
-      await request(app)
-        .post(`${tokens.router}`)
-        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
-        .send(mockProtoToken);
+      await createSignToken();
 
-      await request(app)
-        .post(`${users.router}`)
-        .set("Authorization", `Bearer ${mockProtoToken.code}`)
-        .send({
-          ...mockProtoUser,
-        });
+      await registerUser();
 
-      const res = await request(app)
-        .post(`${tokens.router}`)
-        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
-        .send(mockProtoToken);
+      const res = await createSignToken();
 
       expect(res.statusCode).toBe(error.conflict);
     });
@@ -60,17 +59,9 @@ describe(`Given a ${tokens.router} route`, () => {
 
   describe("When requested with POST method and the request is not authorized", () => {
     test(`Then it should respond with a status of ${error.unauthorized}`, async () => {
-      await request(app)
-        .post(`${tokens.router}`)
-        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
-        .send(mockProtoToken);
+      await createSignToken();
 
-      await request(app)
-        .post(`${users.router}`)
-        .set("Authorization", `Bearer ${mockProtoToken.code}`)
-        .send({
-          ...mockProtoUser,
-        });
+      await registerUser();
 
       let lowAuthorityAuthToken: any;
 
@@ -85,7 +76,7 @@ describe(`Given a ${tokens.router} route`, () => {
         });
 
       const res = await request(app)
-        .post(`${tokens.router}`)
+        .post(tokens.router)
         .set("Authorization", `Bearer ${lowAuthorityAuthToken}`)
         .send({
           ...mockProtoToken,
@@ -100,10 +91,7 @@ describe(`Given a ${tokens.router} route`, () => {
 describe(`Given a ${tokens.verify} route`, () => {
   describe("When requested with POST method and valid token data", () => {
     test(`Then it should respond with a status of ${success.ok}`, async () => {
-      await request(app)
-        .post(`${tokens.router}`)
-        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
-        .send(mockProtoToken);
+      await createSignToken();
 
       const res = await request(app)
         .post(`${tokens.router}${tokens.verify}`)
@@ -118,10 +106,7 @@ describe(`Given a ${tokens.verify} route`, () => {
 
   describe("When requested with POST method and invalid token data", () => {
     test(`Then it should respond with a status of ${error.unauthorized}`, async () => {
-      await request(app)
-        .post(`${tokens.router}`)
-        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
-        .send(mockProtoToken);
+      await createSignToken();
 
       const res = await request(app)
         .post(`${tokens.router}${tokens.verify}`)
