@@ -4,7 +4,6 @@ import { IS_TOKEN_REQUIRED, MAIN_IDENTIFIER } from "../../config/database";
 import { createHash } from "../../common/services/authentication";
 import catchCodedError from "../../common/utils/catchCodedError";
 import { ServeToken } from "../../common/services/ServeDatabase";
-import ISignToken from "./signToken.types";
 import CustomRequest from "../../common/types/CustomRequest";
 import isAuthorizedToRequest from "./signToken.utils";
 import signTokenErrors from "./signToken.errors";
