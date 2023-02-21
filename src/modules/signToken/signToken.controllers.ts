@@ -5,9 +5,7 @@ import { createHash } from "../../common/services/authentication";
 import catchCodedError from "../../common/utils/catchCodedError";
 import { ServeToken } from "../../common/services/ServeDatabase";
 import CustomRequest from "../../common/types/CustomRequest";
-import signTokenErrors from "./signToken.errors";
 import isSignTokenValid from "../../common/utils/isSignTokenValid";
-import isAllowed from "../../common/utils/authorization";
 
 const { success } = HTTP_CODES;
 
@@ -18,17 +16,6 @@ export const generateSignToken = async (
 ) => {
   const TokensService = ServeToken(next);
   const tryThis = catchCodedError(next);
-
-  // const requestorData = req.payload;
-
-  // if (
-  //   !isAllowed(requestorData.role, "CREATE_TOKEN", {
-  //     affectsUser: req.token.role,
-  //   })
-  // ) {
-  //   next(signTokenErrors.unauthorizedToCreate);
-  //   return;
-  // }
 
   const tokenValue = await tryThis<string, string>(createHash, [
     req.token.code,

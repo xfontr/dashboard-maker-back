@@ -1,10 +1,10 @@
 import { NextFunction, Response } from "express";
 import AUTHORIZED_ACTIONS from "../../modules/authorization/authorization.actions";
+import authorizationErrors from "../../modules/authorization/authorization.errors";
 import {
   ActionName,
   PermissionOptions,
 } from "../../modules/authorization/authorization.types";
-import userErrors from "../../modules/user/users.errors";
 import { UserRoles } from "../../modules/user/users.types";
 import CustomRequest from "../types/CustomRequest";
 
@@ -23,7 +23,7 @@ const authorization =
     const requestedAction = AUTHORIZED_ACTIONS[role][actionName];
 
     if (!requestedAction || !requestedAction.isAuthorized) {
-      next(userErrors.invalidRole);
+      next(authorizationErrors.invalidRole);
       return;
     }
 
@@ -36,7 +36,7 @@ const authorization =
       return;
     }
 
-    next(userErrors.invalidRole);
+    next(authorizationErrors.invalidRole);
   };
 
 export default authorization;
