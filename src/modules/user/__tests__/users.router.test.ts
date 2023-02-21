@@ -127,7 +127,7 @@ describe(`Given a ${users.refresh} route`, () => {
         });
 
       await request(app)
-        .post(`${users.router}/${users.logIn}`)
+        .post(`${users.router}${users.logIn}`)
         .send({
           [MAIN_IDENTIFIER]: mockUser[MAIN_IDENTIFIER],
           password: mockUser.password,
@@ -138,7 +138,7 @@ describe(`Given a ${users.refresh} route`, () => {
       });
 
       const res = await request(app)
-        .get(`${users.router}/${users.refresh}`)
+        .get(`${users.router}${users.refresh}`)
         .set(
           "Cookie",
           `authToken=${dbUser[0].authToken}; Path=/; Secure; HttpOnly; Expires=Thu, 26 Jan 2023 19:13:23 GMT;`
@@ -151,7 +151,7 @@ describe(`Given a ${users.refresh} route`, () => {
   describe("When requested with POST method and an invalid cookie", () => {
     test(`Then it should respond with a status of ${error.notFound}`, async () => {
       const res = await request(app)
-        .get(`${users.router}/${users.refresh}`)
+        .get(`${users.router}${users.refresh}`)
         .set("Cookie", "authToken=invalid-cookie;");
 
       expect(res.statusCode).toBe(error.notFound);
@@ -161,7 +161,7 @@ describe(`Given a ${users.refresh} route`, () => {
   describe("When requested with POST method and no cookies", () => {
     test(`Then it should respond with a status of ${error.badRequest}`, async () => {
       const res = await request(app)
-        .get(`${users.router}/${users.refresh}`)
+        .get(`${users.router}${users.refresh}`)
         .set("Cookie", "invalid cookie");
 
       expect(res.statusCode).toBe(error.badRequest);
@@ -185,7 +185,7 @@ describe(`Given a ${users.logOut} route`, () => {
         });
 
       await request(app)
-        .post(`${users.router}/${users.logIn}`)
+        .post(`${users.router}${users.logIn}`)
         .send({
           [MAIN_IDENTIFIER]: mockUser[MAIN_IDENTIFIER],
           password: mockUser.password,
@@ -196,7 +196,7 @@ describe(`Given a ${users.logOut} route`, () => {
       });
 
       const res = await request(app)
-        .patch(`${users.router}/${users.logOut}`)
+        .patch(`${users.router}${users.logOut}`)
         .set(
           "Cookie",
           `authToken=${dbUser[0].authToken}; Path=/; Secure; HttpOnly; Expires=Thu, 26 Jan 2023 19:13:23 GMT;`
