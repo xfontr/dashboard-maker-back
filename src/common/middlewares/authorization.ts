@@ -13,22 +13,34 @@ const authorization =
   async (req: CustomRequest, res: Response, next: NextFunction) => {
     const item = req.payload;
 
-    const role = item?.role as UserRoles | undefined;
+    const role: UserRoles | undefined = item?.role;
 
     if (role === "superAdmin") {
       next();
       return;
     }
 
-    const requestedAction = AUTHORIZED_ACTIONS[role][actionName];
+    /**
+     * The conditional operator here makes sure that the payload actually has a
+     * role, to avoid uncaught errors. Do not remove.
+     */
+    const requestedAction =
+      AUTHORIZED_ACTIONS[role] && AUTHORIZED_ACTIONS[role][actionName];
 
     if (!requestedAction || !requestedAction.isAuthorized) {
       next(authorizationErrors.invalidRole);
       return;
     }
 
-    const affectsUsersCondition = requestedAction.affectsUsers
-      ? !!requestedAction.affectsUsers?.includes(req[options.affectsUser].role)
+    /**
+     * Do not remove the "?" (not including the conditional one). If any of the
+     * options were not set correctly, the conditional will return false and
+     * avoid uncaught errors.
+     */
+    const affectsUsersCondition: boolean = requestedAction.affectsUsers
+      ? !!requestedAction.affectsUsers?.includes(
+          req[options?.affectsUser]?.role
+        )
       : true;
 
     if (affectsUsersCondition) {

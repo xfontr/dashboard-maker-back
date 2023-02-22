@@ -6,7 +6,7 @@ import { findSignToken, findUser } from "../../common/middlewares/findItem";
 import { signTokenSchema, verifySignTokenSchema } from "./signToken.schema";
 import validateRequest from "../../common/services/validateRequest";
 import signTokenErrors from "./signToken.errors";
-import authorization from "../../common/utils/authorization";
+import authorization from "../../common/middlewares/authorization";
 
 const { root, verify } = ENDPOINTS.signTokens;
 
