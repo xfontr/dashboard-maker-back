@@ -1,7 +1,7 @@
 import IUser from "../../users.types";
 import { createToken } from "../../../../common/services/authentication";
 
-export default ({ id, email, role }: IUser) => ({
+const FullToken = ({ id, email, role }: IUser) => ({
   user: {
     token: createToken({
       id,
@@ -10,3 +10,5 @@ export default ({ id, email, role }: IUser) => ({
     }),
   },
 });
+
+export default FullToken;

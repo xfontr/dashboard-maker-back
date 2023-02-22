@@ -11,12 +11,21 @@ import {
   registerUser,
 } from "./users.controllers";
 import userErrors from "./users.errors";
+import authentication from "../../common/middlewares/authentication";
+import authorization from "../../common/middlewares/authorization";
 
 const usersRouter = express.Router();
 
 const { root, logIn, refresh, logOut } = ENDPOINTS.users;
 
-usersRouter.get(root, getAllUsers);
+// GET ALL USERS
+
+usersRouter.get(
+  root,
+  authentication,
+  authorization("GET_ALL_USERS"),
+  getAllUsers
+);
 
 // REGISTER
 
