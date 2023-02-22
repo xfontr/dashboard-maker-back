@@ -13,18 +13,27 @@ import mockUser, {
 const { signTokens: tokens, users } = ENDPOINTS;
 const { error, success } = HTTP_CODES;
 
-const createSignToken = () =>
+const createSignToken = (email: string = mockProtoToken.email) =>
   request(app)
     .post(tokens.router)
     .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
-    .send(mockProtoToken);
+    .send({ ...mockProtoToken, email });
 
-const registerUser = () =>
+const registerUser = (email: string = mockProtoUser.email) =>
   request(app)
     .post(users.router)
     .set("Authorization", `Bearer ${mockProtoToken.code}`)
     .send({
       ...mockProtoUser,
+      email,
+    });
+
+const verifyToken = (tokenCode: string = mockProtoToken.code) =>
+  request(app)
+    .post(`${tokens.router}${tokens.verify}`)
+    .set("Authorization", `Bearer ${tokenCode}`)
+    .send({
+      [MAIN_IDENTIFIER]: mockProtoToken[MAIN_IDENTIFIER],
     });
 
 describe(`Given a ${tokens.router} route`, () => {
@@ -75,7 +84,7 @@ describe(`Given a ${tokens.router} route`, () => {
       let lowAuthorityAuthToken: any;
 
       await request(app)
-        .post(`${users.router}/${users.logIn}`)
+        .post(`${users.router}${users.logIn}`)
         .send({
           [MAIN_IDENTIFIER]: mockUser[MAIN_IDENTIFIER],
           password: mockUser.password,
@@ -100,14 +109,13 @@ describe(`Given a ${tokens.router} route`, () => {
 describe(`Given a ${tokens.verify} route`, () => {
   describe("When requested with POST method and valid token data", () => {
     test(`Then it should respond with a status of ${success.ok}`, async () => {
-      await createSignToken();
+      await createSignToken("fake@fake.com");
 
-      const res = await request(app)
-        .post(`${tokens.router}${tokens.verify}`)
-        .set("Authorization", `Bearer ${mockProtoToken.code}`)
-        .send({
-          [MAIN_IDENTIFIER]: mockProtoToken[MAIN_IDENTIFIER],
-        });
+      await registerUser("fake@fake.com");
+
+      const token = await createSignToken();
+
+      const res = await verifyToken();
 
       expect(res.statusCode).toBe(success.ok);
     });
@@ -117,12 +125,7 @@ describe(`Given a ${tokens.verify} route`, () => {
     test(`Then it should respond with a status of ${error.unauthorized}`, async () => {
       await createSignToken();
 
-      const res = await request(app)
-        .post(`${tokens.router}${tokens.verify}`)
-        .set("Authorization", `Bearer `)
-        .send({
-          [MAIN_IDENTIFIER]: mockProtoToken[MAIN_IDENTIFIER],
-        });
+      const res = await verifyToken("");
 
       expect(res.statusCode).toBe(error.unauthorized);
     });
@@ -130,12 +133,7 @@ describe(`Given a ${tokens.verify} route`, () => {
 
   describe("When requested with POST method and an non-existent token", () => {
     test(`Then it should respond with a status of ${error.notFound}`, async () => {
-      const res = await request(app)
-        .post(`${tokens.router}${tokens.verify}`)
-        .set("Authorization", `Bearer ${mockProtoToken.code}`)
-        .send({
-          [MAIN_IDENTIFIER]: mockProtoToken[MAIN_IDENTIFIER],
-        });
+      const res = await verifyToken();
 
       expect(res.statusCode).toBe(error.notFound);
     });

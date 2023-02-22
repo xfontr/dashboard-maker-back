@@ -40,7 +40,6 @@ signTokensRouter.post(
 
 signTokensRouter.post(
   verify,
-
   validateRequest(verifySignTokenSchema),
 
   findSignToken({

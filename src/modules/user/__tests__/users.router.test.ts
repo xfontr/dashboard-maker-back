@@ -10,16 +10,80 @@ import mockUser, {
   mockProtoUser,
 } from "../../../common/test-utils/mocks/mockUser";
 import User from "../User.model";
+import Payload from "../../../common/types/Payload";
+import FullToken from "../utils/FullToken/FullToken";
+import IUser from "../users.types";
+import ISignToken from "../../signToken/signToken.types";
 
 const { users, signTokens: tokens } = ENDPOINTS;
 const { success, error } = HTTP_CODES;
 
+const createToken = (token: Partial<ISignToken> = mockProtoToken) =>
+  request(app)
+    .post(tokens.router)
+    .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
+    .send(token);
+
+const registerUser = (
+  tokenCode: string = mockProtoToken.code,
+  user: IUser = mockProtoUser
+) =>
+  request(app)
+    .post(users.router)
+    .set("Authorization", `Bearer ${tokenCode}`)
+    .send({
+      ...user,
+    });
+
+const logInUser = () =>
+  request(app)
+    .post(`${users.router}${users.logIn}`)
+    .send({
+      [MAIN_IDENTIFIER]: mockUser[MAIN_IDENTIFIER],
+      password: mockUser.password,
+    });
+
 describe(`Given a ${users.router} route`, () => {
-  describe("When requested with GET method", () => {
+  describe("When requested with GET method with a user authenticated as admin or higher", () => {
     test(`Then it should respond with a status of ${success.ok}`, async () => {
-      const res = await request(app).get(`${users.router}`);
+      await createToken({ ...mockProtoToken, role: "admin" });
+
+      await registerUser(mockProtoToken.code, {
+        ...mockProtoUser,
+        role: "admin",
+      });
+
+      let token = "";
+
+      await logInUser().then(({ body: { user } }) => {
+        token = user.token;
+      });
+
+      const res = await request(app)
+        .get(users.router)
+        .set("Authorization", `Bearer ${token}`);
 
       expect(res.statusCode).toBe(success.ok);
+    });
+  });
+
+  describe("When requested with GET method with a user authenticated as user or lower", () => {
+    test(`Then it should respond with a status of ${error.unauthorized}`, async () => {
+      await createToken();
+
+      await registerUser();
+
+      let token = "";
+
+      await logInUser().then(({ body: { user } }) => {
+        token = user.token;
+      });
+
+      const res = await request(app)
+        .get(users.router)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.statusCode).toBe(error.unauthorized);
     });
   });
 });
@@ -27,17 +91,9 @@ describe(`Given a ${users.router} route`, () => {
 describe(`Given a ${users.router} route`, () => {
   describe("When requested with POST method and valid register data", () => {
     test(`Then it should respond with a status of ${success.created}`, async () => {
-      await request(app)
-        .post(`${tokens.router}`)
-        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
-        .send(mockProtoToken);
+      await createToken();
 
-      const res = await request(app)
-        .post(`${users.router}`)
-        .set("Authorization", `Bearer ${mockProtoToken.code}`)
-        .send({
-          ...mockProtoUser,
-        });
+      const res = await registerUser();
 
       expect(res.statusCode).toBe(success.created);
     });
@@ -45,17 +101,9 @@ describe(`Given a ${users.router} route`, () => {
 
   describe("When requested with POST method, valid register data but a wrong token", () => {
     test(`Then it should respond with a status of ${error.unauthorized}`, async () => {
-      await request(app)
-        .post(tokens.router)
-        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
-        .send(mockProtoToken);
+      await createToken();
 
-      const res = await request(app)
-        .post(users.router)
-        .set("Authorization", "Bearer wrongCode")
-        .send({
-          ...mockProtoUser,
-        });
+      const res = await registerUser("wrongCode");
 
       expect(res.statusCode).toBe(error.unauthorized);
     });
@@ -75,20 +123,12 @@ describe(`Given a ${users.router} route`, () => {
 describe(`Given a ${users.logIn} route`, () => {
   describe("When requested with POST method and valid log in data", () => {
     test(`Then it should respond with a status of ${success.ok}`, async () => {
-      await request(app)
-        .post(tokens.router)
-        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
-        .send(mockProtoToken);
+      await createToken();
 
-      await request(app)
-        .post(users.router)
-        .set("Authorization", `Bearer ${mockProtoToken.code}`)
-        .send({
-          ...mockProtoUser,
-        });
+      await registerUser();
 
       const res = await request(app)
-        .post(`${users.router}/${users.logIn}`)
+        .post(`${users.router}${users.logIn}`)
         .send({
           [MAIN_IDENTIFIER]: mockUser[MAIN_IDENTIFIER],
           password: mockUser.password,
@@ -101,7 +141,7 @@ describe(`Given a ${users.logIn} route`, () => {
   describe("When requested with POST method and invalid logIn data", () => {
     test(`Then it should respond with a status of ${error.badRequest}`, async () => {
       const res = await request(app)
-        .post(`${users.router}/${users.logIn}`)
+        .post(`${users.router}${users.logIn}`)
         .send({
           name: "Name",
         });
@@ -114,17 +154,9 @@ describe(`Given a ${users.logIn} route`, () => {
 describe(`Given a ${users.refresh} route`, () => {
   describe("When requested with POST method and a valid cookie", () => {
     test(`Then it should respond with a status of ${success.ok}`, async () => {
-      await request(app)
-        .post(tokens.router)
-        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
-        .send(mockProtoToken);
+      await createToken();
 
-      await request(app)
-        .post(users.router)
-        .set("Authorization", `Bearer ${mockProtoToken.code}`)
-        .send({
-          ...mockProtoUser,
-        });
+      await registerUser();
 
       await request(app)
         .post(`${users.router}${users.logIn}`)
@@ -172,17 +204,9 @@ describe(`Given a ${users.refresh} route`, () => {
 describe(`Given a ${users.logOut} route`, () => {
   describe("When requested with PATCH method and a valid cookie", () => {
     test(`Then it should respond with a status of ${success.ok}`, async () => {
-      await request(app)
-        .post(`${tokens.router}`)
-        .set("Authorization", `Bearer ${ENVIRONMENT.defaultPowerToken}`)
-        .send(mockProtoToken);
+      await createToken();
 
-      await request(app)
-        .post(`${users.router}`)
-        .set("Authorization", `Bearer ${mockProtoToken.code}`)
-        .send({
-          ...mockProtoUser,
-        });
+      await registerUser();
 
       await request(app)
         .post(`${users.router}${users.logIn}`)
@@ -208,7 +232,7 @@ describe(`Given a ${users.logOut} route`, () => {
     describe("When requested with PATCH method and an invalid cookie", () => {
       test(`Then it should respond with a status of ${error.notFound}`, async () => {
         const res = await request(app)
-          .patch(`${users.router}/${users.logOut}`)
+          .patch(`${users.router}${users.logOut}`)
           .set("Cookie", "authToken=invalid-cookie;");
 
         expect(res.statusCode).toBe(error.notFound);
@@ -218,7 +242,7 @@ describe(`Given a ${users.logOut} route`, () => {
     describe("When requested with PATCH method and no cookies", () => {
       test(`Then it should respond with a status of ${error.badRequest}`, async () => {
         const res = await request(app)
-          .patch(`${users.router}/${users.logOut}`)
+          .patch(`${users.router}${users.logOut}`)
           .set("Cookie", "invalid cookie");
 
         expect(res.statusCode).toBe(error.badRequest);
