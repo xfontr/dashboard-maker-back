@@ -11,7 +11,6 @@ import {
 } from "../../../common/test-utils/mocks/mockToken";
 import CustomRequest from "../../../common/types/CustomRequest";
 import mockPayload from "../../../common/test-utils/mocks/mockPayload";
-import signTokenErrors from "../signToken.errors";
 import userErrors from "../../user/users.errors";
 import mockUser from "../../../common/test-utils/mocks/mockUser";
 
@@ -85,21 +84,6 @@ describe("Given a generateToken controller", () => {
         await generateSignToken(req, res as Response, next);
 
         expect(next).toHaveBeenCalledWith(badRequest);
-        expect(next).toHaveBeenCalledTimes(1);
-        expect(res.status).not.toHaveBeenCalled();
-      });
-    });
-
-    describe("And the requesting user is not authorized", () => {
-      test("Then it should call next with an error and not respond", async () => {
-        const notAuthReq = {
-          token: mockProtoToken,
-          payload: { ...mockPayload, role: "user" },
-        } as CustomRequest;
-
-        await generateSignToken(notAuthReq, res as Response, next);
-
-        expect(next).toHaveBeenCalledWith(signTokenErrors.unauthorizedToCreate);
         expect(next).toHaveBeenCalledTimes(1);
         expect(res.status).not.toHaveBeenCalled();
       });

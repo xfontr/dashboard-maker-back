@@ -6,6 +6,7 @@ import { findSignToken, findUser } from "../../common/middlewares/findItem";
 import { signTokenSchema, verifySignTokenSchema } from "./signToken.schema";
 import validateRequest from "../../common/services/validateRequest";
 import signTokenErrors from "./signToken.errors";
+import authorization from "../../common/middlewares/authorization";
 
 const { root, verify } = ENDPOINTS.signTokens;
 
@@ -16,12 +17,14 @@ signTokensRouter.post(
 
   validateRequest(signTokenSchema),
 
+  authentication,
+
   findSignToken({
     specialError: signTokenErrors.tokenAlreadyExists,
     skip: false,
   }),
 
-  authentication,
+  authorization("CREATE_TOKEN", { affectsUser: "token" }),
 
   findUser({
     specialError: signTokenErrors.emailAlreadyRegistered,

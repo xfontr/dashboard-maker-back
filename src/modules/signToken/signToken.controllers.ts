@@ -5,8 +5,6 @@ import { createHash } from "../../common/services/authentication";
 import catchCodedError from "../../common/utils/catchCodedError";
 import { ServeToken } from "../../common/services/ServeDatabase";
 import CustomRequest from "../../common/types/CustomRequest";
-import isAuthorizedToRequest from "./signToken.utils";
-import signTokenErrors from "./signToken.errors";
 import isSignTokenValid from "../../common/utils/isSignTokenValid";
 
 const { success } = HTTP_CODES;
@@ -18,19 +16,6 @@ export const generateSignToken = async (
 ) => {
   const TokensService = ServeToken(next);
   const tryThis = catchCodedError(next);
-
-  const requestorData = req.payload;
-
-  if (
-    !isAuthorizedToRequest(
-      requestorData.role,
-      req.token.role,
-      requestorData.email
-    )
-  ) {
-    next(signTokenErrors.unauthorizedToCreate);
-    return;
-  }
 
   const tokenValue = await tryThis<string, string>(createHash, [
     req.token.code,
