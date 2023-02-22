@@ -18,6 +18,8 @@ const usersRouter = express.Router();
 
 const { root, logIn, refresh, logOut } = ENDPOINTS.users;
 
+// GET ALL USERS
+
 usersRouter.get(
   root,
   authentication,

@@ -10,8 +10,6 @@ import mockUser, {
   mockProtoUser,
 } from "../../../common/test-utils/mocks/mockUser";
 import User from "../User.model";
-import Payload from "../../../common/types/Payload";
-import FullToken from "../utils/FullToken/FullToken";
 import IUser from "../users.types";
 import ISignToken from "../../signToken/signToken.types";
 
