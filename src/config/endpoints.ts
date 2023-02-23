@@ -2,7 +2,7 @@ const ENDPOINTS = {
   users: {
     router: "/users",
     root: "/",
-    userData: `/logged-data`,
+    userData: `/profile`,
     logIn: "/log-in",
     logOut: "/log-out",
     refresh: "/refresh",
