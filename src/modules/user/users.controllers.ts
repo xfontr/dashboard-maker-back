@@ -29,6 +29,10 @@ export const getAllUsers = async (
   res.status(success.ok).json({ users });
 };
 
+export const getUserInfo = async (req: CustomRequest, res: Response) => {
+  res.status(success.ok).json({ user: req.user });
+};
+
 export const registerUser = async (
   req: CustomRequest,
   res: Response,

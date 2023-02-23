@@ -8,6 +8,7 @@ import CodedError, { Codes } from "../../../common/utils/CodedError";
 import FullToken from "../utils/FullToken/FullToken";
 import {
   getAllUsers,
+  getUserInfo,
   logInUser,
   logOutUser,
   refreshToken,
@@ -20,6 +21,7 @@ import mockUser, {
 } from "../../../common/test-utils/mocks/mockUser";
 import { mockFullToken } from "../../../common/test-utils/mocks/mockToken";
 import userErrors from "../users.errors";
+import mockPayload from "../../../common/test-utils/mocks/mockPayload";
 
 let mockHashedPassword: string | Promise<never> = "validPassword";
 let mockIsTokenVerified = true;
@@ -309,6 +311,26 @@ describe("Given a logOutUser controller", () => {
         expect(nextError).toHaveBeenCalledWith(expectedError);
         expect(res.status).not.toHaveBeenCalled();
       });
+    });
+  });
+});
+
+describe("Given a getUserInfo controller", () => {
+  describe("When called with a request with user log in data and a response", () => {
+    const req = {
+      payload: mockPayload,
+      user: mockUser,
+    } as CustomRequest;
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as Partial<Response>;
+
+    test(`Then it should respond with a status of ${HTTP_CODES.success.ok} and a user`, async () => {
+      await getUserInfo(req, res as Response);
+
+      expect(res.status).toHaveBeenCalledWith(HTTP_CODES.success.ok);
+      expect(res.json).toHaveBeenCalledWith({ user: mockUser });
     });
   });
 });
