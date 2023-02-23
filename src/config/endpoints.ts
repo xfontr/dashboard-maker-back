@@ -1,4 +1,8 @@
 const ENDPOINTS = {
+  health: {
+    router: "/health",
+    root: "/",
+  },
   users: {
     router: "/users",
     root: "/",

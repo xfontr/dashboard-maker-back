@@ -10,6 +10,9 @@ import generalError from "./common/middlewares/generalError";
 import notFoundError from "./common/middlewares/notFoundError";
 import validationError from "./common/middlewares/validationError";
 import ENVIRONMENT from "./config/environment";
+import getHealth from "./common/controllers/getHealth";
+
+const { users, signTokens, health } = ENDPOINTS;
 
 const app = express();
 
@@ -22,8 +25,9 @@ app.use(
   cookieParser()
 );
 
-app.use(ENDPOINTS.users.router, usersRouter);
-app.use(ENDPOINTS.signTokens.router, signTokensRouter);
+app.use(users.router, usersRouter);
+app.use(signTokens.router, signTokensRouter);
+app.use(health.router, express.Router().get(health.root, getHealth));
 
 app.use(notFoundError);
 app.use(validationError);
