@@ -206,12 +206,7 @@ describe(`Given a ${users.logOut} route`, () => {
 
       await registerUser();
 
-      await request(app)
-        .post(`${users.router}${users.logIn}`)
-        .send({
-          [MAIN_IDENTIFIER]: mockUser[MAIN_IDENTIFIER],
-          password: mockUser.password,
-        });
+      await logInUser();
 
       const dbUser = await User.find({
         [MAIN_IDENTIFIER]: mockProtoToken[MAIN_IDENTIFIER],
@@ -245,6 +240,58 @@ describe(`Given a ${users.logOut} route`, () => {
 
         expect(res.statusCode).toBe(error.badRequest);
       });
+    });
+  });
+});
+
+describe(`Given a ${users.userData} route`, () => {
+  describe("When requested with GET method and the requesting user is authenticated", () => {
+    test(`Then it should respond with a status of ${success.ok}`, async () => {
+      await createToken();
+
+      await registerUser();
+
+      let token = "";
+
+      await logInUser().then(({ body: { user } }) => {
+        token = user.token;
+      });
+
+      const res = await request(app)
+        .get(`${users.router}${users.userData}`)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.statusCode).toBe(success.ok);
+    });
+
+    test(`Then it should respond with a status of ${error.notFound} if the user doesn't exist`, async () => {
+      await createToken();
+
+      await registerUser();
+
+      let token = "";
+
+      await logInUser().then(({ body: { user } }) => {
+        token = user.token;
+      });
+
+      await User.findOneAndDelete({
+        [MAIN_IDENTIFIER]: mockUser[MAIN_IDENTIFIER],
+      });
+
+      const res = await request(app)
+        .get(`${users.router}${users.userData}`)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.statusCode).toBe(error.notFound);
+    });
+  });
+
+  describe("When requested with GET method and the requesting user is not authenticated", () => {
+    test(`Then it should respond with a status of ${error.badRequest}`, async () => {
+      const res = await request(app).get(`${users.router}${users.userData}`);
+
+      expect(res.statusCode).toBe(error.badRequest);
     });
   });
 });

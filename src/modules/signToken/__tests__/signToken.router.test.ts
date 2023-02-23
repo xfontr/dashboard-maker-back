@@ -113,7 +113,7 @@ describe(`Given a ${tokens.verify} route`, () => {
 
       await registerUser("fake@fake.com");
 
-      const token = await createSignToken();
+      await createSignToken();
 
       const res = await verifyToken();
 
