@@ -1,10 +1,8 @@
-import { MAIN_IDENTIFIER } from "./database";
-
 const ENDPOINTS = {
   users: {
     router: "/users",
     root: "/",
-    userData: `/:user-${MAIN_IDENTIFIER}`,
+    userData: `/logged-data`,
     logIn: "/log-in",
     logOut: "/log-out",
     refresh: "/refresh",
