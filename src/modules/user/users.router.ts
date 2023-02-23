@@ -5,6 +5,7 @@ import ENDPOINTS from "../../config/endpoints";
 import { logInSchema, registerSchema } from "./users.schema";
 import {
   getAllUsers,
+  getUserInfo,
   logInUser,
   logOutUser,
   refreshToken,
@@ -16,7 +17,7 @@ import authorization from "../../common/middlewares/authorization";
 
 const usersRouter = express.Router();
 
-const { root, logIn, refresh, logOut } = ENDPOINTS.users;
+const { root, logIn, refresh, logOut, userData } = ENDPOINTS.users;
 
 // GET ALL USERS
 
@@ -25,6 +26,18 @@ usersRouter.get(
   authentication,
   authorization("GET_ALL_USERS"),
   getAllUsers
+);
+
+// GET USER INFO
+
+usersRouter.get(
+  userData,
+  authentication,
+  findUser({
+    getValueFrom: "payload",
+    specialError: userErrors.logInUserDoesNotExist,
+  }),
+  getUserInfo
 );
 
 // REGISTER
