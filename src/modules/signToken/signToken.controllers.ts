@@ -1,29 +1,29 @@
-import { NextFunction, Request, Response } from "express";
-import ERROR_CODES from "../../config/errorCodes";
-import { MAIN_IDENTIFIER } from "../../config/database";
+import { NextFunction, Response } from "express";
+import HTTP_CODES from "../../config/errorCodes";
+import { IS_TOKEN_REQUIRED, MAIN_IDENTIFIER } from "../../config/database";
 import { createHash } from "../../common/services/authentication";
 import catchCodedError from "../../common/utils/catchCodedError";
 import { ServeToken } from "../../common/services/ServeDatabase";
-import IToken from "./token.types";
 import CustomRequest from "../../common/types/CustomRequest";
+import isSignTokenValid from "../../common/utils/isSignTokenValid";
 
-const { success } = ERROR_CODES;
+const { success } = HTTP_CODES;
 
-export const generateToken = async (
-  req: Request,
+export const generateSignToken = async (
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
   const TokensService = ServeToken(next);
   const tryThis = catchCodedError(next);
 
-  const token: IToken = req.body;
-
-  const tokenValue = await tryThis<string, string>(createHash, [token.code]);
+  const tokenValue = await tryThis<string, string>(createHash, [
+    req.token.code,
+  ]);
   if (!tokenValue) return;
 
   const newToken = await TokensService.create(
-    { ...token, code: tokenValue },
+    { ...req.token, code: tokenValue },
     { replace: true, mainIdentifier: MAIN_IDENTIFIER }
   );
 
@@ -32,6 +32,14 @@ export const generateToken = async (
   res.status(success.created).json({ token: "Token created successfully" });
 };
 
-export const verifyToken = async (req: CustomRequest, res: Response) => {
+export const verifySignToken = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const isTokenValid = await isSignTokenValid(req, next, !IS_TOKEN_REQUIRED);
+
+  if (!isTokenValid) return;
+
   res.status(success.ok).json({ token: req.token });
 };

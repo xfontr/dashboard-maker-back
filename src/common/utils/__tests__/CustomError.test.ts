@@ -1,4 +1,4 @@
-import ERROR_CODES from "../../../config/errorCodes";
+import HTTP_CODES from "../../../config/errorCodes";
 import camelToRegular from "../camelToRegular";
 import CustomError, { ICustomError } from "../CustomError";
 
@@ -31,8 +31,8 @@ describe("Given a CustomError function", () => {
   describe("When instantiated without parameters", () => {
     test("Then it should return an error with the default message and name", () => {
       const expectedError: ICustomError = {
-        name: `Error ${ERROR_CODES.error.internalServerError}`,
-        code: ERROR_CODES.error.internalServerError,
+        name: `Error ${HTTP_CODES.error.internalServerError}`,
+        code: HTTP_CODES.error.internalServerError,
         message: "Unknown error",
         publicMessage: camelToRegular("internalServerError"),
       };

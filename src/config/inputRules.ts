@@ -1,8 +1,11 @@
 import IOptions from "../modules/options/options.types";
-import IToken from "../modules/token/token.types";
+import ISignToken from "../modules/signToken/signToken.types";
 import IUser from "../modules/user/users.types";
 
-interface AllTypes extends Partial<IUser>, Partial<IToken>, Partial<IOptions> {}
+interface AllTypes
+  extends Partial<IUser>,
+    Partial<ISignToken>,
+    Partial<IOptions> {}
 
 export type InputData = Partial<{
   min: number;

@@ -1,21 +1,24 @@
-import IToken from "../../modules/token/token.types";
-import IUser from "../../modules/user/users.types";
-import CustomRequest from "../types/CustomRequest";
-import Payload from "../types/Payload";
+import CustomRequest, { IStores } from "../types/CustomRequest";
 
-const requestStores = {
-  token: <T>(req: CustomRequest, item: T) => {
-    req.token = item as IToken;
-  },
-  payload: <T>(req: CustomRequest, item: T) => {
-    req.payload = item as Payload;
-  },
-  authority: <T>(req: CustomRequest, item: T) => {
-    req.authority = item as IUser;
-  },
-  user: <T>(req: CustomRequest, item: T) => {
-    req.user = item as IUser;
-  },
-};
+const stores: (keyof IStores)[] = ["payload", "token", "user"];
+
+const Store =
+  (storeName: keyof IStores): Function =>
+  (req: CustomRequest, item: IStores[typeof storeName]) => {
+    (req[storeName] as CustomRequest[keyof IStores]) = item;
+  };
+
+const baseRequestStores = (
+  storeNames: (keyof IStores)[]
+): Record<keyof IStores, Function> =>
+  storeNames.reduce(
+    (finalStore, storeName) => ({
+      ...finalStore,
+      [storeName]: Store(storeName),
+    }),
+    {} as Record<keyof IStores, Function>
+  );
+
+const requestStores = baseRequestStores(stores);
 
 export default requestStores;

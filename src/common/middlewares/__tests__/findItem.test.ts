@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { Model } from "mongoose";
 import { MAIN_IDENTIFIER } from "../../../config/database";
 import IUser from "../../../modules/user/users.types";
+import mockPayload from "../../test-utils/mocks/mockPayload";
 import mockUser from "../../test-utils/mocks/mockUser";
 import CustomRequest from "../../types/CustomRequest";
 import { FindOptions } from "../../types/requestOptions";
@@ -39,7 +40,7 @@ describe("Given a findItem middleware", () => {
             body: { ...req.body, [MAIN_IDENTIFIER]: undefined },
           } as Request;
 
-          await findItem(model, MAIN_IDENTIFIER, conflictError)(
+          await findItem(model, { specialError: conflictError })()(
             mockUndefinedReq,
             res,
             next
@@ -55,7 +56,11 @@ describe("Given a findItem middleware", () => {
           find: (): IUser[] => [],
         } as unknown as Model<IUser>;
 
-        await findItem(model, MAIN_IDENTIFIER, conflictError)(req, res, next);
+        await findItem(model, {})({ specialError: conflictError })(
+          req,
+          res,
+          next
+        );
 
         expect(next).toHaveBeenCalledWith();
       });
@@ -65,7 +70,11 @@ describe("Given a findItem middleware", () => {
           find: () => [mockUser],
         } as unknown as Model<IUser>;
 
-        await findItem(model, MAIN_IDENTIFIER, conflictError)(req, res, next);
+        await findItem(model, {})({ specialError: conflictError })(
+          req,
+          res,
+          next
+        );
 
         expect(next).toHaveBeenCalledWith(conflictError);
         expect(next).toHaveBeenCalledTimes(1);
@@ -73,7 +82,10 @@ describe("Given a findItem middleware", () => {
 
       describe("If there is a store parameter", () => {
         test("Then it should also save the item in the request body", async () => {
-          const options: FindOptions = { storeAt: "token" };
+          const options: FindOptions = {
+            storeAt: "token",
+            specialError: notFoundError,
+          };
           const customReq = {
             body: mockUser,
           } as CustomRequest;
@@ -82,12 +94,7 @@ describe("Given a findItem middleware", () => {
             find: (): IUser[] => [mockUser],
           } as unknown as Model<IUser>;
 
-          await findItem(
-            model,
-            MAIN_IDENTIFIER,
-            notFoundError,
-            options
-          )(customReq, res, next);
+          await findItem(model, options)()(customReq, res, next);
 
           expect(customReq.token).toStrictEqual(mockUser);
           expect(next).toHaveBeenCalledWith();
@@ -96,7 +103,7 @@ describe("Given a findItem middleware", () => {
 
       describe("If there is a skip parameter", () => {
         test("Then it should directly skip to the next step calling next", async () => {
-          const options = { skip: true };
+          const options = { skip: true, specialError: notFoundError };
           const cleanReq = {
             body: { ...mockUser, item: undefined },
           } as Request;
@@ -105,16 +112,33 @@ describe("Given a findItem middleware", () => {
             find: jest.fn(),
           } as unknown as Model<IUser>;
 
-          await findItem(
-            model,
-            MAIN_IDENTIFIER,
-            notFoundError,
-            options
-          )(cleanReq, res, next);
+          await findItem(model, {})(options)(cleanReq, res, next);
 
           expect(next).toHaveBeenCalledWith();
           expect(next).toHaveBeenCalledTimes(1);
           expect(cleanReq.body.item).toBeUndefined();
+        });
+      });
+
+      describe("If there is a getValueFrom parameter but no item is found at the database", () => {
+        test("Then it should store at the request the passed original value", async () => {
+          const options: FindOptions = {
+            getValueFrom: "body",
+            storeAt: "payload",
+          };
+          const payloadReq = {
+            body: mockPayload,
+          } as CustomRequest;
+
+          const model = {
+            find: jest.fn().mockResolvedValue([]),
+          } as unknown as Model<IUser>;
+
+          await findItem(model, {})(options)(payloadReq, res, next);
+
+          expect(next).toHaveBeenCalledWith();
+          expect(next).toHaveBeenCalledTimes(1);
+          expect(payloadReq.payload).toStrictEqual(payloadReq.body);
         });
       });
     });

@@ -11,6 +11,7 @@
     "test": "jest src --watchAll=false",
     "test:dev": "jest src --watchAll=true",
     "test:coverage": "jest src --coverage --watchAll=false",
+    "test:coverage:open": "jest src --coverage --watchAll=false && open coverage/lcov-report/index.html",
     "lint": "eslint ./src",
     "build": "npm run ts",
     "prepare": "husky install"

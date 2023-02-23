@@ -2,7 +2,7 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import connectDatabase from "./connectDatabase";
-import Token from "./modules/token/Token.model";
+import Token from "./modules/signToken/SignToken.model";
 import User from "./modules/user/User.model";
 
 let mongoServer: MongoMemoryServer;
